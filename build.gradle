@@ -1,0 +1,37 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+apply plugin: 'org.openjfx.javafxplugin'
+
+group 'pawel.marszal'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_14
+    targetCompatibility = JavaVersion.VERSION_14
+}
+
+application {
+    mainClassName = 'chessgame.Main'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+javafx {
+    version = '14'
+    modules = ['javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web']
+}
