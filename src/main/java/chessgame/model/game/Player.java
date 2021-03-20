@@ -1,17 +1,17 @@
 package chessgame.model.game;
 
 import chessgame.model.figures.Figure;
-import chessgame.model.properties.Color;
+import chessgame.model.properties.PlayerColor;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class Player {
-    private final Color color;
+    private final PlayerColor playerColor;
 
     private List<Figure> pieces = new LinkedList<>();
 
-    public Player(Color color) {
-        this.color = color;
+    public Player(PlayerColor playerColor) {
+        this.playerColor = playerColor;
     }
 }

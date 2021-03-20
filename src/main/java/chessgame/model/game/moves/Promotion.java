@@ -1,10 +1,10 @@
 package chessgame.model.game.moves;
 
-import chessgame.model.game.Chessboard;
+import chessgame.model.game.ChessBoard;
 
 public class Promotion implements IMove {
     @Override
-    public void execute(Chessboard chessboard) {
+    public void execute(ChessBoard chessboard) {
 
     }
 }

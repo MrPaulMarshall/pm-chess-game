@@ -1,7 +1,8 @@
 package chessgame.model.figures;
 
-import chessgame.model.game.Chessboard;
+import chessgame.model.game.ChessBoard;
 import chessgame.model.properties.*;
+import javafx.scene.image.Image;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,18 +13,20 @@ import java.util.List;
  */
 public abstract class Figure {
 
-//    protected final Image image;
-    protected final Color color;
+    protected final PlayerColor playerColor;
     protected Position position;
     protected boolean didNotMoveYet = true;
+
+    protected final Image image;
 
     protected final List<Position> possibleMoves = new LinkedList<>();
     protected final List<Position> movesWithoutProtectingKing = new LinkedList<>();
 
     // Constructor
     // TODO: finish and write documentation
-    public Figure(String imgSource, Color color) {
-        this.color = color;
+    public Figure(Image image, PlayerColor playerColor) {
+        this.image = image;
+        this.playerColor = playerColor;
     }
 
     // Interface - public methods to implement
@@ -32,7 +35,7 @@ public abstract class Figure {
      * Updates list of moves, that figure can legally make
      * @param chessboard Chessboard object to execute function on
      */
-    public void updatePossibleMoves(Chessboard chessboard) {
+    public void updatePossibleMoves(ChessBoard chessboard) {
         updateMovesWithoutProtectingKing(chessboard);
 
         for (Position move : movesWithoutProtectingKing) {
@@ -52,7 +55,7 @@ public abstract class Figure {
      * Needs to be implemented in each subclass
      * @param chessboard Chessboard object to execute function on
      */
-    abstract public void updateMovesWithoutProtectingKing(Chessboard chessboard);
+    abstract public void updateMovesWithoutProtectingKing(ChessBoard chessboard);
 
     // Setters and Getters
 
@@ -63,6 +66,10 @@ public abstract class Figure {
 
     public Position getPosition() {
         return position;
+    }
+
+    public Image getImage() {
+        return image;
     }
 
     public void markThatFigureMoved() {
@@ -78,6 +85,11 @@ public abstract class Figure {
     }
 
     // Inner methods for subclasses
+
+    protected static Image loadImage(PlayerColor color, String name) {
+        String path = "images/" + (color == PlayerColor.WHITE ? "white" : "black") + "-" + name + ".png";
+        return new Image(path, 50, 50, false,true, false);
+    }
 
     /**
      *
@@ -96,7 +108,7 @@ public abstract class Figure {
      * @return list of accessible fields (all until blocked by other figure)
      * on straight lines determined by 'directions' array
      */
-    protected List<Position> unlimitedMovesInGivenDirections(Chessboard chessboard, int[][] directions) {
+    protected List<Position> unlimitedMovesInGivenDirections(ChessBoard chessboard, int[][] directions) {
         List<Position> moves = new LinkedList<>();
 
         for (int[] dir : directions) {
@@ -108,7 +120,7 @@ public abstract class Figure {
                 if (chessboard.board[x][y] == null) {
                     // cell is free
                     moves.add(new Position(x, y));
-                } else if (chessboard.board[x][y].color != this.color) {
+                } else if (chessboard.board[x][y].playerColor != this.playerColor) {
                     // enemy figure blocks path
                     moves.add(new Position(x, y));
                     break;
@@ -132,7 +144,7 @@ public abstract class Figure {
      * @param jumps array of jumps - pairs of changes in position {horizontal step, vertical step}
      * @return list of fields determined by 'jumps' array, that can be occupied by figure
      */
-    protected List<Position> movesViaGivenJumps(Chessboard chessboard, int[][] jumps) {
+    protected List<Position> movesViaGivenJumps(ChessBoard chessboard, int[][] jumps) {
         List<Position> moves = new LinkedList<>();
 
         for (int[] jump : jumps) {
@@ -141,7 +153,7 @@ public abstract class Figure {
 
             // if new position is valid and either cell is free or there is an enemy to kill
             if (validPosition(x, y) &&
-                    (chessboard.board[x][y] == null || chessboard.board[x][y].color != this.color)) {
+                    (chessboard.board[x][y] == null || chessboard.board[x][y].playerColor != this.playerColor)) {
                 moves.add(new Position(x, y));
             }
         }

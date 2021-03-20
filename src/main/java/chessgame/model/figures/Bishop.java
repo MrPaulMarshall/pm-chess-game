@@ -1,7 +1,7 @@
 package chessgame.model.figures;
 
-import chessgame.model.game.Chessboard;
-import chessgame.model.properties.Color;
+import chessgame.model.game.ChessBoard;
+import chessgame.model.properties.PlayerColor;
 
 public class Bishop extends Figure {
     // directions: left-up, right-up, right-down, left-down
@@ -12,12 +12,12 @@ public class Bishop extends Figure {
             {-1, -1}
     };
 
-    public Bishop(String imgSource, Color color) {
-        super(imgSource, color);
+    public Bishop(PlayerColor playerColor) {
+        super(loadImage(playerColor, "bishop"), playerColor);
     }
 
     @Override
-    public void updateMovesWithoutProtectingKing(Chessboard chessboard) {
+    public void updateMovesWithoutProtectingKing(ChessBoard chessboard) {
         movesWithoutProtectingKing.clear();
         movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(chessboard, moveDirections));
     }

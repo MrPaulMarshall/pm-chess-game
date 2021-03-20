@@ -1,9 +1,9 @@
 package chessgame.model.properties;
 
-public enum Color {
+public enum PlayerColor {
     WHITE, BLACK;
 
-    public Color next() {
+    public PlayerColor next() {
         return this == WHITE ? BLACK : WHITE;
     }
 

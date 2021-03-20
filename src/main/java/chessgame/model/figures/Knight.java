@@ -1,7 +1,7 @@
 package chessgame.model.figures;
 
-import chessgame.model.game.Chessboard;
-import chessgame.model.properties.Color;
+import chessgame.model.game.ChessBoard;
+import chessgame.model.properties.PlayerColor;
 
 public class Knight extends Figure {
     // all jumps, starting with 2-up--1-left and going clockwise
@@ -16,12 +16,12 @@ public class Knight extends Figure {
             {-2, 1}
     };
 
-    public Knight(String imgSource, Color color) {
-        super(imgSource, color);
+    public Knight(PlayerColor playerColor) {
+        super(loadImage(playerColor, "knight"), playerColor);
     }
 
     @Override
-    public void updateMovesWithoutProtectingKing(Chessboard chessboard) {
+    public void updateMovesWithoutProtectingKing(ChessBoard chessboard) {
         movesWithoutProtectingKing.clear();
         movesWithoutProtectingKing.addAll(movesViaGivenJumps(chessboard, jumps));
     }

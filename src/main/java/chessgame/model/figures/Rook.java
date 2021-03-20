@@ -1,7 +1,7 @@
 package chessgame.model.figures;
 
-import chessgame.model.game.Chessboard;
-import chessgame.model.properties.Color;
+import chessgame.model.game.ChessBoard;
+import chessgame.model.properties.PlayerColor;
 
 public class Rook extends Figure {
     // directions: up, right, down, left
@@ -12,12 +12,12 @@ public class Rook extends Figure {
             {-1, 0}
     };
 
-    public Rook(String imgSource, Color color) {
-        super(imgSource, color);
+    public Rook(PlayerColor playerColor) {
+        super(loadImage(playerColor, "rook"), playerColor);
     }
 
     @Override
-    public void updateMovesWithoutProtectingKing(Chessboard chessboard) {
+    public void updateMovesWithoutProtectingKing(ChessBoard chessboard) {
         movesWithoutProtectingKing.clear();
         movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(chessboard, moveDirections));
     }

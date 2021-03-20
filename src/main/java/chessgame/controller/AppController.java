@@ -26,7 +26,7 @@ public class AppController {
         BorderPane page = loader.load();
 
         Stage dialogStage = new Stage();
-        dialogStage.setTitle("Login");
+        dialogStage.setTitle("Chess game - welcome screen");
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
         Scene scene = new Scene(page);
@@ -34,7 +34,13 @@ public class AppController {
 
         WelcomeScreenPresenter presenter = loader.getController();
         presenter.setDialogStage(dialogStage);
+        presenter.setPrimaryStage(primaryStage);
 
         dialogStage.showAndWait();
+    }
+
+    private void showBoardScreen() throws Exception {
+        BoardScreenAppController boardScreenAppController = new BoardScreenAppController(this, primaryStage);
+        boardScreenAppController.initRootLayout();
     }
 }

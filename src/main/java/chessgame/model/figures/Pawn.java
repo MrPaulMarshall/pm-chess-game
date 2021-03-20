@@ -1,20 +1,20 @@
 package chessgame.model.figures;
 
-import chessgame.model.game.Chessboard;
-import chessgame.model.properties.Color;
+import chessgame.model.game.ChessBoard;
+import chessgame.model.properties.PlayerColor;
 import chessgame.model.properties.Position;
 
 public class Pawn extends Figure {
     // constant dependent on color, which determines vertical direction of the pawn
     private final int s;
 
-    public Pawn(String imgSource, Color color) {
-        super(imgSource, color);
-        this.s = color == Color.WHITE ? 1 : -1;
+    public Pawn(PlayerColor playerColor) {
+        super(loadImage(playerColor, "pawn"), playerColor);
+        this.s = playerColor == PlayerColor.WHITE ? 1 : -1;
     }
 
     @Override
-    public void updateMovesWithoutProtectingKing(Chessboard chessboard) {
+    public void updateMovesWithoutProtectingKing(ChessBoard chessboard) {
         movesWithoutProtectingKing.clear();
 
         // 1 field forward
@@ -41,7 +41,7 @@ public class Pawn extends Figure {
 
             if (validPosition(x, y) &&
                     chessboard.board[x][y] != null &&
-                    chessboard.board[x][y].color != this.color) {
+                    chessboard.board[x][y].playerColor != this.playerColor) {
                 movesWithoutProtectingKing.add(new Position(x, y));
             }
         }

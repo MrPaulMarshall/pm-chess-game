@@ -10,7 +10,7 @@ import chessgame.model.properties.Position;
  * In order to check whether move is valid (doesn't endanger a king)
  * this object can be copied, and simulation can be performed on that copy
  */
-public class Chessboard {
+public class ChessBoard {
     public final boolean realChessboard;
 
     public final Figure[][] board = new Figure[8][8];
@@ -19,7 +19,7 @@ public class Chessboard {
     public Player whitePlayer;
     public Player blackPlayer;
 
-    public Chessboard(Player white, Player black, boolean realChessboard) {
+    public ChessBoard(Player white, Player black, boolean realChessboard) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 this.board[i][j] = null;

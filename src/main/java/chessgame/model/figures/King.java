@@ -1,7 +1,7 @@
 package chessgame.model.figures;
 
-import chessgame.model.game.Chessboard;
-import chessgame.model.properties.Color;
+import chessgame.model.game.ChessBoard;
+import chessgame.model.properties.PlayerColor;
 
 public class King extends Figure {
     // 1-cell steps in all directions, starting from up-left and going clockwise
@@ -18,8 +18,8 @@ public class King extends Figure {
 
     private boolean isChecked = false;
 
-    public King(String imgSource, Color color) {
-        super(imgSource, color);
+    public King(PlayerColor playerColor) {
+        super(loadImage(playerColor, "king"), playerColor);
     }
 
     public void setIsChecked(boolean isChecked) {
@@ -27,7 +27,7 @@ public class King extends Figure {
     }
 
     @Override
-    public void updateMovesWithoutProtectingKing(Chessboard chessboard) {
+    public void updateMovesWithoutProtectingKing(ChessBoard chessboard) {
         movesWithoutProtectingKing.clear();
 
         // roszady
