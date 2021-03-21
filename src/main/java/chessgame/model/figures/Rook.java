@@ -1,6 +1,6 @@
 package chessgame.model.figures;
 
-import chessgame.model.game.ChessBoard;
+import chessgame.model.game.Game;
 import chessgame.model.properties.PlayerColor;
 
 public class Rook extends Figure {
@@ -17,8 +17,8 @@ public class Rook extends Figure {
     }
 
     @Override
-    public void updateMovesWithoutProtectingKing(ChessBoard chessboard) {
+    public void updateMovesWithoutProtectingKing(Game game) {
         movesWithoutProtectingKing.clear();
-        movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(chessboard, moveDirections));
+        movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(game, moveDirections));
     }
 }

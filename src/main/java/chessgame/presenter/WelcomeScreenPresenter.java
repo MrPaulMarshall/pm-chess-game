@@ -1,8 +1,7 @@
 package chessgame.presenter;
 
 import chessgame.controller.AppController;
-import chessgame.controller.BoardScreenAppController;
-import chessgame.controller.BoardScreenOverviewController;
+import chessgame.controller.BoardScreenController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
@@ -37,8 +36,8 @@ public class WelcomeScreenPresenter {
     @FXML
     public void handleOkAction(ActionEvent e) throws Exception {
         dialogStage.close();
-        BoardScreenAppController boardScreenAppController = new BoardScreenAppController(appController, primaryStage);
-        boardScreenAppController.initRootLayout();
+        BoardScreenController boardScreenController = new BoardScreenController(appController, primaryStage);
+        boardScreenController.initRootLayout();
     }
 
     @FXML

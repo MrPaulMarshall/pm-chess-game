@@ -1,6 +1,8 @@
 package chessgame.model.game;
 
 import chessgame.model.figures.Figure;
+import chessgame.model.figures.King;
+import chessgame.model.game.moves.Move;
 import chessgame.model.properties.PlayerColor;
 
 import java.util.LinkedList;
@@ -9,9 +11,40 @@ import java.util.List;
 public class Player {
     private final PlayerColor playerColor;
 
-    private List<Figure> pieces = new LinkedList<>();
+    private final List<Figure> pieces = new LinkedList<>();
+    private King king;
 
     public Player(PlayerColor playerColor) {
         this.playerColor = playerColor;
+    }
+
+    public List<Move> getAllPossibleMoves() {
+        List<Move> moves = new LinkedList<>();
+        pieces.forEach(figure -> moves.addAll(figure.getPossibleMoves()));
+        return moves;
+    }
+
+    public List<Figure> getPieces() {
+        return this.pieces;
+    }
+
+    public void setKing(King king) {
+        this.king = king;
+    }
+
+    public King getKing() {
+        return this.king;
+    }
+
+    public boolean kingIsChecked() {
+        return this.king.getIsChecked();
+    }
+
+    public PlayerColor getColor() {
+        return this.playerColor;
+    }
+
+    public String getSignature() {
+        return this.playerColor == PlayerColor.WHITE ? "WHITES" : "BLACKS";
     }
 }

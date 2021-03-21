@@ -1,6 +1,6 @@
 package chessgame.model.figures;
 
-import chessgame.model.game.ChessBoard;
+import chessgame.model.game.Game;
 import chessgame.model.properties.PlayerColor;
 
 public class Queen extends Figure {
@@ -16,13 +16,13 @@ public class Queen extends Figure {
             {-1, 0}
     };
 
-    public Queen(String imgSource, PlayerColor playerColor) {
+    public Queen(PlayerColor playerColor) {
         super(loadImage(playerColor, "queen"), playerColor);
     }
 
     @Override
-    public void updateMovesWithoutProtectingKing(ChessBoard chessboard) {
+    public void updateMovesWithoutProtectingKing(Game game) {
         movesWithoutProtectingKing.clear();
-        movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(chessboard, moveDirections));
+        movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(game, moveDirections));
     }
 }

@@ -4,7 +4,36 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9a42dbf3-e345-499e-b90c-d6139b13daf7" name="Default Changelist" comment="" />
+    <list default="true" id="9a42dbf3-e345-499e-b90c-d6139b13daf7" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/chessgame/controller/BoardScreenController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/game/Game.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/game/moves/DoublePawnStart.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/chessgame/presenter/BoardScreenView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/controller/AppController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/controller/AppController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/controller/BoardScreenAppController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/controller/BoardScreenOverviewController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Bishop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Bishop.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Figure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Figure.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/King.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/King.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Knight.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Knight.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Pawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Pawn.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Queen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Queen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Rook.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/figures/Rook.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/game/Chessboard.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/game/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/game/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/game/moves/BasicMove.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/game/moves/BasicMove.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/game/moves/Castling.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/game/moves/Castling.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/game/moves/EnPassant.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/game/moves/IMove.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/game/moves/Move.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/game/moves/Promotion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/game/moves/Promotion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/model/properties/Position.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/model/properties/Position.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/presenter/BoardCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/presenter/BoardCell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/presenter/BoardScreenPresenter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/chessgame/presenter/WelcomeScreenPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chessgame/presenter/WelcomeScreenPresenter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/view/board_screen.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/view/board_screen.fxml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -76,6 +105,9 @@
       <recent name="D:\Users\PAWEL\Documents\STUDIA\Moje-projekty\pm-chess-game\src\main\resources" />
       <recent name="D:\Users\PAWEL\Documents\STUDIA\Moje-projekty\pm-chess-game\src\main\java\chessgame" />
     </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="chessgame.presenter" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="Main" type="GradleRunConfiguration" factoryName="Gradle">
@@ -109,7 +141,9 @@
       <workItem from="1616236394656" duration="297000" />
       <workItem from="1616236708364" duration="21437000" />
       <workItem from="1616264664441" duration="4693000" />
-      <workItem from="1616269901650" duration="1390000" />
+      <workItem from="1616269901650" duration="2055000" />
+      <workItem from="1616274917971" duration="4864000" />
+      <workItem from="1616313225845" duration="36754000" />
     </task>
     <servers />
   </component>

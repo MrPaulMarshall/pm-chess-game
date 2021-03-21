@@ -1,6 +1,8 @@
 package chessgame.model.figures;
 
-import chessgame.model.game.ChessBoard;
+import chessgame.model.game.Game;
+import chessgame.model.game.moves.BasicMove;
+import chessgame.model.game.moves.Move;
 import chessgame.model.properties.*;
 import javafx.scene.image.Image;
 
@@ -19,8 +21,8 @@ public abstract class Figure {
 
     protected final Image image;
 
-    protected final List<Position> possibleMoves = new LinkedList<>();
-    protected final List<Position> movesWithoutProtectingKing = new LinkedList<>();
+    protected final List<Move> possibleMoves = new LinkedList<>();
+    protected final List<Move> movesWithoutProtectingKing = new LinkedList<>();
 
     // Constructor
     // TODO: finish and write documentation
@@ -33,35 +35,34 @@ public abstract class Figure {
 
     /**
      * Updates list of moves, that figure can legally make
-     * @param chessboard Chessboard object to execute function on
+     * @param game Chessboard object to execute function on
      */
-    public void updatePossibleMoves(ChessBoard chessboard) {
-        updateMovesWithoutProtectingKing(chessboard);
+    public void updatePossibleMoves(Game game) {
+        possibleMoves.clear();
+        updateMovesWithoutProtectingKing(game);
 
-        for (Position move : movesWithoutProtectingKing) {
-            // TODO:
-            //  copy chessboard
-            //  simulate that move in the new chessboard
-            //  check proper conditions
-            //  if conditions are met, add move to the list
-            if (false) {
+        game.setRealChessboard(false);
+
+        for (Move move : movesWithoutProtectingKing) {
+            if (!game.simulateMove(move)) {
                 possibleMoves.add(move);
             }
         }
+
+        game.setRealChessboard(true);
     }
 
     /**
      * Updates list of moves, that figure could take having ignored safety of its king
      * Needs to be implemented in each subclass
-     * @param chessboard Chessboard object to execute function on
+     * @param game Chessboard object to execute function on
      */
-    abstract public void updateMovesWithoutProtectingKing(ChessBoard chessboard);
+    abstract public void updateMovesWithoutProtectingKing(Game game);
 
     // Setters and Getters
 
     public void setPosition(Position position) {
-        this.position.x = position.x;
-        this.position.y = position.y;
+        this.position = new Position(position.x, position.y);
     }
 
     public Position getPosition() {
@@ -72,15 +73,27 @@ public abstract class Figure {
         return image;
     }
 
+    public PlayerColor getColor() {
+        return this.playerColor;
+    }
+
+    public boolean getMovedFlag() {
+        return this.didNotMoveYet;
+    }
+
     public void markThatFigureMoved() {
         this.didNotMoveYet = false;
     }
 
-    public List<Position> getPossibleMoves() {
+    public void undoMarkThatFigureMoved() {
+        this.didNotMoveYet = true;
+    }
+
+    public List<Move> getPossibleMoves() {
         return possibleMoves;
     }
 
-    public List<Position> getMovesWithoutProtectingKing() {
+    public List<Move> getMovesWithoutProtectingKing() {
         return movesWithoutProtectingKing;
     }
 
@@ -103,13 +116,13 @@ public abstract class Figure {
 
     /**
      * Used by classes Bishop, Rook and Queen
-     * @param chessboard Chessboard object to execute function on
+     * @param game Chessboard object to execute function on
      * @param directions array of pairs {horizontal step, vertical step}
      * @return list of accessible fields (all until blocked by other figure)
      * on straight lines determined by 'directions' array
      */
-    protected List<Position> unlimitedMovesInGivenDirections(ChessBoard chessboard, int[][] directions) {
-        List<Position> moves = new LinkedList<>();
+    protected List<Move> unlimitedMovesInGivenDirections(Game game, int[][] directions) {
+        List<Move> moves = new LinkedList<>();
 
         for (int[] dir : directions) {
             // start from closest cell in this direction
@@ -117,12 +130,14 @@ public abstract class Figure {
             int y = position.y + dir[1];
 
             while (validPosition(x, y)) {
-                if (chessboard.board[x][y] == null) {
+                if (game.board[x][y] == null) {
                     // cell is free
-                    moves.add(new Position(x, y));
-                } else if (chessboard.board[x][y].playerColor != this.playerColor) {
+                    moves.add(new BasicMove(
+                            this, new Position(x, y), null, null));
+                } else if (game.board[x][y].playerColor != this.playerColor) {
                     // enemy figure blocks path
-                    moves.add(new Position(x, y));
+                    moves.add(new BasicMove(
+                            this, new Position(x, y), game.board[x][y], new Position(x, y)));
                     break;
                 } else {
                     // allied figure blocks path
@@ -140,12 +155,12 @@ public abstract class Figure {
 
     /**
      * Used by classes Knight and King
-     * @param chessboard Chessboard object to execute function on
+     * @param game Chessboard object to execute function on
      * @param jumps array of jumps - pairs of changes in position {horizontal step, vertical step}
      * @return list of fields determined by 'jumps' array, that can be occupied by figure
      */
-    protected List<Position> movesViaGivenJumps(ChessBoard chessboard, int[][] jumps) {
-        List<Position> moves = new LinkedList<>();
+    protected List<Move> movesViaGivenJumps(Game game, int[][] jumps) {
+        List<Move> moves = new LinkedList<>();
 
         for (int[] jump : jumps) {
             int x = position.x + jump[0];
@@ -153,11 +168,17 @@ public abstract class Figure {
 
             // if new position is valid and either cell is free or there is an enemy to kill
             if (validPosition(x, y) &&
-                    (chessboard.board[x][y] == null || chessboard.board[x][y].playerColor != this.playerColor)) {
-                moves.add(new Position(x, y));
+                    (game.board[x][y] == null || game.board[x][y].playerColor != this.playerColor)) {
+                moves.add(new BasicMove(this, new Position(x, y), game.board[x][y],
+                        game.board[x][y] != null ? new Position(x, y) : null));
             }
         }
 
         return moves;
+    }
+
+    public Move findMoveByTargetPosition(Position newPosition) {
+        return this.possibleMoves.stream().filter(p -> p.getNewPosition().equals(newPosition))
+                .findFirst().orElse(null);
     }
 }

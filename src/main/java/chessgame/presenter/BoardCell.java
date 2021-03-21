@@ -1,6 +1,6 @@
 package chessgame.presenter;
 
-import chessgame.controller.BoardScreenAppController;
+import chessgame.controller.BoardScreenController;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,18 +29,18 @@ public class BoardCell {
     private final int j;
     private final Pane pane;
 
-    private final BoardScreenAppController boardScreenAppController;
+    private final BoardScreenController boardScreenController;
 
-    private ImageView imageView;
+    private final ImageView imageView;
 
     private final Background normalBackground;
     private final Background clickableBackground;
 
-    public BoardCell(int i, int j, Pane pane, BoardScreenAppController boardScreenAppController) {
+    public BoardCell(int i, int j, Pane pane, BoardScreenController boardScreenController) {
         this.i = i;
         this.j = j;
         this.pane = pane;
-        this.boardScreenAppController = boardScreenAppController;
+        this.boardScreenController = boardScreenController;
         this.imageView = new ImageView();
 
         pane.setMaxWidth(50);
@@ -60,7 +60,7 @@ public class BoardCell {
         this.pane.setBackground(this.normalBackground);
 
         pane.setOnMouseClicked(e -> {
-            this.boardScreenAppController.boardCellOnClick(i, j);
+            this.boardScreenController.boardCellOnClick(i, j);
         });
     }
 
@@ -74,5 +74,17 @@ public class BoardCell {
 
     public void removeImage() {
         this.imageView.setImage(null);
+    }
+
+    public void refreshBackground() {
+        this.pane.setBackground(this.normalBackground);
+    }
+
+    public void setChosenBackground() {
+        this.pane.setBackground(MARKED_BACKGROUND);
+    }
+
+    public void setClickableBackground() {
+        this.pane.setBackground(this.clickableBackground);
     }
 }

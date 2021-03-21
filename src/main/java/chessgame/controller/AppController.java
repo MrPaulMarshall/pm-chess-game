@@ -40,7 +40,7 @@ public class AppController {
     }
 
     private void showBoardScreen() throws Exception {
-        BoardScreenAppController boardScreenAppController = new BoardScreenAppController(this, primaryStage);
-        boardScreenAppController.initRootLayout();
+        BoardScreenController boardScreenController = new BoardScreenController(this, primaryStage);
+        boardScreenController.initRootLayout();
     }
 }
