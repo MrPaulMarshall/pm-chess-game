@@ -25,8 +25,6 @@ public class BoardCell {
     private static final Background MARKED_BACKGROUND = new Background(
             new BackgroundFill(Color.valueOf("#E2514C"), CornerRadii.EMPTY, Insets.EMPTY));
 
-    private final int i;
-    private final int j;
     private final Pane pane;
 
     private final BoardScreenController boardScreenController;
@@ -37,8 +35,6 @@ public class BoardCell {
     private final Background clickableBackground;
 
     public BoardCell(int i, int j, Pane pane, BoardScreenController boardScreenController) {
-        this.i = i;
-        this.j = j;
         this.pane = pane;
         this.boardScreenController = boardScreenController;
         this.imageView = new ImageView();
@@ -59,9 +55,7 @@ public class BoardCell {
 
         this.pane.setBackground(this.normalBackground);
 
-        pane.setOnMouseClicked(e -> {
-            this.boardScreenController.boardCellOnClick(i, j);
-        });
+        pane.setOnMouseClicked(e -> this.boardScreenController.boardCellOnClick(i, j));
     }
 
     public Pane getPane() {
@@ -70,10 +64,6 @@ public class BoardCell {
 
     public void setImage(Image image) {
         this.imageView.setImage(image);
-    }
-
-    public void removeImage() {
-        this.imageView.setImage(null);
     }
 
     public void refreshBackground() {

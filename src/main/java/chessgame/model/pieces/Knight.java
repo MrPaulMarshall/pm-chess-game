@@ -25,4 +25,9 @@ public class Knight extends Piece {
         movesWithoutProtectingKing.clear();
         movesWithoutProtectingKing.addAll(movesViaGivenJumps(game, jumps));
     }
+
+    @Override
+    public String toString() {
+        return "N";
+    }
 }

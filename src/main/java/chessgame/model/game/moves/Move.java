@@ -22,7 +22,7 @@ public abstract class Move {
 
     public abstract void undo(Game game);
 
-    public abstract boolean equals(Object other);
+    public abstract String toString();
 
     public Position getNewPosition() {
         return this.newPosition;
@@ -35,4 +35,5 @@ public abstract class Move {
     public Piece getPieceToTake() {
         return this.takenPiece;
     }
+
 }

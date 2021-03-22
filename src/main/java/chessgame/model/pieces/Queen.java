@@ -25,4 +25,9 @@ public class Queen extends Piece {
         movesWithoutProtectingKing.clear();
         movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(game, moveDirections));
     }
+
+    @Override
+    public String toString() {
+        return "Q";
+    }
 }

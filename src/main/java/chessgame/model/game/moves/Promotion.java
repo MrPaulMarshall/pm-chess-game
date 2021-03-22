@@ -5,7 +5,7 @@ import chessgame.model.game.Game;
 
 public class Promotion extends Move {
 
-    private BasicMove basicMove;
+    private final BasicMove basicMove;
     private Piece newPiece;
 
     public Promotion(BasicMove basicMove) {
@@ -49,7 +49,9 @@ public class Promotion extends Move {
     }
 
     @Override
-    public boolean equals(Object other) {
-        return false;
+    public String toString() {
+        return (this.takenPiece == null ? "" : this.oldPosition.translateX() + "x")
+                + this.newPosition.translateX() + this.newPosition.translateY() + this.newPiece.toString();
     }
+
 }

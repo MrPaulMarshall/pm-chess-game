@@ -36,7 +36,7 @@
             </top>
 
             <center>
-                <ListView fx:id="commandLogView" prefHeight="450.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
+                <TextArea fx:id="movesTextArea" prefHeight="450.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
             </center>
         </BorderPane>
     </right>

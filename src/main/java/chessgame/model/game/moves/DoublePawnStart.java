@@ -38,7 +38,8 @@ public class DoublePawnStart extends Move {
     }
 
     @Override
-    public boolean equals(Object other) {
-        return false;
+    public String toString() {
+        return this.newPosition.translateX() + this.newPosition.translateY();
     }
+
 }

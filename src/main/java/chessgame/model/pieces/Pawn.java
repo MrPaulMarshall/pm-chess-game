@@ -69,8 +69,6 @@ public class Pawn extends Piece {
             }
         }
 
-        // TODO: EnPassant
-        //  game needs to remember old moves, or at least 1
         if (game.getLastMove() instanceof DoublePawnStart
                 && game.getLastMove().getNewPosition().y == this.position.y
                 && Math.abs(game.getLastMove().getNewPosition().x - this.position.x) == 1) {
@@ -84,5 +82,10 @@ public class Pawn extends Piece {
                         this, new Position(x, y), game.board[x][position.y], new Position(x, position.y)));
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return this.position.translateX();
     }
 }

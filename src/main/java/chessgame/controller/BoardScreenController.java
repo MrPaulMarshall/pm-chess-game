@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 public class BoardScreenController {
 
     private final Stage primaryStage;
-    private final AppController appController;
     private BoardScreenView boardScreenView = null;
 
     private final BoardCell[][] boardCells;
@@ -35,8 +34,7 @@ public class BoardScreenController {
     private Game game;
     private boolean gameIsRunning;
 
-    public BoardScreenController(AppController appController, Stage primaryStage) {
-        this.appController = appController;
+    public BoardScreenController(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
         this.boardCells = new BoardCell[8][8];
@@ -93,6 +91,7 @@ public class BoardScreenController {
 
     public void executeMove(Move move) {
         this.game.executeMove(move);
+        this.boardScreenView.printLastMove();
         this.boardScreenView.reloadBoardView();
 
         // check win condition etc.
@@ -120,18 +119,13 @@ public class BoardScreenController {
         ChoosePromotionPieceController controller = new ChoosePromotionPieceController();
         PlayerColor color = game.getCurrentPlayer().getColor();
         String chosenPiece = controller.askForPromotionPiece(color);
-        switch (chosenPiece) {
-            case "queen":
-                return new Queen(color);
-            case "knight":
-                return new Knight(color);
-            case "rook":
-                return new Rook(color);
-            case "bishop":
-                return new Bishop(color);
-            default:
-                throw new IllegalStateException("Piece chosen during promotion isn't valid");
-        }
+        return switch (chosenPiece) {
+            case "queen" -> new Queen(color);
+            case "knight" -> new Knight(color);
+            case "rook" -> new Rook(color);
+            case "bishop" -> new Bishop(color);
+            default -> throw new IllegalStateException("Piece chosen during promotion isn't valid");
+        };
     }
 
     public void endGame(Player player) {

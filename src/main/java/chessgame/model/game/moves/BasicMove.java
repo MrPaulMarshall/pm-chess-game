@@ -1,5 +1,6 @@
 package chessgame.model.game.moves;
 
+import chessgame.model.pieces.Pawn;
 import chessgame.model.pieces.Piece;
 import chessgame.model.game.Game;
 import chessgame.model.properties.Position;
@@ -46,7 +47,14 @@ public class BasicMove extends Move {
     }
 
     @Override
-    public boolean equals(Object other) {
-        return false;
+    public String toString() {
+        if (this.movedPiece instanceof Pawn) {
+            return (this.takenPiece == null ? "" : this.oldPosition.translateX() + "x")
+                    + this.newPosition.translateX() + this.newPosition.translateY();
+        }
+
+        return this.movedPiece.toString() + (this.takenPiece == null ? "" : "x")
+                + this.newPosition.translateX() + this.newPosition.translateY();
     }
+
 }

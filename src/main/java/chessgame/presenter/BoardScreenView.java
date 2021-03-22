@@ -6,6 +6,7 @@ import chessgame.model.properties.Position;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 
 import java.util.List;
@@ -23,7 +24,10 @@ public class BoardScreenView {
     private GridPane chessBoardGrid;
 
     @FXML
-    public void initialize() throws Exception {
+    private TextArea movesTextArea;
+
+    @FXML
+    public void initialize() {
     }
 
     public void setBoardScreenAppController(BoardScreenController boardScreenController) {
@@ -42,6 +46,14 @@ public class BoardScreenView {
                 this.chessBoardGrid.add(this.boardCells[i][j].getPane(), i, j);
             }
         }
+    }
+
+    public void printLastMove() {
+        this.movesTextArea.appendText(
+                game.getLastMove().getPieceToMove().getColor().toString() + ": "
+                + (game.getCurrentPlayer().kingIsChecked() ? "+" : "")
+                + game.getLastMove().toString() + "\n"
+        );
     }
 
     public void refreshBackground() {
@@ -78,11 +90,6 @@ public class BoardScreenView {
     @FXML
     public void handleDrawAction(ActionEvent e) {
         this.boardScreenController.endGame(null);
-    }
-
-    @FXML
-    public void handleExitAction(ActionEvent e) {
-        System.exit(0);
     }
 
 }

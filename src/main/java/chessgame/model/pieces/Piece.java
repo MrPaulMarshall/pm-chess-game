@@ -25,7 +25,6 @@ public abstract class Piece {
     protected final List<Move> movesWithoutProtectingKing = new LinkedList<>();
 
     // Constructor
-    // TODO: finish and write documentation
     public Piece(Image image, PlayerColor playerColor) {
         this.image = image;
         this.playerColor = playerColor;
@@ -181,4 +180,6 @@ public abstract class Piece {
         return this.possibleMoves.stream().filter(p -> p.getNewPosition().equals(newPosition))
                 .findFirst().orElse(null);
     }
+
+    public abstract String toString();
 }

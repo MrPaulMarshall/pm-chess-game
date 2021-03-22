@@ -6,9 +6,6 @@ import chessgame.model.game.moves.Move;
 import chessgame.model.properties.PlayerColor;
 import chessgame.model.properties.Position;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * Class that represent the game;
  * It contains chessboard itself, players, and pieces.<br>
@@ -25,8 +22,6 @@ public class Game {
     private Player currentPlayer;
     private Player whitePlayer;
     private Player blackPlayer;
-
-    private final List<Move> possibleMoves = new LinkedList<>();
 
     private Player winner;
     private boolean draw;
@@ -109,7 +104,6 @@ public class Game {
         this.lastMove = move;
 
         // update moves (without concern for king's safety)
-        this.possibleMoves.clear();
         this.currentPlayer.getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
         // check is enemy king is now threatened
         this.getOtherPlayer().getKing().setIsChecked(

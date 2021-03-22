@@ -5,13 +5,13 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import chessgame.presenter.WelcomeScreenPresenter;
+import chessgame.presenter.WelcomeScreenView;
 
-public class AppController {
+public class WelcomeScreenController {
 
-    private Stage primaryStage;
+    private final Stage primaryStage;
 
-    public AppController(Stage primaryStage) {
+    public WelcomeScreenController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
@@ -21,7 +21,7 @@ public class AppController {
 
     private void showWelcomeScreen() throws Exception {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(AppController.class
+        loader.setLocation(WelcomeScreenController.class
                 .getResource("/view/welcome_screen.fxml"));
         BorderPane page = loader.load();
 
@@ -32,15 +32,11 @@ public class AppController {
         Scene scene = new Scene(page);
         dialogStage.setScene(scene);
 
-        WelcomeScreenPresenter presenter = loader.getController();
-        presenter.setDialogStage(dialogStage);
-        presenter.setPrimaryStage(primaryStage);
+        WelcomeScreenView welcomeScreenView = loader.getController();
+        welcomeScreenView.setDialogStage(dialogStage);
+        welcomeScreenView.setPrimaryStage(primaryStage);
 
         dialogStage.showAndWait();
     }
 
-    private void showBoardScreen() throws Exception {
-        BoardScreenController boardScreenController = new BoardScreenController(this, primaryStage);
-        boardScreenController.initRootLayout();
-    }
 }

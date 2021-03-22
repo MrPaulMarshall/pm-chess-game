@@ -21,4 +21,9 @@ public class Bishop extends Piece {
         movesWithoutProtectingKing.clear();
         movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(game, moveDirections));
     }
+
+    @Override
+    public String toString() {
+        return "B";
+    }
 }

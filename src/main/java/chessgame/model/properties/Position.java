@@ -20,4 +20,13 @@ public class Position {
         return (o instanceof Position && ((Position)o).x == x && ((Position)o).y == y);
     }
 
+    public String translateX() {
+        char[] x_c = new char[1];
+        x_c[0] = (char)(97 + this.x);
+        return new String(x_c);
+    }
+
+    public String translateY() {
+        return Integer.toString(this.y + 1);
+    }
 }

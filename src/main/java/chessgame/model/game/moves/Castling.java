@@ -7,9 +7,9 @@ import chessgame.model.properties.Position;
 
 public class Castling extends Move {
 
-    private Rook rookToMove;
-    private Position oldPositionOfRook;
-    private Position newPositionForRook;
+    private final Rook rookToMove;
+    private final Position oldPositionOfRook;
+    private final Position newPositionForRook;
 
     public Castling(King king, Position newPositionForKing, Rook rookToMove, Position newPositionForRook) {
         this.movedPiece = king;
@@ -48,7 +48,9 @@ public class Castling extends Move {
     }
 
     @Override
-    public boolean equals(Object other) {
-        return false;
+    public String toString() {
+        int distance = Math.abs(this.oldPosition.y - this.oldPositionOfRook.y);
+        return distance == 2 ? "0-0" : "0-0-0";
     }
+
 }
