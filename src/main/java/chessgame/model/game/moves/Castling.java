@@ -1,7 +1,7 @@
 package chessgame.model.game.moves;
 
-import chessgame.model.figures.King;
-import chessgame.model.figures.Rook;
+import chessgame.model.pieces.King;
+import chessgame.model.pieces.Rook;
 import chessgame.model.game.Game;
 import chessgame.model.properties.Position;
 
@@ -12,7 +12,7 @@ public class Castling extends Move {
     private Position newPositionForRook;
 
     public Castling(King king, Position newPositionForKing, Rook rookToMove, Position newPositionForRook) {
-        this.movedFigure = king;
+        this.movedPiece = king;
         this.oldPosition = king.getPosition().copy();
         this.newPosition = newPositionForKing;
 
@@ -23,10 +23,10 @@ public class Castling extends Move {
 
     @Override
     public void execute(Game game) {
-        game.board[newPosition.x][newPosition.y] = this.movedFigure;
+        game.board[newPosition.x][newPosition.y] = this.movedPiece;
         game.board[oldPosition.x][oldPosition.y] = null;
-        this.movedFigure.setPosition(newPosition);
-        this.movedFigure.markThatFigureMoved();
+        this.movedPiece.setPosition(newPosition);
+        this.movedPiece.markThatFigureMoved();
 
         game.board[newPositionForRook.x][newPositionForRook.y] = this.rookToMove;
         game.board[oldPositionOfRook.x][oldPositionOfRook.y] = null;
@@ -36,13 +36,15 @@ public class Castling extends Move {
 
     @Override
     public void undo(Game game) {
-        this.movedFigure.undoMarkThatFigureMoved();
+        this.movedPiece.undoMarkThatFigureMoved();
+        this.movedPiece.setPosition(oldPosition);
         game.board[newPosition.x][newPosition.y] = null;
-        game.board[oldPosition.x][oldPosition.y] = this.movedFigure;
+        game.board[oldPosition.x][oldPosition.y] = this.movedPiece;
 
         this.rookToMove.undoMarkThatFigureMoved();
+        this.rookToMove.setPosition(oldPositionOfRook);
         game.board[newPositionForRook.x][newPositionForRook.y] = null;
-        game.board[oldPositionOfRook.x][oldPosition.y] = this.rookToMove;
+        game.board[oldPositionOfRook.x][oldPositionOfRook.y] = this.rookToMove;
     }
 
     @Override

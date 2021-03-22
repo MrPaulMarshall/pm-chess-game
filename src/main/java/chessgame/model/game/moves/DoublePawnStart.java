@@ -1,39 +1,39 @@
 package chessgame.model.game.moves;
 
-import chessgame.model.figures.Pawn;
+import chessgame.model.pieces.Pawn;
 import chessgame.model.game.Game;
 import chessgame.model.properties.Position;
 
 public class DoublePawnStart extends Move {
 
     public DoublePawnStart(Pawn movingPawn, Position newPosition) {
-        this.movedFigure = movingPawn;
+        this.movedPiece = movingPawn;
         this.oldPosition = movingPawn.getPosition().copy();
         this.newPosition = newPosition.copy();
 
         this.takenPiece = null;
         this.takenPiecePosition = null;
 
-        this.wasFigureMovedBefore = movingPawn.getMovedFlag();
+        this.pieceDidNotMoveBefore = movingPawn.getDidNotMoveFlag();
     }
 
     @Override
     public void execute(Game game) {
         game.board[oldPosition.x][oldPosition.y] = null;
-        game.board[newPosition.x][newPosition.y] = movedFigure;
-        this.movedFigure.setPosition(newPosition);
+        game.board[newPosition.x][newPosition.y] = movedPiece;
+        this.movedPiece.setPosition(newPosition);
 
-        this.movedFigure.markThatFigureMoved();
+        this.movedPiece.markThatFigureMoved();
     }
 
     @Override
     public void undo(Game game) {
-        if (this.wasFigureMovedBefore) {
-            this.movedFigure.undoMarkThatFigureMoved();
+        if (this.pieceDidNotMoveBefore) {
+            this.movedPiece.undoMarkThatFigureMoved();
         }
 
-        this.movedFigure.setPosition(oldPosition);
-        game.board[oldPosition.x][oldPosition.y] = movedFigure;
+        this.movedPiece.setPosition(oldPosition);
+        game.board[oldPosition.x][oldPosition.y] = movedPiece;
         game.board[newPosition.x][newPosition.y] = null;
     }
 

@@ -12,11 +12,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
-//        Parent root = FXMLLoader.load(getClass().getResource("../main.resources/view/welcome_screen.fxml"));
-//        primaryStage.setTitle("Chess by Paweł Marszał");
-//        primaryStage.setScene(new Scene(root, 600, 400));
-
         primaryStage.setTitle("Chess game by Paweł Marszał");
         AppController appController = new AppController(primaryStage);
         appController.initRootLayout();

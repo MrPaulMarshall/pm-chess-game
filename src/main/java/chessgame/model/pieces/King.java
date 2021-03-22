@@ -1,11 +1,11 @@
-package chessgame.model.figures;
+package chessgame.model.pieces;
 
 import chessgame.model.game.Game;
 import chessgame.model.game.moves.Castling;
 import chessgame.model.properties.PlayerColor;
 import chessgame.model.properties.Position;
 
-public class King extends Figure {
+public class King extends Piece {
     // 1-cell steps in all directions, starting from up-left and going clockwise
     static private final int[][] jumps = {
             {-1, 1},

@@ -1,4 +1,4 @@
-package chessgame.model.figures;
+package chessgame.model.pieces;
 
 import chessgame.model.game.Game;
 import chessgame.model.game.moves.BasicMove;
@@ -13,7 +13,7 @@ import java.util.List;
  * Interface that all figures must implement,
  * along common data fields and inner methods
  */
-public abstract class Figure {
+public abstract class Piece {
 
     protected final PlayerColor playerColor;
     protected Position position;
@@ -26,7 +26,7 @@ public abstract class Figure {
 
     // Constructor
     // TODO: finish and write documentation
-    public Figure(Image image, PlayerColor playerColor) {
+    public Piece(Image image, PlayerColor playerColor) {
         this.image = image;
         this.playerColor = playerColor;
     }
@@ -77,7 +77,7 @@ public abstract class Figure {
         return this.playerColor;
     }
 
-    public boolean getMovedFlag() {
+    public boolean getDidNotMoveFlag() {
         return this.didNotMoveYet;
     }
 

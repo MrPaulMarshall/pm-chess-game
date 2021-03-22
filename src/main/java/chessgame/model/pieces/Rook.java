@@ -1,9 +1,9 @@
-package chessgame.model.figures;
+package chessgame.model.pieces;
 
 import chessgame.model.game.Game;
 import chessgame.model.properties.PlayerColor;
 
-public class Rook extends Figure {
+public class Rook extends Piece {
     // directions: up, right, down, left
     static private final int[][] moveDirections = {
             {0, 1},

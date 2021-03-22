@@ -1,7 +1,7 @@
 package chessgame.model.game;
 
 import chessgame.controller.BoardScreenController;
-import chessgame.model.figures.*;
+import chessgame.model.pieces.*;
 import chessgame.model.game.moves.Move;
 import chessgame.model.properties.PlayerColor;
 import chessgame.model.properties.Position;
@@ -20,7 +20,7 @@ public class Game {
     private boolean realChessboard;
     private final BoardScreenController boardScreenController;
 
-    public final Figure[][] board;
+    public final Piece[][] board;
 
     private Player currentPlayer;
     private Player whitePlayer;
@@ -42,7 +42,7 @@ public class Game {
         this.realChessboard = realChessboard;
         this.boardScreenController = boardScreenController;
 
-        this.board = new Figure[8][8];
+        this.board = new Piece[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 this.board[i][j] = null;
@@ -58,7 +58,7 @@ public class Game {
         this.currentPlayer = this.currentPlayer == this.whitePlayer ? this.blackPlayer : this.whitePlayer;
     }
 
-    public Figure getFigure(int i, int j) {
+    public Piece getPiece(int i, int j) {
         return this.board[i][j];
     }
 
@@ -86,14 +86,14 @@ public class Game {
         return this.realChessboard;
     }
 
-    public void removePiece(Figure figure) {
-        this.getPlayerByColor(figure.getColor()).getPieces().remove(figure);
-        this.board[figure.getPosition().x][figure.getPosition().y] = null;
+    public void removePiece(Piece piece) {
+        this.getPlayerByColor(piece.getColor()).getPieces().remove(piece);
+        this.board[piece.getPosition().x][piece.getPosition().y] = null;
     }
 
-    public void addPieceBack(Figure figure, Position pos) {
-        this.getPlayerByColor(figure.getColor()).getPieces().add(figure);
-        this.board[pos.x][pos.y] = figure;
+    public void addPieceBack(Piece piece, Position pos) {
+        this.getPlayerByColor(piece.getColor()).getPieces().add(piece);
+        this.board[pos.x][pos.y] = piece;
     }
 
     public void executeMove(Move move) {
@@ -171,8 +171,7 @@ public class Game {
         );
     }
 
-    // TODO
-    public Figure askForPromotedPiece() {
+    public Piece askForPromotedPiece() {
         return this.boardScreenController.getPromotedPiece();
     }
 
@@ -193,10 +192,10 @@ public class Game {
     }
 
 
-    private void addNewPiece(Figure figure, Player player, Position position) {
-        this.board[position.x][position.y] = figure;
-        figure.setPosition(position);
-        player.getPieces().add(figure);
+    private void addNewPiece(Piece piece, Player player, Position position) {
+        this.board[position.x][position.y] = piece;
+        piece.setPosition(position);
+        player.getPieces().add(piece);
     }
 
     private void initializeGame() {

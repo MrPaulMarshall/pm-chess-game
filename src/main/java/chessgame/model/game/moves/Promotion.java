@@ -1,17 +1,17 @@
 package chessgame.model.game.moves;
 
-import chessgame.model.figures.Figure;
+import chessgame.model.pieces.Piece;
 import chessgame.model.game.Game;
 
 public class Promotion extends Move {
 
     private BasicMove basicMove;
-    private Figure newPiece;
+    private Piece newPiece;
 
     public Promotion(BasicMove basicMove) {
         this.basicMove = basicMove;
 
-        this.movedFigure = basicMove.movedFigure;
+        this.movedPiece = basicMove.movedPiece;
         this.oldPosition = basicMove.oldPosition;
         this.newPosition = basicMove.newPosition;
         this.takenPiece = basicMove.takenPiece;
@@ -24,11 +24,13 @@ public class Promotion extends Move {
     public void execute(Game game) {
         // execute basic move
         this.basicMove.execute(game);
-        game.getCurrentPlayer().getPieces().remove(basicMove.movedFigure);
 
         // change pawn for another piece
         if (game.isRealChessboard()) {
+            game.getCurrentPlayer().getPieces().remove(basicMove.movedPiece);
+
             this.newPiece = game.askForPromotedPiece();
+            this.newPiece.setPosition(this.basicMove.newPosition);
             game.board[this.basicMove.newPosition.x][this.basicMove.newPosition.y] = this.newPiece;
             game.getCurrentPlayer().getPieces().add(this.newPiece);
         }
@@ -39,9 +41,10 @@ public class Promotion extends Move {
         if (game.isRealChessboard()) {
             game.getCurrentPlayer().getPieces().remove(this.newPiece);
             game.board[this.basicMove.newPosition.x][this.basicMove.newPosition.y] = null;
+
+            game.getCurrentPlayer().getPieces().add(basicMove.movedPiece);
         }
 
-        game.getCurrentPlayer().getPieces().add(basicMove.movedFigure);
         this.basicMove.undo(game);
     }
 

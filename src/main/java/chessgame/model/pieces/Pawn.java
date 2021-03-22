@@ -1,4 +1,4 @@
-package chessgame.model.figures;
+package chessgame.model.pieces;
 
 import chessgame.model.game.Game;
 import chessgame.model.game.moves.BasicMove;
@@ -7,7 +7,7 @@ import chessgame.model.game.moves.Promotion;
 import chessgame.model.properties.PlayerColor;
 import chessgame.model.properties.Position;
 
-public class Pawn extends Figure {
+public class Pawn extends Piece {
     // constant dependent on color, which determines vertical direction of the pawn
     private final int s;
 

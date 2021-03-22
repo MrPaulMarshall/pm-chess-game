@@ -58,8 +58,8 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </VBox.margin>
                 </Button>
-                <Button fx:id="exitButton" alignment="TOP_CENTER" onAction="#handleExitAction" contentDisplay="TOP"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Exit" textAlignment="CENTER"
+                <Button fx:id="drawButton" alignment="TOP_CENTER" onAction="#handleDrawAction" contentDisplay="TOP"
+                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Draw" textAlignment="CENTER"
                         prefHeight="40" prefWidth="120">
                     <font>
                         <Font size="20"/>

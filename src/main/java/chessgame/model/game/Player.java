@@ -1,7 +1,7 @@
 package chessgame.model.game;
 
-import chessgame.model.figures.Figure;
-import chessgame.model.figures.King;
+import chessgame.model.pieces.Piece;
+import chessgame.model.pieces.King;
 import chessgame.model.game.moves.Move;
 import chessgame.model.properties.PlayerColor;
 
@@ -11,7 +11,7 @@ import java.util.List;
 public class Player {
     private final PlayerColor playerColor;
 
-    private final List<Figure> pieces = new LinkedList<>();
+    private final List<Piece> pieces = new LinkedList<>();
     private King king;
 
     public Player(PlayerColor playerColor) {
@@ -24,7 +24,7 @@ public class Player {
         return moves;
     }
 
-    public List<Figure> getPieces() {
+    public List<Piece> getPieces() {
         return this.pieces;
     }
 

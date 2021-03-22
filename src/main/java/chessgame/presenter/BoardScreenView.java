@@ -54,9 +54,10 @@ public class BoardScreenView {
 
     public void reloadBoardView() {
         this.refreshBackground();
+        this.currentPlayerName.setText(game.getCurrentPlayer().getSignature());
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                this.boardCells[i][j].setImage(game.getFigure(i, j) == null ? null : game.getFigure(i, j).getImage());
+                this.boardCells[i][j].setImage(game.getPiece(i, j) == null ? null : game.getPiece(i, j).getImage());
             }
         }
     }
@@ -71,7 +72,12 @@ public class BoardScreenView {
 
     @FXML
     public void handleSurrenderAction(ActionEvent e) {
+        this.boardScreenController.endGame(this.game.getOtherPlayer());
+    }
 
+    @FXML
+    public void handleDrawAction(ActionEvent e) {
+        this.boardScreenController.endGame(null);
     }
 
     @FXML

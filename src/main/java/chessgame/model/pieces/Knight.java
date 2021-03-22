@@ -1,9 +1,9 @@
-package chessgame.model.figures;
+package chessgame.model.pieces;
 
 import chessgame.model.game.Game;
 import chessgame.model.properties.PlayerColor;
 
-public class Knight extends Figure {
+public class Knight extends Piece {
     // all jumps, starting with 2-up--1-left and going clockwise
     static private final int[][] jumps = {
             {-1, 2},

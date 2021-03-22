@@ -1,9 +1,9 @@
-package chessgame.model.figures;
+package chessgame.model.pieces;
 
 import chessgame.model.game.Game;
 import chessgame.model.properties.PlayerColor;
 
-public class Bishop extends Figure {
+public class Bishop extends Piece {
     // directions: left-up, right-up, right-down, left-down
     static private final int[][] moveDirections = {
             {-1, 1},
