@@ -168,6 +168,9 @@ public class BoardScreenController {
      * @param player winner of the game (or null, if draw)
      */
     public void endGame(Player player) {
+        // this disables 'Draw' and 'Surrender' buttons after end of the game, when board is still visible
+        if (!this.gameIsRunning) return;
+
         this.gameIsRunning = false;
         this.boardScreenView.reloadBoardView();
 
