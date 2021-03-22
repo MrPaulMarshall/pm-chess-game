@@ -2,39 +2,60 @@ package chessgame.model.game;
 
 import chessgame.controller.BoardScreenController;
 import chessgame.model.pieces.*;
-import chessgame.model.game.moves.Move;
+import chessgame.model.moves.Move;
 import chessgame.model.properties.PlayerColor;
 import chessgame.model.properties.Position;
 
 /**
- * Class that represent the game;
- * It contains chessboard itself, players, and pieces.<br>
+ * @author Paweł Marszał
  *
- * In order to check whether move is valid (doesn't endanger a king)
- * this object can be copied, and simulation can be performed on that copy
+ * Class that represent the totality of logical model of the game
+ * It contains chessboard itself, players, and pieces.
  */
 public class Game {
-    private boolean realChessboard;
+    /**
+     * If true, game is proceeding normally
+     * If false, game is in simulation mode, in order to check if given move would leave own king in check
+     */
+    private boolean gameMode;
+    /**
+     * Reference to controller, needed to ask player for piece during promotion
+     */
     private final BoardScreenController boardScreenController;
 
+    /**
+     * Array that represents board itself
+     * It contains pieces where there are such, and null elsewhere
+     */
     public final Piece[][] board;
 
+    /**
+     * References to players. 'currentPlayer' is changing between whitePlayer and blackPlayer
+     */
     private Player currentPlayer;
     private Player whitePlayer;
     private Player blackPlayer;
 
+    /**
+     * Reference to player that has already won, or null otherwise
+     */
     private Player winner;
+    /**
+     * True if game has ended in a draw, false otherwise
+     */
     private boolean draw;
 
+    /**
+     * Reference to last executed move, used by log and capturing EnPassant
+     */
     private Move lastMove;
 
     /**
-     *
-     * @param realChessboard
-     * @param boardScreenController
+     * Creates new Game
+     * @param boardScreenController reference to controller
      */
-    public Game(boolean realChessboard, BoardScreenController boardScreenController) {
-        this.realChessboard = realChessboard;
+    public Game(BoardScreenController boardScreenController) {
+        this.gameMode = true;
         this.boardScreenController = boardScreenController;
 
         this.board = new Piece[8][8];
@@ -44,14 +65,23 @@ public class Game {
             }
         }
 
-        if (realChessboard) {
-            this.initializeGame();
-        }
+        this.initializeGame();
     }
 
+    /**
+     * Switch current player
+     */
     public void changePlayer() {
         this.currentPlayer = this.currentPlayer == this.whitePlayer ? this.blackPlayer : this.whitePlayer;
     }
+
+    // Setters
+
+    public void setGameMode(boolean gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    // Getters
 
     public Piece getPiece(int i, int j) {
         return this.board[i][j];
@@ -73,14 +103,14 @@ public class Game {
         return this.lastMove;
     }
 
-    public void setRealChessboard(boolean realChessboard) {
-        this.realChessboard = realChessboard;
+    public boolean getGameMode() {
+        return this.gameMode;
     }
 
-    public boolean isRealChessboard() {
-        return this.realChessboard;
-    }
-
+    /**
+     *
+     * @param piece
+     */
     public void removePiece(Piece piece) {
         this.getPlayerByColor(piece.getColor()).getPieces().remove(piece);
         this.board[piece.getPosition().x][piece.getPosition().y] = null;
@@ -91,6 +121,16 @@ public class Game {
         this.board[pos.x][pos.y] = piece;
     }
 
+    /**
+     * Executes move in full, that means it takes care of:
+     * - changing position(s) of pieces
+     * - taking of enemy piece
+     * - actualizing history
+     * - recalculating possible moves
+     * - checking conditions of victory (draw)
+     * - changing current player
+     * @param move move to execute
+     */
     public void executeMove(Move move) {
         // potentially remove enemy piece
         if (move.getPieceToTake() != null) {
@@ -117,7 +157,7 @@ public class Game {
 
         // check conditions of victory
         if (this.currentPlayer.getAllPossibleMoves().isEmpty()) {
-            if (this.currentPlayer.kingIsChecked()) {
+            if (this.currentPlayer.isKingChecked()) {
                 this.winner = this.getOtherPlayer();
             }
             else {
@@ -126,7 +166,13 @@ public class Game {
         }
     }
 
+    /**
+     * Simulates execution of move, to test if it safe
+     * @param move move to test
+     * @return true if move can be executed safely, false if it would endanger the king
+     */
     public boolean simulateMove(Move move) {
+        this.gameMode = false;
         Move trulyLastMove = this.lastMove;
 
         // potentially remove enemy piece
@@ -143,9 +189,9 @@ public class Game {
         // update moves (without concern for king's safety)
         this.getOtherPlayer().getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
         // check is current king is now threatened
-        boolean isKingThreaten = this.isPosThreaten(this.currentPlayer.getKing().getPosition(), this.getOtherPlayer());
+        boolean isKingUnderCheck = this.isPosThreaten(this.currentPlayer.getKing().getPosition(), this.getOtherPlayer());
 
-        // cancel
+        // undo move
         this.lastMove = trulyLastMove;
         move.undo(this);
 
@@ -156,21 +202,30 @@ public class Game {
             this.getOtherPlayer().getPieces().add(move.getPieceToTake());
         }
 
-        return isKingThreaten;
+        this.gameMode = true;
+        return !isKingUnderCheck;
     }
 
+    /**
+     * @param position position to be checked
+     * @param player player whose pieces would be threatening position
+     * @return true if position is threaten by player's pieces, false otherwise
+     */
     public boolean isPosThreaten(Position position, Player player) {
         return player.getPieces().stream().anyMatch(
                 piece -> piece.getMovesWithoutProtectingKing().stream().anyMatch(m -> m.getNewPosition().equals(position))
         );
     }
 
+    /**
+     * Asks controller to obtain new piece from player
+     * @return piece chosen by player
+     */
     public Piece askForPromotedPiece() {
         return this.boardScreenController.getPromotedPiece();
     }
 
     /**
-     *
      * @return null if no one is winner yet, or reference to winner if there is one already
      */
     public Player getWinner() {
@@ -178,20 +233,31 @@ public class Game {
     }
 
     /**
-     *
      * @return true if game has ended in a draw, false otherwise
      */
     public boolean isDraw() {
         return this.draw;
     }
 
-
+    /**
+     * Inserts piece into the game - used in #initializeGame()
+     * @param piece piece to be inserted
+     * @param player new piece's owner
+     * @param position where piece should be inserted
+     */
     private void addNewPiece(Piece piece, Player player, Position position) {
         this.board[position.x][position.y] = piece;
         piece.setPosition(position);
         player.getPieces().add(piece);
     }
 
+    /**
+     * Initializes game:
+     * - creates players
+     * - creates and inserts pieces
+     * - sets initial values of flags and parameters
+     * - calculates possible moves in the first round
+     */
     private void initializeGame() {
         // Create players
         this.whitePlayer = new Player(PlayerColor.WHITE);

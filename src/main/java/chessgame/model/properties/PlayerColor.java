@@ -1,5 +1,10 @@
 package chessgame.model.properties;
 
+/**
+ * @author Paweł Marszał
+ *
+ * Stores color of pieces, which are also identifiers of players
+ */
 public enum PlayerColor {
     WHITE, BLACK;
 

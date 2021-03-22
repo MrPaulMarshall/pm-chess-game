@@ -7,6 +7,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import chessgame.presenter.WelcomeScreenView;
 
+/**
+ * @author Paweł Marszał
+ *
+ * Controller that initializes and displays 'welcome' screen
+ */
 public class WelcomeScreenController {
 
     private final Stage primaryStage;
@@ -15,11 +20,11 @@ public class WelcomeScreenController {
         this.primaryStage = primaryStage;
     }
 
+    /**
+     * Loads, initializes and displays 'welcome' screen
+     * @throws Exception if anything goes wrong
+     */
     public void initRootLayout() throws Exception {
-        showWelcomeScreen();
-    }
-
-    private void showWelcomeScreen() throws Exception {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(WelcomeScreenController.class
                 .getResource("/view/welcome_screen.fxml"));

@@ -3,7 +3,7 @@ package chessgame.controller;
 import chessgame.model.pieces.*;
 import chessgame.model.game.Game;
 import chessgame.model.game.Player;
-import chessgame.model.game.moves.Move;
+import chessgame.model.moves.Move;
 import chessgame.model.properties.PlayerColor;
 import chessgame.model.properties.Position;
 import chessgame.presenter.BoardCell;
@@ -15,41 +15,56 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.util.stream.Collectors;
 
+/**
+ * @author Paweł Marszał
+ *
+ * Represents controller of main view of the application
+ */
 public class BoardScreenController {
 
     private final Stage primaryStage;
-    private BoardScreenView boardScreenView = null;
 
-    private final BoardCell[][] boardCells;
-
-    private Piece pieceChosen;
-
+    /**
+     * References to model
+     */
     private Game game;
+    private Piece pieceChosen;
     private boolean gameIsRunning;
+
+    /**
+     * References to view
+     */
+    private final BoardCell[][] boardCells;
+    private BoardScreenView boardScreenView = null;
 
     public BoardScreenController(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        this.gameIsRunning = false;
 
         this.boardCells = new BoardCell[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                boardCells[i][j] = new BoardCell(i, j, new StackPane(), this);
+                boardCells[i][j] = new BoardCell(i, j, this);
             }
         }
-        this.pieceChosen = null;
     }
 
+    /**
+     * Initializes game and displays view
+     * @throws Exception if anything goes wrong
+     */
     public void initRootLayout() throws Exception {
         this.primaryStage.setTitle("Chess board");
 
-        this.game = new Game(true, this);
+        this.game = new Game(this);
+        this.pieceChosen = null;
+        this.gameIsRunning = true;
 
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(BoardScreenController.class
@@ -60,7 +75,6 @@ public class BoardScreenController {
         boardScreenView.setBoardScreenAppController(this);
         boardScreenView.setBoardCells(boardCells);
         boardScreenView.setGame(this.game);
-        this.gameIsRunning = true;
 
         boardScreenView.reloadBoardView();
 
@@ -69,26 +83,39 @@ public class BoardScreenController {
         primaryStage.show();
     }
 
+    /**
+     * Reacts to player's click on the cell of the board
+     * @param i column coordinate
+     * @param j row coordinate
+     */
     public void boardCellOnClick(int i, int j) {
+        // if game has ended, board is disabled
         if (!gameIsRunning) return;
 
         Move move;
         Piece piece;
 
+        // if player click on the chosen piece again, unmark it
         if (this.game.board[i][j] == this.pieceChosen) {
             this.pieceChosen = null;
             this.boardScreenView.refreshBackground();
         }
+        // if player chosen valid move, execute it
         else if (this.pieceChosen != null
                     && (move = this.pieceChosen.findMoveByTargetPosition(new Position(i, j))) != null) {
             this.executeMove(move);
         }
+        // if player clicked on another of his pieces, mark it
         else if ((piece = game.getPiece(i, j)) != null
                 && piece.getColor() == game.getCurrentPlayer().getColor()) {
             choosePiece(piece);
         }
     }
 
+    /**
+     * Executes move in the model, checks end-game conditions, and refreshes the board
+     * @param move move picked by player
+     */
     public void executeMove(Move move) {
         this.game.executeMove(move);
         this.boardScreenView.printLastMove();
@@ -106,6 +133,10 @@ public class BoardScreenController {
         this.pieceChosen = null;
     }
 
+    /**
+     * Marks piece, so the player can move it
+     * @param piece picked by player
+     */
     public void choosePiece(Piece piece) {
         this.boardScreenView.refreshBackground();
         this.pieceChosen = piece;
@@ -115,6 +146,10 @@ public class BoardScreenController {
                 piece.getPossibleMoves().stream().map(Move::getNewPosition).collect(Collectors.toList()));
     }
 
+    /**
+     * Created dialog window with pieces that player can choose during promotion
+     * @return piece chosen by player
+     */
     public Piece getPromotedPiece() {
         ChoosePromotionPieceController controller = new ChoosePromotionPieceController();
         PlayerColor color = game.getCurrentPlayer().getColor();
@@ -128,11 +163,15 @@ public class BoardScreenController {
         };
     }
 
+    /**
+     * Disables board, creates dialog with result, and closes the program
+     * @param player winner of the game (or null, if draw)
+     */
     public void endGame(Player player) {
         this.gameIsRunning = false;
         this.boardScreenView.reloadBoardView();
 
-        String result = player == null ? "THE GAME HAS ENDED IN A DRAW" : (player.getSignature() + " HAS WON, CONGRATULATIONS");
+        String result = player == null ? "THE GAME HAS ENDED IN A DRAW" : (player.toString() + " HAS WON, CONGRATULATIONS");
 
         Stage endGameStage = new Stage();
         endGameStage.setTitle("End game dialog");

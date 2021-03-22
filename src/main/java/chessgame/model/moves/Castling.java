@@ -1,13 +1,25 @@
-package chessgame.model.game.moves;
+package chessgame.model.moves;
 
 import chessgame.model.pieces.King;
 import chessgame.model.pieces.Rook;
 import chessgame.model.game.Game;
 import chessgame.model.properties.Position;
 
+/**
+ * @author Paweł Marszał
+ *
+ * Represents castling - if King and Rook haven't moved yet and all places in king's path are safe,
+ * they can jump behind each other
+ */
 public class Castling extends Move {
 
+    /**
+     * Rook that King castles with
+     */
     private final Rook rookToMove;
+    /**
+     * Old and new positions of that Rook
+     */
     private final Position oldPositionOfRook;
     private final Position newPositionForRook;
 
@@ -23,11 +35,13 @@ public class Castling extends Move {
 
     @Override
     public void execute(Game game) {
+        // King's jump
         game.board[newPosition.x][newPosition.y] = this.movedPiece;
         game.board[oldPosition.x][oldPosition.y] = null;
         this.movedPiece.setPosition(newPosition);
         this.movedPiece.markThatFigureMoved();
 
+        // Rook's jump
         game.board[newPositionForRook.x][newPositionForRook.y] = this.rookToMove;
         game.board[oldPositionOfRook.x][oldPositionOfRook.y] = null;
         this.rookToMove.setPosition(newPositionForRook);
@@ -36,11 +50,13 @@ public class Castling extends Move {
 
     @Override
     public void undo(Game game) {
+        // undo King's jump
         this.movedPiece.undoMarkThatFigureMoved();
         this.movedPiece.setPosition(oldPosition);
         game.board[newPosition.x][newPosition.y] = null;
         game.board[oldPosition.x][oldPosition.y] = this.movedPiece;
 
+        // undo Rook's jump
         this.rookToMove.undoMarkThatFigureMoved();
         this.rookToMove.setPosition(oldPositionOfRook);
         game.board[newPositionForRook.x][newPositionForRook.y] = null;

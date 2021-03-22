@@ -1,9 +1,14 @@
-package chessgame.model.game.moves;
+package chessgame.model.moves;
 
 import chessgame.model.pieces.Pawn;
 import chessgame.model.game.Game;
 import chessgame.model.properties.Position;
 
+/**
+ * @author Paweł Marszał
+ *
+ * Represents double starting move, that pawn can do, if it hasn't moved yet and path is free
+ */
 public class DoublePawnStart extends Move {
 
     public DoublePawnStart(Pawn movingPawn, Position newPosition) {

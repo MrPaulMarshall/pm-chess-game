@@ -11,24 +11,86 @@ import javafx.scene.layout.*;
 
 import java.util.List;
 
+/**
+ * @author Paweł Marszał
+ *
+ * View class that displays main screen of the game (with board)
+ */
 public class BoardScreenView {
 
+    /**
+     * Reference to controller
+     */
     private BoardScreenController boardScreenController;
+
+    /**
+     * Board - arrays of cells (from GUI's perspective)
+     */
     private BoardCell[][] boardCells;
+
+    /**
+     * Reference to Game object, to read data to display from the model
+     */
     private Game game;
 
+    /**
+     * Label that displays which player currently makes move
+     */
     @FXML
     private Label currentPlayerName;
 
+    /**
+     * Pane that contains whole board - it contains smaller panes: cells
+     */
     @FXML
     private GridPane chessBoardGrid;
 
+    /**
+     * Area when history of moves is displayed
+     */
     @FXML
     private TextArea movesTextArea;
 
     @FXML
     public void initialize() {
     }
+
+    /**
+     * Prints last move into text area
+     */
+    public void printLastMove() {
+        this.movesTextArea.appendText(
+                game.getLastMove().getPieceToMove().getColor().toString() + ": "
+                        + (game.getCurrentPlayer().isKingChecked() ? "+" : "")
+                        + game.getLastMove().toString() + "\n"
+        );
+    }
+
+    /**
+     * Sets all cells into their idle state
+     */
+    public void refreshBackground() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                this.boardCells[i][j].refreshBackground();
+            }
+        }
+    }
+
+    /**
+     * Reloads whole information about state of the game
+     */
+    public void reloadBoardView() {
+        this.refreshBackground();
+        this.currentPlayerName.setText(game.getCurrentPlayer().toString());
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                this.boardCells[i][j].setImage(game.getPiece(i, j) == null ? null : game.getPiece(i, j).getImage());
+            }
+        }
+    }
+
+    // Setters
 
     public void setBoardScreenAppController(BoardScreenController boardScreenController) {
         this.boardScreenController = boardScreenController;
@@ -44,32 +106,6 @@ public class BoardScreenView {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 this.chessBoardGrid.add(this.boardCells[i][j].getPane(), i, j);
-            }
-        }
-    }
-
-    public void printLastMove() {
-        this.movesTextArea.appendText(
-                game.getLastMove().getPieceToMove().getColor().toString() + ": "
-                + (game.getCurrentPlayer().kingIsChecked() ? "+" : "")
-                + game.getLastMove().toString() + "\n"
-        );
-    }
-
-    public void refreshBackground() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                this.boardCells[i][j].refreshBackground();
-            }
-        }
-    }
-
-    public void reloadBoardView() {
-        this.refreshBackground();
-        this.currentPlayerName.setText(game.getCurrentPlayer().getSignature());
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                this.boardCells[i][j].setImage(game.getPiece(i, j) == null ? null : game.getPiece(i, j).getImage());
             }
         }
     }

@@ -3,6 +3,11 @@ package chessgame.model.pieces;
 import chessgame.model.game.Game;
 import chessgame.model.properties.PlayerColor;
 
+/**
+ * @author Paweł Marszał
+ *
+ * Extends abstract class Piece
+ */
 public class Bishop extends Piece {
     // directions: left-up, right-up, right-down, left-down
     static private final int[][] moveDirections = {

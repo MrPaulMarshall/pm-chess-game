@@ -4,14 +4,19 @@ import chessgame.controller.BoardScreenController;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
+/**
+ * @author Paweł Marszał
+ *
+ * Represents single cell on the board from the GUI's perspective
+ */
 public class BoardCell {
 
+    /**
+     * Background with different colors, to inform user of current state of the game
+     */
     private static final Background WHITE_BACKGROUND = new Background(
             new BackgroundFill(Color.valueOf("#EEEED5"), CornerRadii.EMPTY, Insets.EMPTY));
     private static final Background BLACK_BACKGROUND = new Background(
@@ -25,26 +30,45 @@ public class BoardCell {
     private static final Background MARKED_BACKGROUND = new Background(
             new BackgroundFill(Color.valueOf("#E2514C"), CornerRadii.EMPTY, Insets.EMPTY));
 
-    private final Pane pane;
-
+    /**
+     * Reference to controller
+     */
     private final BoardScreenController boardScreenController;
 
+    /**
+     * Pane that represents the cell, it contains background and potentially piece's image
+     */
+    private final Pane pane;
+
+    /**
+     * Object that displays piece's image provided by the controller
+     */
     private final ImageView imageView;
 
+    /**
+     * Two backgrounds: one in idle state, and one that tells that piece can move to this cell
+     */
     private final Background normalBackground;
     private final Background clickableBackground;
 
-    public BoardCell(int i, int j, Pane pane, BoardScreenController boardScreenController) {
-        this.pane = pane;
+    /**
+     * Create BoardCell object
+     * @param i column coordinate
+     * @param j row coordinate
+     * @param boardScreenController reference to controller
+     */
+    public BoardCell(int i, int j, BoardScreenController boardScreenController) {
+        this.pane = new StackPane();
         this.boardScreenController = boardScreenController;
         this.imageView = new ImageView();
 
-        pane.setMaxWidth(50);
-        pane.setMinWidth(50);
-        pane.setMaxHeight(50);
-        pane.setMinHeight(50);
-        pane.getChildren().add(this.imageView);
+        this.pane.setMaxWidth(50);
+        this.pane.setMinWidth(50);
+        this.pane.setMaxHeight(50);
+        this.pane.setMinHeight(50);
+        this.pane.getChildren().add(this.imageView);
 
+        // determine if this cell should be light or dark
         if ((i + j) % 2 == 0) {
             this.normalBackground = WHITE_BACKGROUND;
             this.clickableBackground = WHITE_CLICKABLE_BACKGROUND;
@@ -55,25 +79,37 @@ public class BoardCell {
 
         this.pane.setBackground(this.normalBackground);
 
-        pane.setOnMouseClicked(e -> this.boardScreenController.boardCellOnClick(i, j));
+        this.pane.setOnMouseClicked(e -> this.boardScreenController.boardCellOnClick(i, j));
     }
 
     public Pane getPane() {
         return this.pane;
     }
 
+    /**
+     * @param image image to display
+     */
     public void setImage(Image image) {
         this.imageView.setImage(image);
     }
 
+    /**
+     * Sets background to idle state
+     */
     public void refreshBackground() {
         this.pane.setBackground(this.normalBackground);
     }
 
+    /**
+     * Marks that this cell is currently chosen
+     */
     public void setChosenBackground() {
         this.pane.setBackground(MARKED_BACKGROUND);
     }
 
+    /**
+     * Marks that currently chosen piece can move to this cell
+     */
     public void setClickableBackground() {
         this.pane.setBackground(this.clickableBackground);
     }

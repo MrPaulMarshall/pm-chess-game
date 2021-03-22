@@ -1,11 +1,21 @@
 package chessgame.model.pieces;
 
 import chessgame.model.game.Game;
-import chessgame.model.game.moves.Castling;
+import chessgame.model.moves.Castling;
 import chessgame.model.properties.PlayerColor;
 import chessgame.model.properties.Position;
 
+/**
+ * @author Paweł Marszał
+ *
+ * Extends abstract class Piece
+ */
 public class King extends Piece {
+    /**
+     * Stores information if king is under check
+     */
+    private boolean isChecked = false;
+
     // 1-cell steps in all directions, starting from up-left and going clockwise
     static private final int[][] jumps = {
             {-1, 1},
@@ -17,8 +27,6 @@ public class King extends Piece {
             {-1, -1},
             {-1, 0}
     };
-
-    private boolean isChecked = false;
 
     public King(PlayerColor playerColor) {
         super(loadImage(playerColor, "king"), playerColor);
@@ -36,7 +44,7 @@ public class King extends Piece {
     public void updateMovesWithoutProtectingKing(Game game) {
         movesWithoutProtectingKing.clear();
 
-        // normal moves
+        // normal moves in all directions, but only of length 1
         movesWithoutProtectingKing.addAll(movesViaGivenJumps(game, jumps));
 
         // Castling

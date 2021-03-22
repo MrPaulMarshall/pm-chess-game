@@ -1,8 +1,8 @@
 package chessgame.model.pieces;
 
 import chessgame.model.game.Game;
-import chessgame.model.game.moves.BasicMove;
-import chessgame.model.game.moves.Move;
+import chessgame.model.moves.BasicMove;
+import chessgame.model.moves.Move;
 import chessgame.model.properties.*;
 import javafx.scene.image.Image;
 
@@ -10,59 +10,98 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Interface that all figures must implement,
- * along common data fields and inner methods
+ * @author Paweł Marszał
+ *
+ * Interface that all figures must implement.
+ *
+ * It also contains data fields and inner methods common for all (or most) of its subclasses.
  */
 public abstract class Piece {
 
+    /**
+     * Color of the piece (and its owner)
+     */
     protected final PlayerColor playerColor;
+    /**
+     * Position of the piece on the board
+     */
     protected Position position;
+    /**
+     * Flag that tells if piece remains unmoved
+     * It's important for double start (pawn) and castling (King and Rook)
+     */
     protected boolean didNotMoveYet = true;
 
+    /**
+     * Object that stores loaded image of piece, used to display piece in GUI
+     */
     protected final Image image;
 
+    /**
+     * Collection of all legal moves that piece can do
+     */
     protected final List<Move> possibleMoves = new LinkedList<>();
+    /**
+     * Collection of all legal moves if safety of own king is not considered
+     */
     protected final List<Move> movesWithoutProtectingKing = new LinkedList<>();
 
-    // Constructor
+    /**
+     * Code common for all piece's constructors
+     * @param image loaded piece's image
+     * @param playerColor color of piece's owner
+     */
     public Piece(Image image, PlayerColor playerColor) {
         this.image = image;
         this.playerColor = playerColor;
+        this.position = null;
     }
 
     // Interface - public methods to implement
 
     /**
      * Updates list of moves, that figure can legally make
-     * @param game Chessboard object to execute function on
+     * @param game Game object, providing context for updating moves
      */
     public void updatePossibleMoves(Game game) {
         possibleMoves.clear();
         updateMovesWithoutProtectingKing(game);
 
-        game.setRealChessboard(false);
-
         for (Move move : movesWithoutProtectingKing) {
-            if (!game.simulateMove(move)) {
+            if (game.simulateMove(move)) {
                 possibleMoves.add(move);
             }
         }
-
-        game.setRealChessboard(true);
     }
 
     /**
      * Updates list of moves, that figure could take having ignored safety of its king
      * Needs to be implemented in each subclass
-     * @param game Chessboard object to execute function on
+     * @param game Game object, providing context for updating moves
      */
     abstract public void updateMovesWithoutProtectingKing(Game game);
 
-    // Setters and Getters
+    /**
+     * @return representation of piece in 'chess notation'
+     */
+    public abstract String toString();
+
+    // Setters
 
     public void setPosition(Position position) {
         this.position = new Position(position.x, position.y);
     }
+
+    public void markThatFigureMoved() {
+        this.didNotMoveYet = false;
+    }
+
+    public void undoMarkThatFigureMoved() {
+        this.didNotMoveYet = true;
+    }
+
+
+    // Getters
 
     public Position getPosition() {
         return position;
@@ -80,14 +119,6 @@ public abstract class Piece {
         return this.didNotMoveYet;
     }
 
-    public void markThatFigureMoved() {
-        this.didNotMoveYet = false;
-    }
-
-    public void undoMarkThatFigureMoved() {
-        this.didNotMoveYet = true;
-    }
-
     public List<Move> getPossibleMoves() {
         return possibleMoves;
     }
@@ -95,6 +126,7 @@ public abstract class Piece {
     public List<Move> getMovesWithoutProtectingKing() {
         return movesWithoutProtectingKing;
     }
+
 
     // Inner methods for subclasses
 
@@ -104,7 +136,7 @@ public abstract class Piece {
     }
 
     /**
-     *
+     * Validates given coordinates
      * @param x horizontal coordinate
      * @param y vertical coordinate
      * @return true if given position is on the board, or false if it is out of bounds
@@ -168,6 +200,7 @@ public abstract class Piece {
             // if new position is valid and either cell is free or there is an enemy to kill
             if (validPosition(x, y) &&
                     (game.board[x][y] == null || game.board[x][y].playerColor != this.playerColor)) {
+
                 moves.add(new BasicMove(this, new Position(x, y), game.board[x][y],
                         game.board[x][y] != null ? new Position(x, y) : null));
             }
@@ -176,10 +209,15 @@ public abstract class Piece {
         return moves;
     }
 
+    /**
+     * Method used to check if player has chosen existing, legal move
+     * @param newPosition position chosen by the player
+     * @return legal move that results in currently chosen piece landing on given position
+     * rules of chess guarantee that at most one such move can exist
+     */
     public Move findMoveByTargetPosition(Position newPosition) {
         return this.possibleMoves.stream().filter(p -> p.getNewPosition().equals(newPosition))
                 .findFirst().orElse(null);
     }
 
-    public abstract String toString();
 }

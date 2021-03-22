@@ -3,6 +3,11 @@ package chessgame.model.pieces;
 import chessgame.model.game.Game;
 import chessgame.model.properties.PlayerColor;
 
+/**
+ * @author Paweł Marszał
+ *
+ * Extends abstract class Piece
+ */
 public class Rook extends Piece {
     // directions: up, right, down, left
     static private final int[][] moveDirections = {

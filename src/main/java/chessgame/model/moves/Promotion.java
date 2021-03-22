@@ -1,11 +1,23 @@
-package chessgame.model.game.moves;
+package chessgame.model.moves;
 
 import chessgame.model.pieces.Piece;
 import chessgame.model.game.Game;
 
+/**
+ * @author Paweł Marszał
+ *
+ * Represents promotion of pawn into big piece: Queen, Knight, Rook or Bishop
+ */
 public class Promotion extends Move {
 
+    /**
+     * Basic move that leads to pawn being in the last row
+     */
     private final BasicMove basicMove;
+
+    /**
+     * New piece, that player has chosen
+     */
     private Piece newPiece;
 
     public Promotion(BasicMove basicMove) {
@@ -25,8 +37,8 @@ public class Promotion extends Move {
         // execute basic move
         this.basicMove.execute(game);
 
-        // change pawn for another piece
-        if (game.isRealChessboard()) {
+        // exchange pawn for new piece
+        if (game.getGameMode()) {
             game.getCurrentPlayer().getPieces().remove(basicMove.movedPiece);
 
             this.newPiece = game.askForPromotedPiece();
@@ -38,13 +50,15 @@ public class Promotion extends Move {
 
     @Override
     public void undo(Game game) {
-        if (game.isRealChessboard()) {
+        // undo exchanging pawn
+        if (game.getGameMode()) {
             game.getCurrentPlayer().getPieces().remove(this.newPiece);
             game.board[this.basicMove.newPosition.x][this.basicMove.newPosition.y] = null;
 
             game.getCurrentPlayer().getPieces().add(basicMove.movedPiece);
         }
 
+        // undo move that lead to pawn being on the last row
         this.basicMove.undo(game);
     }
 
