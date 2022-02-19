@@ -1,18 +1,24 @@
+# IntellIJ
+.idea
+
+# Java
+*.class
+*.jar
+
+# Gradle
+#  ignore
 .gradle
-# .idea
-/build/
+build
+#  include
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
 
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# Cache of project
-.gradletasknamecache
-
-# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
-# gradle/wrapper/gradle-wrapper.properties
+# Maven
+#  ignore
+target
+#  include
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/gradle-wrapper.properties
 
 # Ignore logs
 *.log
