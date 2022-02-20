@@ -12,11 +12,11 @@
     </parent>
 
     <groupId>com.marshall</groupId>
-    <artifactId>chess.client</artifactId>
+    <artifactId>pm-chess-game</artifactId>
     <version>1.0</version>
 
-    <name>server-spike</name>
-    <description>Client application for Chess Game</description>
+    <name>PM Chess Game</name>
+    <description>Maven project for the game of chess, including client app and server</description>
 
     <properties>
         <maven.compiler.source>14</maven.compiler.source>
