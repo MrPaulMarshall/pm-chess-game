@@ -1,0 +1,6 @@
+#!/bin/bash
+
+IMAGE="${IMAGE:-pmarszal/pm-chess-game-server}"
+VERSION="${VERSION:-latest}"
+
+docker build -t ${IMAGE}:${VERSION} ./server/
