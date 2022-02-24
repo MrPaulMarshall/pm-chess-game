@@ -1,5 +1,6 @@
 package chessgame.controller;
 
+import chessgame.model.game.PiecePromotionSource;
 import chessgame.model.pieces.*;
 import chessgame.model.game.Game;
 import chessgame.model.game.Player;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
  *
  * Represents controller of main view of the application
  */
-public class BoardScreenController {
+public class BoardScreenController implements PiecePromotionSource {
 
     private final Stage primaryStage;
 
@@ -174,7 +175,7 @@ public class BoardScreenController {
         this.gameIsRunning = false;
         this.boardScreenView.reloadBoardView();
 
-        String result = player == null ? "THE GAME HAS ENDED IN A DRAW" : (player.toString() + " HAS WON, CONGRATULATIONS");
+        String result = player == null ? "THE GAME HAS ENDED IN A DRAW" : (player + " HAS WON, CONGRATULATIONS");
 
         Stage endGameStage = new Stage();
         endGameStage.setTitle("End game dialog");
