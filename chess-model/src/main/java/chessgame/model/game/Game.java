@@ -1,8 +1,7 @@
 package chessgame.model.game;
 
-import chessgame.controller.BoardScreenController;
-import chessgame.model.pieces.*;
 import chessgame.model.moves.Move;
+import chessgame.model.pieces.*;
 import chessgame.model.properties.PlayerColor;
 import chessgame.model.properties.Position;
 
@@ -18,10 +17,11 @@ public class Game {
      * If false, game is in simulation mode, in order to check if given move would leave own king in check
      */
     private boolean gameMode;
+
     /**
      * Reference to controller, needed to ask player for piece during promotion
      */
-    private final BoardScreenController boardScreenController;
+    private final PiecePromotionSource piecePromotionSource;
 
     /**
      * Array that represents board itself
@@ -52,11 +52,11 @@ public class Game {
 
     /**
      * Creates new Game
-     * @param boardScreenController reference to controller
+     * @param piecePromotionSource allows to ask a user for a decision what Piece to promote the pawn into
      */
-    public Game(BoardScreenController boardScreenController) {
+    public Game(PiecePromotionSource piecePromotionSource) {
         this.gameMode = true;
-        this.boardScreenController = boardScreenController;
+        this.piecePromotionSource = piecePromotionSource;
 
         this.board = new Piece[8][8];
         for (int i = 0; i < 8; i++) {
@@ -109,7 +109,6 @@ public class Game {
 
     /**
      *
-     * @param piece
      */
     public void removePiece(Piece piece) {
         this.getPlayerByColor(piece.getColor()).getPieces().remove(piece);
@@ -167,7 +166,7 @@ public class Game {
     }
 
     /**
-     * Simulates execution of move, to test if it safe
+     * Simulates execution of move, to test if it is safe
      * @param move move to test
      * @return true if move can be executed safely, false if it would endanger the king
      */
@@ -222,7 +221,7 @@ public class Game {
      * @return piece chosen by player
      */
     public Piece askForPromotedPiece() {
-        return this.boardScreenController.getPromotedPiece();
+        return this.piecePromotionSource.getPromotedPiece();
     }
 
     /**

@@ -18,7 +18,7 @@ public class Bishop extends Piece {
     };
 
     public Bishop(PlayerColor playerColor) {
-        super(loadImage(playerColor, "bishop"), playerColor);
+        super(playerColor);
     }
 
     @Override

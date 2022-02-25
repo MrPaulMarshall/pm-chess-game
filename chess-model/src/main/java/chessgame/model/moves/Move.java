@@ -1,7 +1,7 @@
 package chessgame.model.moves;
 
-import chessgame.model.pieces.Piece;
 import chessgame.model.game.Game;
+import chessgame.model.pieces.Piece;
 import chessgame.model.properties.Position;
 
 /**

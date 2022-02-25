@@ -21,7 +21,7 @@ public class Pawn extends Piece {
     private final int s;
 
     public Pawn(PlayerColor playerColor) {
-        super(loadImage(playerColor, "pawn"), playerColor);
+        super(playerColor);
         this.s = playerColor == PlayerColor.WHITE ? -1 : 1;
     }
 

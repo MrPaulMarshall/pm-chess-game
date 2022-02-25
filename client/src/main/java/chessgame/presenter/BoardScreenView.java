@@ -3,6 +3,8 @@ package chessgame.presenter;
 import chessgame.controller.BoardScreenController;
 import chessgame.model.game.Game;
 import chessgame.model.properties.Position;
+import chessgame.services.ImageProvider;
+import chessgame.services.LocalResourceImageProvider;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -32,6 +34,11 @@ public class BoardScreenView {
      * Reference to Game object, to read data to display from the model
      */
     private Game game;
+
+    /**
+     * Source of the images to display the pieces
+     */
+    private final ImageProvider imageProvider = new LocalResourceImageProvider();
 
     /**
      * Label that displays which player currently makes move
@@ -85,7 +92,8 @@ public class BoardScreenView {
         this.currentPlayerName.setText(game.getCurrentPlayer().toString());
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                this.boardCells[i][j].setImage(game.getPiece(i, j) == null ? null : game.getPiece(i, j).getImage());
+                this.boardCells[i][j].setImage(
+                        game.getPiece(i, j) == null ? null : imageProvider.getImage(game.getPiece(i, j)));
             }
         }
     }
