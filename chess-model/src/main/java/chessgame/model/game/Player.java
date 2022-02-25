@@ -1,8 +1,8 @@
 package chessgame.model.game;
 
-import chessgame.model.pieces.Piece;
-import chessgame.model.pieces.King;
 import chessgame.model.moves.Move;
+import chessgame.model.pieces.King;
+import chessgame.model.pieces.Piece;
 import chessgame.model.properties.PlayerColor;
 
 import java.util.LinkedList;

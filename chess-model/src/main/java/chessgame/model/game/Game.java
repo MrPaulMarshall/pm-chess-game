@@ -1,7 +1,7 @@
 package chessgame.model.game;
 
-import chessgame.model.pieces.*;
 import chessgame.model.moves.Move;
+import chessgame.model.pieces.*;
 import chessgame.model.properties.PlayerColor;
 import chessgame.model.properties.Position;
 

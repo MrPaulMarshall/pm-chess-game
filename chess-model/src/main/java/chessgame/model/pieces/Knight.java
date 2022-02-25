@@ -22,7 +22,7 @@ public class Knight extends Piece {
     };
 
     public Knight(PlayerColor playerColor) {
-        super(loadImage(playerColor, "knight"), playerColor);
+        super(playerColor);
     }
 
     @Override

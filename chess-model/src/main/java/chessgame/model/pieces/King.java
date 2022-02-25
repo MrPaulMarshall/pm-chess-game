@@ -29,7 +29,7 @@ public class King extends Piece {
     };
 
     public King(PlayerColor playerColor) {
-        super(loadImage(playerColor, "king"), playerColor);
+        super(playerColor);
     }
 
     public void setIsChecked(boolean isChecked) {

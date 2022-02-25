@@ -8,21 +8,17 @@ import chessgame.model.properties.PlayerColor;
  *
  * Extends abstract class Piece
  */
-public class Queen extends Piece {
-    // directions: all directions
+public class Rook extends Piece {
+    // directions: up, right, down, left
     static private final int[][] moveDirections = {
-            {-1, 1},
             {0, 1},
-            {1, 1},
             {1, 0},
-            {1, -1},
             {0, -1},
-            {-1, -1},
             {-1, 0}
     };
 
-    public Queen(PlayerColor playerColor) {
-        super(loadImage(playerColor, "queen"), playerColor);
+    public Rook(PlayerColor playerColor) {
+        super(playerColor);
     }
 
     @Override
@@ -33,6 +29,6 @@ public class Queen extends Piece {
 
     @Override
     public String toString() {
-        return "Q";
+        return "R";
     }
 }
