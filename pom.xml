@@ -5,9 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>server</module>
-        <module>client</module>
+        <module>chess-server</module>
+        <module>chess-client</module>
         <module>chess-model</module>
+        <module>chess-web-api</module>
     </modules>
 
     <parent>
