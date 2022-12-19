@@ -4,13 +4,21 @@ My application, that allows two players to play chess
 
 ## How to run it
 
-In order to run this application you need to have installed Gradle.
+### Prerequisites
 
-Then you run the game in terminal using this command:
+* Java 17
+* JavaFX 17
+* Maven
+
+### Installation
+
+Make sure you have set environmental variables JAVA_PATH and PATH_TO_FX.
+
+Compile the app using `./mvnw package`, and after that you can run the game by:
 
 ```
-gradle run
-``` 
+java --module-path $PATH_TO_FX --add-modules javafx.controls,javafx.fxml -cp "chess-client/target/chess-client-1.0.jar:chess-model/target/chess-model-1.0.jar" chessgame.Main
+```
 
 ---
 
