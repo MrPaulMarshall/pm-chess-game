@@ -34,13 +34,6 @@
             <type>pom</type>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-graphics -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-fxml -->
         <dependency>
             <groupId>org.openjfx</groupId>
