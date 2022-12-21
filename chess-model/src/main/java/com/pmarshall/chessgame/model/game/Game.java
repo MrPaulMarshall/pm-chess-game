@@ -4,8 +4,6 @@ import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.properties.PlayerColor;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.moves.Move;
-import chessgame.model.pieces.*;
-import com.pmarshall.model.pieces.*;
 
 /**
  * @author Paweł Marszał
