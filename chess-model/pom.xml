@@ -7,7 +7,7 @@
 
     <parent>
         <artifactId>pm-chess-game</artifactId>
-        <groupId>com.marshall</groupId>
+        <groupId>com.pmarshall</groupId>
         <version>1.0</version>
     </parent>
 
