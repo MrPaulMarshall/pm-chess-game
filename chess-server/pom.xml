@@ -50,7 +50,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
 
                 <configuration>
-                    <mainClass>com.marshall.chess.server.Server</mainClass>
+                    <mainClass>com.marshall.chessgame.server.Server</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -13,7 +13,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.marshall</groupId>
+    <groupId>com.pmarshall</groupId>
     <artifactId>pm-chess-game</artifactId>
     <version>1.0</version>
 
