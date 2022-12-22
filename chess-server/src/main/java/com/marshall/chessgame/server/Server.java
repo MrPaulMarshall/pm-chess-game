@@ -1,25 +1,21 @@
 package com.marshall.chessgame.server;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-
-@SpringBootApplication
-@RestController
 public class Server {
-
-    @GetMapping("/server/test/{number}")
-    public String getHandler(@PathVariable(required = true) Long number) {
-        return "Hi from the server, " + number;
-    }
 
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new CleanUpHook());
+        initializeServer();
+        acceptClientConnections();
+    }
 
-        // TODO: remove, as the application won't be using Spring Boot
-        SpringApplication.run(Server.class, args);
+    private static void initializeServer() {
+        // TODO: initialize the server: collections of player-handlers, ServerSocket etc.
+    }
+
+    private static void acceptClientConnections() {
+        while (true) {
+            // TODO: accept incoming clients and startup their sessions
+        }
     }
 
     /**
