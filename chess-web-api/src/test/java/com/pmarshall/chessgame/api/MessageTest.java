@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *  because it has both String and non-String properties.
  * More complicated message Types (like MoveResponse) can have their own specific tests too.
  */
-class ApiMessageTest {
+class MessageTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private String jsonFormat;
@@ -114,6 +114,15 @@ class ApiMessageTest {
 
         // when-then
         assertThatThrownBy(() -> this.objectMapper.readerFor(Message.class).readValue(json))
+                .isInstanceOf(JsonProcessingException.class);
+    }
+
+    @Test
+    public void shouldNotAcceptBlankJson() {
+        assertThatThrownBy(() -> this.objectMapper.readerFor(Message.class).readValue(""))
+                .isInstanceOf(JsonProcessingException.class);
+
+        assertThatThrownBy(() -> this.objectMapper.readerFor(Message.class).readValue(" \n "))
                 .isInstanceOf(JsonProcessingException.class);
     }
 }
