@@ -6,20 +6,23 @@ import java.net.Socket;
 
 public class Server {
 
-    private static ServerSocket serverSocket;
+    private static final Thread mainThread = Thread.currentThread();
 
     public static void main(String[] args) throws IOException {
         Runtime.getRuntime().addShutdownHook(new CleanUpHook());
-        initializeServer();
-        acceptClientConnections();
+
+        final ServerSocket serverSocket = initializeServer();
+        try (serverSocket) {
+            acceptClientConnections(serverSocket);
+        }
     }
 
-    private static void initializeServer() throws IOException {
+    private static ServerSocket initializeServer() throws IOException {
         // TODO: initialize the server: collections of player-handlers, ServerSocket etc.
-        serverSocket = new ServerSocket(0);
+        return new ServerSocket(0);
     }
 
-    private static void acceptClientConnections() throws IOException {
+    private static void acceptClientConnections(ServerSocket serverSocket) throws IOException {
         while (true) {
             Socket socket = serverSocket.accept();
             initiateClientSession(socket);
@@ -38,10 +41,7 @@ public class Server {
         @Override
         public void run() {
             // TODO: implement me :)
-            try {
-                serverSocket.close();
-            } catch (IOException ignored) {
-            }
+            mainThread.interrupt();
         }
     }
 }
