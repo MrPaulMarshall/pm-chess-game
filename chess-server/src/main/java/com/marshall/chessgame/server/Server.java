@@ -16,6 +16,19 @@ public class Server {
     }
 
     public static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new CleanUpHook());
+
+        // TODO: remove, as the application won't be using Spring Boot
         SpringApplication.run(Server.class, args);
+    }
+
+    /**
+     * Shutdown hook that will terminate open games, interrupt threads, close opened sockets etc.
+     */
+    private static class CleanUpHook extends Thread {
+        @Override
+        public void run() {
+            // TODO: implement me :)
+        }
     }
 }
