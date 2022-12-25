@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.pieces;
 
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.game.Game;
 import com.pmarshall.chessgame.model.moves.BasicMove;
@@ -20,9 +20,9 @@ public class Pawn extends Piece {
      */
     private final int s;
 
-    public Pawn(PlayerColor playerColor) {
-        super(playerColor);
-        this.s = playerColor == PlayerColor.WHITE ? -1 : 1;
+    public Pawn(Color color) {
+        super(color);
+        this.s = color == Color.WHITE ? -1 : 1;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class Pawn extends Piece {
 
             if (validPosition(x, y) &&
                     game.board[x][y] != null &&
-                    game.board[x][y].playerColor != this.playerColor) {
+                    game.board[x][y].color != this.color) {
 
                 BasicMove basicMove = new BasicMove(this, new Position(x, y), game.board[x][y], new Position(x, y));
 

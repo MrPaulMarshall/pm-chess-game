@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.pieces;
 
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.game.Game;
 
 /**
@@ -17,8 +17,8 @@ public class Bishop extends Piece {
             {-1, -1}
     };
 
-    public Bishop(PlayerColor playerColor) {
-        super(playerColor);
+    public Bishop(Color color) {
+        super(color);
     }
 
     @Override

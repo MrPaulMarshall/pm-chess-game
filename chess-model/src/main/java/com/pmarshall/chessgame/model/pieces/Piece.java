@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.pieces;
 
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.game.Game;
 import com.pmarshall.chessgame.model.moves.BasicMove;
@@ -21,7 +21,7 @@ public abstract class Piece {
     /**
      * Color of the piece (and its owner)
      */
-    protected final PlayerColor playerColor;
+    protected final Color color;
     /**
      * Position of the piece on the board
      */
@@ -46,8 +46,8 @@ public abstract class Piece {
      *
      * @param playerColor color of piece's owner
      */
-    public Piece(PlayerColor playerColor) {
-        this.playerColor = playerColor;
+    public Piece(Color playerColor) {
+        this.color = playerColor;
         this.position = null;
     }
 
@@ -103,8 +103,8 @@ public abstract class Piece {
         return position;
     }
 
-    public PlayerColor getColor() {
-        return this.playerColor;
+    public Color getColor() {
+        return this.color;
     }
 
     public boolean getDidNotMoveFlag() {
@@ -154,7 +154,7 @@ public abstract class Piece {
                     // cell is free
                     moves.add(new BasicMove(
                             this, new Position(x, y), null, null));
-                } else if (game.board[x][y].playerColor != this.playerColor) {
+                } else if (game.board[x][y].color != this.color) {
                     // enemy figure blocks path
                     moves.add(new BasicMove(
                             this, new Position(x, y), game.board[x][y], new Position(x, y)));
@@ -189,7 +189,7 @@ public abstract class Piece {
 
             // if new position is valid and either cell is free or there is an enemy to kill
             if (validPosition(x, y) &&
-                    (game.board[x][y] == null || game.board[x][y].playerColor != this.playerColor)) {
+                    (game.board[x][y] == null || game.board[x][y].color != this.color)) {
 
                 moves.add(new BasicMove(this, new Position(x, y), game.board[x][y],
                         game.board[x][y] != null ? new Position(x, y) : null));

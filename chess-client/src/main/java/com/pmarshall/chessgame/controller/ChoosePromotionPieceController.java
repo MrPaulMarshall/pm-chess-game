@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.controller;
 
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -24,7 +23,7 @@ public class ChoosePromotionPieceController {
      * Background on which pieces to choose are displayed
      */
     private static final Background NORMAL_BACKGROUND = new Background(
-            new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY));
+            new BackgroundFill(javafx.scene.paint.Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY));
 
     /**
      * Stores information about player's decision
@@ -41,7 +40,7 @@ public class ChoosePromotionPieceController {
      * @param color determines which player needs a piece
      * @return piece that player has chosen
      */
-    public String askForPromotionPiece(PlayerColor color) {
+    public String askForPromotionPiece(Color color) {
         this.chosenPieceIndex = -1;
 
         // create new window
@@ -61,7 +60,7 @@ public class ChoosePromotionPieceController {
         piecesHBox.spacingProperty().setValue(10);
 
         for (int i = 0; i < possiblePieces.length; i++) {
-            String path = "images/" + (color == PlayerColor.WHITE ? "white" : "black") + "-" + possiblePieces[i] + ".png";
+            String path = "images/" + (color == Color.WHITE ? "white" : "black") + "-" + possiblePieces[i] + ".png";
             Image image = new Image(path, 70, 70, false,true, false);
 
             StackPane pane = new StackPane();

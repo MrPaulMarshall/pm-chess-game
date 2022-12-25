@@ -5,7 +5,7 @@ import com.pmarshall.chessgame.model.game.Game;
 import com.pmarshall.chessgame.model.game.Player;
 import com.pmarshall.chessgame.model.moves.Move;
 import com.pmarshall.chessgame.model.pieces.*;
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.presenter.BoardCell;
 import com.pmarshall.chessgame.presenter.BoardScreenView;
@@ -153,7 +153,7 @@ public class BoardScreenController implements PiecePromotionSource {
      */
     public Piece getPromotedPiece() {
         ChoosePromotionPieceController controller = new ChoosePromotionPieceController();
-        PlayerColor color = game.getCurrentPlayer().getColor();
+        Color color = game.getCurrentPlayer().getColor();
         String chosenPiece = controller.askForPromotionPiece(color);
         return switch (chosenPiece) {
             case "queen" -> new Queen(color);

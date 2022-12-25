@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.pieces;
 
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.game.Game;
 
 /**
@@ -21,8 +21,8 @@ public class Queen extends Piece {
             {-1, 0}
     };
 
-    public Queen(PlayerColor playerColor) {
-        super(playerColor);
+    public Queen(Color color) {
+        super(color);
     }
 
     @Override

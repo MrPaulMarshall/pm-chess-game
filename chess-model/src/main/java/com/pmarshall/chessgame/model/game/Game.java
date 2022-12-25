@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.model.game;
 
 import com.pmarshall.chessgame.model.pieces.*;
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.moves.Move;
 
@@ -95,7 +95,7 @@ public class Game {
         return this.currentPlayer == this.whitePlayer ? this.blackPlayer : this.whitePlayer;
     }
 
-    private Player getPlayerByColor(PlayerColor color) {
+    private Player getPlayerByColor(Color color) {
         return this.currentPlayer.getColor() == color ? this.currentPlayer : this.getOtherPlayer();
     }
 
@@ -259,42 +259,42 @@ public class Game {
      */
     private void initializeGame() {
         // Create players
-        this.whitePlayer = new Player(PlayerColor.WHITE);
-        this.blackPlayer = new Player(PlayerColor.BLACK);
+        this.whitePlayer = new Player(Color.WHITE);
+        this.blackPlayer = new Player(Color.BLACK);
 
         // WHITES
         for (int i = 0; i < 8; i++) {
-            addNewPiece(new Pawn(PlayerColor.WHITE), this.whitePlayer, new Position(i, 6));
+            addNewPiece(new Pawn(Color.WHITE), this.whitePlayer, new Position(i, 6));
         }
-        addNewPiece(new Rook(PlayerColor.WHITE), this.whitePlayer, new Position(0, 7));
-        addNewPiece(new Knight(PlayerColor.WHITE), this.whitePlayer, new Position(1, 7));
-        addNewPiece(new Bishop(PlayerColor.WHITE), this.whitePlayer, new Position(2, 7));
-        addNewPiece(new Queen(PlayerColor.WHITE), this.whitePlayer, new Position(3, 7));
+        addNewPiece(new Rook(Color.WHITE), this.whitePlayer, new Position(0, 7));
+        addNewPiece(new Knight(Color.WHITE), this.whitePlayer, new Position(1, 7));
+        addNewPiece(new Bishop(Color.WHITE), this.whitePlayer, new Position(2, 7));
+        addNewPiece(new Queen(Color.WHITE), this.whitePlayer, new Position(3, 7));
 
-        King whiteKing = new King(PlayerColor.WHITE);
+        King whiteKing = new King(Color.WHITE);
         addNewPiece(whiteKing, this.whitePlayer, new Position(4, 7));
         this.whitePlayer.setKing(whiteKing);
 
-        addNewPiece(new Bishop(PlayerColor.WHITE), this.whitePlayer, new Position(5, 7));
-        addNewPiece(new Knight(PlayerColor.WHITE), this.whitePlayer, new Position(6, 7));
-        addNewPiece(new Rook(PlayerColor.WHITE), this.whitePlayer, new Position(7, 7));
+        addNewPiece(new Bishop(Color.WHITE), this.whitePlayer, new Position(5, 7));
+        addNewPiece(new Knight(Color.WHITE), this.whitePlayer, new Position(6, 7));
+        addNewPiece(new Rook(Color.WHITE), this.whitePlayer, new Position(7, 7));
 
         // BLACKS
         for (int i = 0; i < 8; i++) {
-            addNewPiece(new Pawn(PlayerColor.BLACK), this.blackPlayer, new Position(i, 1));
+            addNewPiece(new Pawn(Color.BLACK), this.blackPlayer, new Position(i, 1));
         }
-        addNewPiece(new Rook(PlayerColor.BLACK), this.blackPlayer, new Position(0, 0));
-        addNewPiece(new Knight(PlayerColor.BLACK), this.blackPlayer, new Position(1, 0));
-        addNewPiece(new Bishop(PlayerColor.BLACK), this.blackPlayer, new Position(2, 0));
-        addNewPiece(new Queen(PlayerColor.BLACK), this.blackPlayer, new Position(3, 0));
+        addNewPiece(new Rook(Color.BLACK), this.blackPlayer, new Position(0, 0));
+        addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(1, 0));
+        addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(2, 0));
+        addNewPiece(new Queen(Color.BLACK), this.blackPlayer, new Position(3, 0));
 
-        King blackKing = new King(PlayerColor.BLACK);
+        King blackKing = new King(Color.BLACK);
         addNewPiece(blackKing, this.blackPlayer, new Position(4, 0));
         this.blackPlayer.setKing(blackKing);
 
-        addNewPiece(new Bishop(PlayerColor.BLACK), this.blackPlayer, new Position(5, 0));
-        addNewPiece(new Knight(PlayerColor.BLACK), this.blackPlayer, new Position(6, 0));
-        addNewPiece(new Rook(PlayerColor.BLACK), this.blackPlayer, new Position(7, 0));
+        addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(5, 0));
+        addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(6, 0));
+        addNewPiece(new Rook(Color.BLACK), this.blackPlayer, new Position(7, 0));
 
         // Set initial flags
         this.winner = null;

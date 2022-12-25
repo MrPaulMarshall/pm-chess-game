@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.pieces;
 
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.game.Game;
 import com.pmarshall.chessgame.model.moves.Castling;
@@ -28,8 +28,8 @@ public class King extends Piece {
             {-1, 0}
     };
 
-    public King(PlayerColor playerColor) {
-        super(playerColor);
+    public King(Color color) {
+        super(color);
     }
 
     public void setIsChecked(boolean isChecked) {

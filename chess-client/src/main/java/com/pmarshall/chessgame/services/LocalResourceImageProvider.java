@@ -1,21 +1,21 @@
 package com.pmarshall.chessgame.services;
 
 import com.pmarshall.chessgame.model.pieces.*;
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import javafx.scene.image.Image;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.pmarshall.chessgame.model.properties.PlayerColor.BLACK;
-import static com.pmarshall.chessgame.model.properties.PlayerColor.WHITE;
+import static com.pmarshall.chessgame.model.properties.Color.BLACK;
+import static com.pmarshall.chessgame.model.properties.Color.WHITE;
 
 public class LocalResourceImageProvider implements ImageProvider {
 
     private static final String DIRECTORY_PREFIX = "images/";
 
-    private static final Map<PlayerColor, Map<Class<? extends Piece>, Image>> images;
+    private static final Map<Color, Map<Class<? extends Piece>, Image>> images;
 
     static {
         final List<Class<? extends Piece>> pieceTypes = List.of(
@@ -46,7 +46,7 @@ public class LocalResourceImageProvider implements ImageProvider {
         return images.get(piece.getColor()).get(piece.getClass());
     }
 
-    protected static Image loadImage(PlayerColor color, String name) {
+    protected static Image loadImage(Color color, String name) {
         String path = DIRECTORY_PREFIX + (color == WHITE ? "white" : "black") + "-" + name + ".png";
         return new Image(path, 50, 50, false,true, false);
     }
