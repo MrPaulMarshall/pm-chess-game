@@ -10,7 +10,7 @@ import com.pmarshall.chessgame.model.moves.Castling;
  *
  * Extends abstract class Piece
  */
-public class King extends Piece {
+public final class King extends Piece {
     /**
      * Stores information if king is under check
      */
@@ -103,6 +103,11 @@ public class King extends Piece {
                 }
             }
         }
+    }
+
+    @Override
+    public PieceType getType() {
+        return PieceType.KING;
     }
 
     @Override

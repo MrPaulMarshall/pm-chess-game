@@ -8,7 +8,7 @@ import com.pmarshall.chessgame.model.game.Game;
  *
  * Extends abstract class Piece
  */
-public class Knight extends Piece {
+public final class Knight extends Piece {
     // all jumps, starting with 2-up--1-left and going clockwise
     static private final int[][] jumps = {
             {-1, 2},
@@ -29,6 +29,11 @@ public class Knight extends Piece {
     public void updateMovesWithoutProtectingKing(Game game) {
         movesWithoutProtectingKing.clear();
         movesWithoutProtectingKing.addAll(movesViaGivenJumps(game, jumps));
+    }
+
+    @Override
+    public PieceType getType() {
+        return PieceType.KNIGHT;
     }
 
     @Override

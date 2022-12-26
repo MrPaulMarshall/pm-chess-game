@@ -8,7 +8,7 @@ import com.pmarshall.chessgame.model.game.Game;
  *
  * Extends abstract class Piece
  */
-public class Rook extends Piece {
+public final class Rook extends Piece {
     // directions: up, right, down, left
     static private final int[][] moveDirections = {
             {0, 1},
@@ -25,6 +25,11 @@ public class Rook extends Piece {
     public void updateMovesWithoutProtectingKing(Game game) {
         movesWithoutProtectingKing.clear();
         movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(game, moveDirections));
+    }
+
+    @Override
+    public PieceType getType() {
+        return PieceType.ROOK;
     }
 
     @Override

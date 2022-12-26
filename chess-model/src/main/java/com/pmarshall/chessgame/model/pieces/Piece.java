@@ -77,6 +77,8 @@ public abstract class Piece {
      */
     abstract public void updateMovesWithoutProtectingKing(Game game);
 
+    public abstract PieceType getType();
+
     /**
      * @return representation of piece in 'chess notation'
      */

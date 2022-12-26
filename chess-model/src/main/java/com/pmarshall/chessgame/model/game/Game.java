@@ -221,7 +221,15 @@ public class Game {
      * @return piece chosen by player
      */
     public Piece askForPromotedPiece() {
-        return this.piecePromotionSource.getPromotedPiece();
+        Color color = this.currentPlayer.getColor();
+        PieceType type = this.piecePromotionSource.getPromotedPiece();
+        return switch (type) {
+            case QUEEN -> new Queen(color);
+            case ROOK -> new Rook(color);
+            case BISHOP -> new Bishop(color);
+            case KNIGHT -> new Knight(color);
+            default -> throw new IllegalStateException("Should never happen");
+        };
     }
 
     /**

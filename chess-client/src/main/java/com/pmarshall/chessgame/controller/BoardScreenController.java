@@ -5,7 +5,6 @@ import com.pmarshall.chessgame.model.game.Game;
 import com.pmarshall.chessgame.model.game.Player;
 import com.pmarshall.chessgame.model.moves.Move;
 import com.pmarshall.chessgame.model.pieces.*;
-import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.presenter.BoardCell;
 import com.pmarshall.chessgame.presenter.BoardScreenView;
@@ -151,17 +150,9 @@ public class BoardScreenController implements PiecePromotionSource {
      * Created dialog window with pieces that player can choose during promotion
      * @return piece chosen by player
      */
-    public Piece getPromotedPiece() {
+    public PieceType getPromotedPiece() {
         ChoosePromotionPieceController controller = new ChoosePromotionPieceController();
-        Color color = game.getCurrentPlayer().getColor();
-        String chosenPiece = controller.askForPromotionPiece(color);
-        return switch (chosenPiece) {
-            case "queen" -> new Queen(color);
-            case "knight" -> new Knight(color);
-            case "rook" -> new Rook(color);
-            case "bishop" -> new Bishop(color);
-            default -> throw new IllegalStateException("Piece chosen during promotion isn't valid");
-        };
+        return controller.askForPromotionPiece(game.getCurrentPlayer().getColor());
     }
 
     /**

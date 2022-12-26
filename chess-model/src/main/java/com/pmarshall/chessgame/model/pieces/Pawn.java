@@ -12,7 +12,7 @@ import com.pmarshall.chessgame.model.moves.Promotion;
  *
  * Extends abstract class Piece
  */
-public class Pawn extends Piece {
+public final class Pawn extends Piece {
     /**
      * Constant that determines direction of pawn's move
      *  whites: -1 (bottom-up)
@@ -97,6 +97,11 @@ public class Pawn extends Piece {
                         this, new Position(x, y), game.board[x][position.y], new Position(x, position.y)));
             }
         }
+    }
+
+    @Override
+    public PieceType getType() {
+        return PieceType.PAWN;
     }
 
     @Override

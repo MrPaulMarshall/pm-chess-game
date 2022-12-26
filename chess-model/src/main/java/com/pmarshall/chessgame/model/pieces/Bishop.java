@@ -8,7 +8,7 @@ import com.pmarshall.chessgame.model.game.Game;
  *
  * Extends abstract class Piece
  */
-public class Bishop extends Piece {
+public final class Bishop extends Piece {
     // directions: left-up, right-up, right-down, left-down
     static private final int[][] moveDirections = {
             {-1, 1},
@@ -25,6 +25,11 @@ public class Bishop extends Piece {
     public void updateMovesWithoutProtectingKing(Game game) {
         movesWithoutProtectingKing.clear();
         movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(game, moveDirections));
+    }
+
+    @Override
+    public PieceType getType() {
+        return PieceType.BISHOP;
     }
 
     @Override

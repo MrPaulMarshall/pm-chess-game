@@ -1,6 +1,7 @@
 package com.pmarshall.chessgame.controller;
 
 import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.pieces.PieceType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -33,14 +34,14 @@ public class ChoosePromotionPieceController {
     /**
      * Pieces that player can choose
      */
-    private final String[] possiblePieces = {"queen", "knight", "rook", "bishop"};
+    private final PieceType[] possiblePieces = {PieceType.QUEEN, PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT};
 
     /**
      * Creates dialog window and waits for player's decision
      * @param color determines which player needs a piece
      * @return piece that player has chosen
      */
-    public String askForPromotionPiece(Color color) {
+    public PieceType askForPromotionPiece(Color color) {
         this.chosenPieceIndex = -1;
 
         // create new window
@@ -60,7 +61,8 @@ public class ChoosePromotionPieceController {
         piecesHBox.spacingProperty().setValue(10);
 
         for (int i = 0; i < possiblePieces.length; i++) {
-            String path = "images/" + (color == Color.WHITE ? "white" : "black") + "-" + possiblePieces[i] + ".png";
+            String path = "images/"
+                    + color.name().toLowerCase() + "-" + possiblePieces[i].name().toLowerCase() + ".png";
             Image image = new Image(path, 70, 70, false,true, false);
 
             StackPane pane = new StackPane();
