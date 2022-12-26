@@ -7,7 +7,7 @@ import com.pmarshall.chessgame.model.moves.Move;
 
 /**
  * @author Paweł Marszał
- *
+ * <p>
  * Class that represent the totality of logical model of the game
  * It contains chessboard itself, players, and pieces.
  */
@@ -112,12 +112,12 @@ public class Game {
      */
     public void removePiece(Piece piece) {
         this.getPlayerByColor(piece.getColor()).getPieces().remove(piece);
-        this.board[piece.getPosition().x][piece.getPosition().y] = null;
+        this.board[piece.getPosition().x()][piece.getPosition().y()] = null;
     }
 
     public void addPieceBack(Piece piece, Position pos) {
         this.getPlayerByColor(piece.getColor()).getPieces().add(piece);
-        this.board[pos.x][pos.y] = piece;
+        this.board[pos.x()][pos.y()] = piece;
     }
 
     /**
@@ -134,7 +134,7 @@ public class Game {
         // potentially remove enemy piece
         if (move.getPieceToTake() != null) {
             Position posOfTakenPiece = move.getPieceToTake().getPosition();
-            this.board[posOfTakenPiece.x][posOfTakenPiece.y] = null;
+            this.board[posOfTakenPiece.x()][posOfTakenPiece.y()] = null;
             this.getOtherPlayer().getPieces().remove(move.getPieceToTake());
         }
 
@@ -146,7 +146,7 @@ public class Game {
         this.currentPlayer.getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
         // check is enemy king is now threatened
         this.getOtherPlayer().getKing().setIsChecked(
-                this.isPosThreaten(this.getOtherPlayer().getKing().getPosition(), this.currentPlayer));
+                this.isPosThreatened(this.getOtherPlayer().getKing().getPosition(), this.currentPlayer));
 
         // change player
         this.changePlayer();
@@ -177,7 +177,7 @@ public class Game {
         // potentially remove enemy piece
         if (move.getPieceToTake() != null) {
             Position posOfTakenPiece = move.getPieceToTake().getPosition();
-            this.board[posOfTakenPiece.x][posOfTakenPiece.y] = null;
+            this.board[posOfTakenPiece.x()][posOfTakenPiece.y()] = null;
             this.getOtherPlayer().getPieces().remove(move.getPieceToTake());
         }
 
@@ -188,7 +188,7 @@ public class Game {
         // update moves (without concern for king's safety)
         this.getOtherPlayer().getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
         // check is current king is now threatened
-        boolean isKingUnderCheck = this.isPosThreaten(this.currentPlayer.getKing().getPosition(), this.getOtherPlayer());
+        boolean isKingUnderCheck = this.isPosThreatened(this.currentPlayer.getKing().getPosition(), this.getOtherPlayer());
 
         // undo move
         this.lastMove = trulyLastMove;
@@ -197,7 +197,7 @@ public class Game {
         // potentially return enemy piece
         if (move.getPieceToTake() != null) {
             Position posOfTakenPiece = move.getPieceToTake().getPosition();
-            this.board[posOfTakenPiece.x][posOfTakenPiece.y] = move.getPieceToTake();
+            this.board[posOfTakenPiece.x()][posOfTakenPiece.y()] = move.getPieceToTake();
             this.getOtherPlayer().getPieces().add(move.getPieceToTake());
         }
 
@@ -210,7 +210,7 @@ public class Game {
      * @param player player whose pieces would be threatening position
      * @return true if position is threaten by player's pieces, false otherwise
      */
-    public boolean isPosThreaten(Position position, Player player) {
+    public boolean isPosThreatened(Position position, Player player) {
         return player.getPieces().stream().anyMatch(
                 piece -> piece.getMovesWithoutProtectingKing().stream().anyMatch(m -> m.getNewPosition().equals(position))
         );
@@ -253,7 +253,7 @@ public class Game {
      * @param position where piece should be inserted
      */
     private void addNewPiece(Piece piece, Player player, Position position) {
-        this.board[position.x][position.y] = piece;
+        this.board[position.x()][position.y()] = piece;
         piece.setPosition(position);
         player.getPieces().add(piece);
     }

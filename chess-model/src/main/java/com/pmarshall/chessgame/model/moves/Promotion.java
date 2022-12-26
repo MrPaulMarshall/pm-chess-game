@@ -43,7 +43,7 @@ public class Promotion extends Move {
 
             this.newPiece = game.askForPromotedPiece();
             this.newPiece.setPosition(this.basicMove.newPosition);
-            game.board[this.basicMove.newPosition.x][this.basicMove.newPosition.y] = this.newPiece;
+            game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = this.newPiece;
             game.getCurrentPlayer().getPieces().add(this.newPiece);
         }
     }
@@ -53,7 +53,7 @@ public class Promotion extends Move {
         // undo exchanging pawn
         if (game.getGameMode()) {
             game.getCurrentPlayer().getPieces().remove(this.newPiece);
-            game.board[this.basicMove.newPosition.x][this.basicMove.newPosition.y] = null;
+            game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = null;
 
             game.getCurrentPlayer().getPieces().add(basicMove.movedPiece);
         }

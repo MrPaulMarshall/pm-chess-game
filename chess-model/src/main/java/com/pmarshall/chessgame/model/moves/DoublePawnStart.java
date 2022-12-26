@@ -13,8 +13,8 @@ public class DoublePawnStart extends Move {
 
     public DoublePawnStart(Pawn movingPawn, Position newPosition) {
         this.movedPiece = movingPawn;
-        this.oldPosition = movingPawn.getPosition().copy();
-        this.newPosition = newPosition.copy();
+        this.oldPosition = movingPawn.getPosition();
+        this.newPosition = newPosition;
 
         this.takenPiece = null;
         this.takenPiecePosition = null;
@@ -24,8 +24,8 @@ public class DoublePawnStart extends Move {
 
     @Override
     public void execute(Game game) {
-        game.board[oldPosition.x][oldPosition.y] = null;
-        game.board[newPosition.x][newPosition.y] = movedPiece;
+        game.board[oldPosition.x()][oldPosition.y()] = null;
+        game.board[newPosition.x()][newPosition.y()] = movedPiece;
         this.movedPiece.setPosition(newPosition);
 
         this.movedPiece.markThatFigureMoved();
@@ -38,8 +38,8 @@ public class DoublePawnStart extends Move {
         }
 
         this.movedPiece.setPosition(oldPosition);
-        game.board[oldPosition.x][oldPosition.y] = movedPiece;
-        game.board[newPosition.x][newPosition.y] = null;
+        game.board[oldPosition.x()][oldPosition.y()] = movedPiece;
+        game.board[newPosition.x()][newPosition.y()] = null;
     }
 
     @Override

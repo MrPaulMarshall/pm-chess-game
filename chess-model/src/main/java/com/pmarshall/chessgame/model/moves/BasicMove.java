@@ -13,8 +13,8 @@ import com.pmarshall.chessgame.model.game.Game;
 public class BasicMove extends Move {
     public BasicMove(Piece movedPiece, Position newPosition, Piece takenPiece, Position takenPiecePosition) {
         this.movedPiece = movedPiece;
-        this.oldPosition = movedPiece.getPosition().copy();
-        this.newPosition = newPosition.copy();
+        this.oldPosition = movedPiece.getPosition();
+        this.newPosition = newPosition;
 
         this.takenPiece = takenPiece;
         this.takenPiecePosition = takenPiecePosition;
@@ -30,8 +30,8 @@ public class BasicMove extends Move {
         }
 
         // change piece's position
-        game.board[oldPosition.x][oldPosition.y] = null;
-        game.board[newPosition.x][newPosition.y] = movedPiece;
+        game.board[oldPosition.x()][oldPosition.y()] = null;
+        game.board[newPosition.x()][newPosition.y()] = movedPiece;
         movedPiece.setPosition(newPosition);
         movedPiece.markThatFigureMoved();
     }
@@ -45,8 +45,8 @@ public class BasicMove extends Move {
 
         // change piece's position
         movedPiece.setPosition(oldPosition);
-        game.board[oldPosition.x][oldPosition.y] = this.movedPiece;
-        game.board[newPosition.x][newPosition.y] = null;
+        game.board[oldPosition.x()][oldPosition.y()] = this.movedPiece;
+        game.board[newPosition.x()][newPosition.y()] = null;
 
         // restore piece, if one was taken
         if (this.takenPiece != null) {

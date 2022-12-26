@@ -119,11 +119,11 @@ public class BoardScreenView {
     }
 
     public void setChosenPieceBackground(Position position) {
-        this.boardCells[position.x][position.y].setChosenBackground();
+        this.boardCells[position.x()][position.y()].setChosenBackground();
     }
 
     public void setClickableBackgrounds(List<Position> positions) {
-        positions.forEach(pos -> this.boardCells[pos.x][pos.y].setClickableBackground());
+        positions.forEach(pos -> this.boardCells[pos.x()][pos.y()].setClickableBackground());
     }
 
     @FXML
