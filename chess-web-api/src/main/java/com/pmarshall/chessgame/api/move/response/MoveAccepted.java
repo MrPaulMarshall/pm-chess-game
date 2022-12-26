@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.api.move;
+package com.pmarshall.chessgame.api.move.response;
 
 public record MoveAccepted(
         boolean promotionRequired

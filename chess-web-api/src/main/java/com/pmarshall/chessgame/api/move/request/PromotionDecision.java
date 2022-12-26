@@ -1,7 +1,8 @@
-package com.pmarshall.chessgame.api.move;
+package com.pmarshall.chessgame.api.move.request;
+
+import com.pmarshall.chessgame.model.pieces.PieceType;
 
 public record PromotionDecision(
-        // TODO: change to enum
-        String piece
-) implements Move {
+        PieceType decision
+) implements MoveRequest {
 }

@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.api.move;
+package com.pmarshall.chessgame.api.move.response;
 
 import com.pmarshall.chessgame.api.Message;
 

@@ -1,9 +1,6 @@
-package com.pmarshall.chessgame.api.move;
+package com.pmarshall.chessgame.api.move.request;
 
-import com.pmarshall.chessgame.model.properties.Position;
+import com.pmarshall.chessgame.api.Message;
 
-public record MoveRequest(
-        Position startingPosition,
-        Position finalPosition
-) implements Move {
+public interface MoveRequest extends Message {
 }
