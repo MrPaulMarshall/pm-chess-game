@@ -1,21 +1,47 @@
 package com.marshall.chessgame.server;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-@SpringBootApplication
-@RestController
 public class Server {
 
-    @GetMapping("/server/test/{number}")
-    public String getHandler(@PathVariable(required = true) Long number) {
-        return "Hi from the server, " + number;
+    private static final Thread mainThread = Thread.currentThread();
+
+    public static void main(String[] args) throws IOException {
+        Runtime.getRuntime().addShutdownHook(new CleanUpHook());
+
+        final ServerSocket serverSocket = initializeServer();
+        try (serverSocket) {
+            acceptClientConnections(serverSocket);
+        }
     }
 
-    public static void main(String[] args) {
-        SpringApplication.run(Server.class, args);
+    private static ServerSocket initializeServer() throws IOException {
+        // TODO: initialize the server: collections of player-handlers, ServerSocket etc.
+        return new ServerSocket(0);
+    }
+
+    private static void acceptClientConnections(ServerSocket serverSocket) throws IOException {
+        while (true) {
+            Socket socket = serverSocket.accept();
+            initiateClientSession(socket);
+        }
+    }
+
+    private static void initiateClientSession(Socket socket) throws IOException {
+        // TODO: implement me :)
+        socket.close();
+    }
+
+    /**
+     * Shutdown hook that will terminate open games, interrupt threads, close opened sockets etc.
+     */
+    private static class CleanUpHook extends Thread {
+        @Override
+        public void run() {
+            // TODO: implement me :)
+            mainThread.interrupt();
+        }
     }
 }

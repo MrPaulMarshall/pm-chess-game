@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.model.game;
 import com.pmarshall.chessgame.model.moves.Move;
 import com.pmarshall.chessgame.model.pieces.King;
 import com.pmarshall.chessgame.model.pieces.Piece;
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class Player {
     /**
      * Stores color: {white, black}
      */
-    private final PlayerColor playerColor;
+    private final Color color;
 
     /**
      * Stores all pieces left to the player
@@ -28,14 +28,14 @@ public class Player {
      */
     private King king;
 
-    public Player(PlayerColor playerColor) {
-        this.playerColor = playerColor;
+    public Player(Color color) {
+        this.color = color;
     }
 
     // Getters
 
-    public PlayerColor getColor() {
-        return this.playerColor;
+    public Color getColor() {
+        return this.color;
     }
 
     public List<Piece> getPieces() {
@@ -53,7 +53,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return this.playerColor == PlayerColor.WHITE ? "WHITES" : "BLACKS";
+        return this.color == Color.WHITE ? "WHITES" : "BLACKS";
     }
 
     /**

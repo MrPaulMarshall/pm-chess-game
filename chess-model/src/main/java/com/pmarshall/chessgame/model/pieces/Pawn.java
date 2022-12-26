@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.pieces;
 
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.game.Game;
 import com.pmarshall.chessgame.model.moves.BasicMove;
@@ -12,7 +12,7 @@ import com.pmarshall.chessgame.model.moves.Promotion;
  *
  * Extends abstract class Piece
  */
-public class Pawn extends Piece {
+public final class Pawn extends Piece {
     /**
      * Constant that determines direction of pawn's move
      *  whites: -1 (bottom-up)
@@ -20,9 +20,9 @@ public class Pawn extends Piece {
      */
     private final int s;
 
-    public Pawn(PlayerColor playerColor) {
-        super(playerColor);
-        this.s = playerColor == PlayerColor.WHITE ? -1 : 1;
+    public Pawn(Color color) {
+        super(color);
+        this.s = color == Color.WHITE ? -1 : 1;
     }
 
     @Override
@@ -31,22 +31,22 @@ public class Pawn extends Piece {
 
         // 2 fields forward - as it is pawn's first move, positions ahead are certainly valid
         if (didNotMoveYet) {
-            if (game.board[position.x][position.y + s] == null &&
-                    game.board[position.x][position.y + 2*s] == null) {
+            if (game.board[position.x()][position.y() + s] == null &&
+                    game.board[position.x()][position.y() + 2*s] == null) {
 
                 movesWithoutProtectingKing.add(new DoublePawnStart(
-                        this, new Position(position.x, position.y + 2*s)));
+                        this, new Position(position.x(), position.y() + 2*s)));
             }
         }
 
         // 1 field forward - normal straight pawn's move
-        if (validPosition(position.x, position.y + s) &&
-                game.board[position.x][position.y + s] == null) {
+        if (validPosition(position.x(), position.y() + s) &&
+                game.board[position.x()][position.y() + s] == null) {
 
             BasicMove basicMove = new BasicMove(
-                    this, new Position(position.x, position.y + s), null, null);
+                    this, new Position(position.x(), position.y() + s), null, null);
 
-            if (position.y + s == 0 || position.y + s == 7) {
+            if (position.y() + s == 0 || position.y() + s == 7) {
                 // if piece lands on the last row, promotion must be executed afterwards
                 movesWithoutProtectingKing.add(new Promotion(basicMove));
             }
@@ -63,12 +63,12 @@ public class Pawn extends Piece {
 
         // normal capturing diagonally
         for (int i : directions) {
-            int x = position.x + i;
-            int y = position.y + s;
+            int x = position.x() + i;
+            int y = position.y() + s;
 
             if (validPosition(x, y) &&
                     game.board[x][y] != null &&
-                    game.board[x][y].playerColor != this.playerColor) {
+                    game.board[x][y].color != this.color) {
 
                 BasicMove basicMove = new BasicMove(this, new Position(x, y), game.board[x][y], new Position(x, y));
 
@@ -86,17 +86,22 @@ public class Pawn extends Piece {
         //  if last move was double-pawn-start by enemy pawn, and they are currently at the same row (and neighbours)
         //  as double-pawn-start was executed, the target-field is certainly free
         if (game.getLastMove() instanceof DoublePawnStart
-                && game.getLastMove().getNewPosition().y == this.position.y
-                && Math.abs(game.getLastMove().getNewPosition().x - this.position.x) == 1) {
+                && game.getLastMove().getNewPosition().y() == this.position.y()
+                && Math.abs(game.getLastMove().getNewPosition().x() - this.position.x()) == 1) {
 
-            int x = game.getLastMove().getNewPosition().x;
-            int y = position.y + s;
+            int x = game.getLastMove().getNewPosition().x();
+            int y = position.y() + s;
 
             if (validPosition(x, y) && game.board[x][y] == null) {
                 movesWithoutProtectingKing.add(new BasicMove(
-                        this, new Position(x, y), game.board[x][position.y], new Position(x, position.y)));
+                        this, new Position(x, y), game.board[x][position.y()], new Position(x, position.y())));
             }
         }
+    }
+
+    @Override
+    public PieceType getType() {
+        return PieceType.PAWN;
     }
 
     @Override

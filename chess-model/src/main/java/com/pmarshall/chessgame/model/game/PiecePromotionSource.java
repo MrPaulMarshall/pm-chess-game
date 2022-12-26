@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.model.game;
 
-import com.pmarshall.chessgame.model.pieces.Piece;
+import com.pmarshall.chessgame.model.pieces.PieceType;
 
 public interface PiecePromotionSource {
-    Piece getPromotedPiece();
+    PieceType getPromotedPiece();
 }

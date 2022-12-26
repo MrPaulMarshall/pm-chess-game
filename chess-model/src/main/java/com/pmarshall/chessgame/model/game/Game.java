@@ -1,13 +1,13 @@
 package com.pmarshall.chessgame.model.game;
 
 import com.pmarshall.chessgame.model.pieces.*;
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.moves.Move;
 
 /**
  * @author Paweł Marszał
- *
+ * <p>
  * Class that represent the totality of logical model of the game
  * It contains chessboard itself, players, and pieces.
  */
@@ -95,7 +95,7 @@ public class Game {
         return this.currentPlayer == this.whitePlayer ? this.blackPlayer : this.whitePlayer;
     }
 
-    private Player getPlayerByColor(PlayerColor color) {
+    private Player getPlayerByColor(Color color) {
         return this.currentPlayer.getColor() == color ? this.currentPlayer : this.getOtherPlayer();
     }
 
@@ -112,12 +112,12 @@ public class Game {
      */
     public void removePiece(Piece piece) {
         this.getPlayerByColor(piece.getColor()).getPieces().remove(piece);
-        this.board[piece.getPosition().x][piece.getPosition().y] = null;
+        this.board[piece.getPosition().x()][piece.getPosition().y()] = null;
     }
 
     public void addPieceBack(Piece piece, Position pos) {
         this.getPlayerByColor(piece.getColor()).getPieces().add(piece);
-        this.board[pos.x][pos.y] = piece;
+        this.board[pos.x()][pos.y()] = piece;
     }
 
     /**
@@ -134,7 +134,7 @@ public class Game {
         // potentially remove enemy piece
         if (move.getPieceToTake() != null) {
             Position posOfTakenPiece = move.getPieceToTake().getPosition();
-            this.board[posOfTakenPiece.x][posOfTakenPiece.y] = null;
+            this.board[posOfTakenPiece.x()][posOfTakenPiece.y()] = null;
             this.getOtherPlayer().getPieces().remove(move.getPieceToTake());
         }
 
@@ -146,7 +146,7 @@ public class Game {
         this.currentPlayer.getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
         // check is enemy king is now threatened
         this.getOtherPlayer().getKing().setIsChecked(
-                this.isPosThreaten(this.getOtherPlayer().getKing().getPosition(), this.currentPlayer));
+                this.isPosThreatened(this.getOtherPlayer().getKing().getPosition(), this.currentPlayer));
 
         // change player
         this.changePlayer();
@@ -177,7 +177,7 @@ public class Game {
         // potentially remove enemy piece
         if (move.getPieceToTake() != null) {
             Position posOfTakenPiece = move.getPieceToTake().getPosition();
-            this.board[posOfTakenPiece.x][posOfTakenPiece.y] = null;
+            this.board[posOfTakenPiece.x()][posOfTakenPiece.y()] = null;
             this.getOtherPlayer().getPieces().remove(move.getPieceToTake());
         }
 
@@ -188,7 +188,7 @@ public class Game {
         // update moves (without concern for king's safety)
         this.getOtherPlayer().getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
         // check is current king is now threatened
-        boolean isKingUnderCheck = this.isPosThreaten(this.currentPlayer.getKing().getPosition(), this.getOtherPlayer());
+        boolean isKingUnderCheck = this.isPosThreatened(this.currentPlayer.getKing().getPosition(), this.getOtherPlayer());
 
         // undo move
         this.lastMove = trulyLastMove;
@@ -197,7 +197,7 @@ public class Game {
         // potentially return enemy piece
         if (move.getPieceToTake() != null) {
             Position posOfTakenPiece = move.getPieceToTake().getPosition();
-            this.board[posOfTakenPiece.x][posOfTakenPiece.y] = move.getPieceToTake();
+            this.board[posOfTakenPiece.x()][posOfTakenPiece.y()] = move.getPieceToTake();
             this.getOtherPlayer().getPieces().add(move.getPieceToTake());
         }
 
@@ -210,7 +210,7 @@ public class Game {
      * @param player player whose pieces would be threatening position
      * @return true if position is threaten by player's pieces, false otherwise
      */
-    public boolean isPosThreaten(Position position, Player player) {
+    public boolean isPosThreatened(Position position, Player player) {
         return player.getPieces().stream().anyMatch(
                 piece -> piece.getMovesWithoutProtectingKing().stream().anyMatch(m -> m.getNewPosition().equals(position))
         );
@@ -221,7 +221,15 @@ public class Game {
      * @return piece chosen by player
      */
     public Piece askForPromotedPiece() {
-        return this.piecePromotionSource.getPromotedPiece();
+        Color color = this.currentPlayer.getColor();
+        PieceType type = this.piecePromotionSource.getPromotedPiece();
+        return switch (type) {
+            case QUEEN -> new Queen(color);
+            case ROOK -> new Rook(color);
+            case BISHOP -> new Bishop(color);
+            case KNIGHT -> new Knight(color);
+            default -> throw new IllegalStateException("Should never happen");
+        };
     }
 
     /**
@@ -245,7 +253,7 @@ public class Game {
      * @param position where piece should be inserted
      */
     private void addNewPiece(Piece piece, Player player, Position position) {
-        this.board[position.x][position.y] = piece;
+        this.board[position.x()][position.y()] = piece;
         piece.setPosition(position);
         player.getPieces().add(piece);
     }
@@ -259,42 +267,42 @@ public class Game {
      */
     private void initializeGame() {
         // Create players
-        this.whitePlayer = new Player(PlayerColor.WHITE);
-        this.blackPlayer = new Player(PlayerColor.BLACK);
+        this.whitePlayer = new Player(Color.WHITE);
+        this.blackPlayer = new Player(Color.BLACK);
 
         // WHITES
         for (int i = 0; i < 8; i++) {
-            addNewPiece(new Pawn(PlayerColor.WHITE), this.whitePlayer, new Position(i, 6));
+            addNewPiece(new Pawn(Color.WHITE), this.whitePlayer, new Position(i, 6));
         }
-        addNewPiece(new Rook(PlayerColor.WHITE), this.whitePlayer, new Position(0, 7));
-        addNewPiece(new Knight(PlayerColor.WHITE), this.whitePlayer, new Position(1, 7));
-        addNewPiece(new Bishop(PlayerColor.WHITE), this.whitePlayer, new Position(2, 7));
-        addNewPiece(new Queen(PlayerColor.WHITE), this.whitePlayer, new Position(3, 7));
+        addNewPiece(new Rook(Color.WHITE), this.whitePlayer, new Position(0, 7));
+        addNewPiece(new Knight(Color.WHITE), this.whitePlayer, new Position(1, 7));
+        addNewPiece(new Bishop(Color.WHITE), this.whitePlayer, new Position(2, 7));
+        addNewPiece(new Queen(Color.WHITE), this.whitePlayer, new Position(3, 7));
 
-        King whiteKing = new King(PlayerColor.WHITE);
+        King whiteKing = new King(Color.WHITE);
         addNewPiece(whiteKing, this.whitePlayer, new Position(4, 7));
         this.whitePlayer.setKing(whiteKing);
 
-        addNewPiece(new Bishop(PlayerColor.WHITE), this.whitePlayer, new Position(5, 7));
-        addNewPiece(new Knight(PlayerColor.WHITE), this.whitePlayer, new Position(6, 7));
-        addNewPiece(new Rook(PlayerColor.WHITE), this.whitePlayer, new Position(7, 7));
+        addNewPiece(new Bishop(Color.WHITE), this.whitePlayer, new Position(5, 7));
+        addNewPiece(new Knight(Color.WHITE), this.whitePlayer, new Position(6, 7));
+        addNewPiece(new Rook(Color.WHITE), this.whitePlayer, new Position(7, 7));
 
         // BLACKS
         for (int i = 0; i < 8; i++) {
-            addNewPiece(new Pawn(PlayerColor.BLACK), this.blackPlayer, new Position(i, 1));
+            addNewPiece(new Pawn(Color.BLACK), this.blackPlayer, new Position(i, 1));
         }
-        addNewPiece(new Rook(PlayerColor.BLACK), this.blackPlayer, new Position(0, 0));
-        addNewPiece(new Knight(PlayerColor.BLACK), this.blackPlayer, new Position(1, 0));
-        addNewPiece(new Bishop(PlayerColor.BLACK), this.blackPlayer, new Position(2, 0));
-        addNewPiece(new Queen(PlayerColor.BLACK), this.blackPlayer, new Position(3, 0));
+        addNewPiece(new Rook(Color.BLACK), this.blackPlayer, new Position(0, 0));
+        addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(1, 0));
+        addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(2, 0));
+        addNewPiece(new Queen(Color.BLACK), this.blackPlayer, new Position(3, 0));
 
-        King blackKing = new King(PlayerColor.BLACK);
+        King blackKing = new King(Color.BLACK);
         addNewPiece(blackKing, this.blackPlayer, new Position(4, 0));
         this.blackPlayer.setKing(blackKing);
 
-        addNewPiece(new Bishop(PlayerColor.BLACK), this.blackPlayer, new Position(5, 0));
-        addNewPiece(new Knight(PlayerColor.BLACK), this.blackPlayer, new Position(6, 0));
-        addNewPiece(new Rook(PlayerColor.BLACK), this.blackPlayer, new Position(7, 0));
+        addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(5, 0));
+        addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(6, 0));
+        addNewPiece(new Rook(Color.BLACK), this.blackPlayer, new Position(7, 0));
 
         // Set initial flags
         this.winner = null;

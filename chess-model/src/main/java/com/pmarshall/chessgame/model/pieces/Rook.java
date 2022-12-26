@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.pieces;
 
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.game.Game;
 
 /**
@@ -8,7 +8,7 @@ import com.pmarshall.chessgame.model.game.Game;
  *
  * Extends abstract class Piece
  */
-public class Rook extends Piece {
+public final class Rook extends Piece {
     // directions: up, right, down, left
     static private final int[][] moveDirections = {
             {0, 1},
@@ -17,14 +17,19 @@ public class Rook extends Piece {
             {-1, 0}
     };
 
-    public Rook(PlayerColor playerColor) {
-        super(playerColor);
+    public Rook(Color color) {
+        super(color);
     }
 
     @Override
     public void updateMovesWithoutProtectingKing(Game game) {
         movesWithoutProtectingKing.clear();
         movesWithoutProtectingKing.addAll(unlimitedMovesInGivenDirections(game, moveDirections));
+    }
+
+    @Override
+    public PieceType getType() {
+        return PieceType.ROOK;
     }
 
     @Override

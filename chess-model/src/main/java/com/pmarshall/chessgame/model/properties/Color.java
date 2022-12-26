@@ -5,10 +5,10 @@ package com.pmarshall.chessgame.model.properties;
  *
  * Stores color of pieces, which are also identifiers of players
  */
-public enum PlayerColor {
+public enum Color {
     WHITE, BLACK;
 
-    public PlayerColor next() {
+    public Color next() {
         return this == WHITE ? BLACK : WHITE;
     }
 

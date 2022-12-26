@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.pieces;
 
-import com.pmarshall.chessgame.model.properties.PlayerColor;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.game.Game;
 import com.pmarshall.chessgame.model.moves.BasicMove;
@@ -21,7 +21,7 @@ public abstract class Piece {
     /**
      * Color of the piece (and its owner)
      */
-    protected final PlayerColor playerColor;
+    protected final Color color;
     /**
      * Position of the piece on the board
      */
@@ -46,8 +46,8 @@ public abstract class Piece {
      *
      * @param playerColor color of piece's owner
      */
-    public Piece(PlayerColor playerColor) {
-        this.playerColor = playerColor;
+    public Piece(Color playerColor) {
+        this.color = playerColor;
         this.position = null;
     }
 
@@ -77,6 +77,8 @@ public abstract class Piece {
      */
     abstract public void updateMovesWithoutProtectingKing(Game game);
 
+    public abstract PieceType getType();
+
     /**
      * @return representation of piece in 'chess notation'
      */
@@ -85,7 +87,7 @@ public abstract class Piece {
     // Setters
 
     public void setPosition(Position position) {
-        this.position = new Position(position.x, position.y);
+        this.position = position;
     }
 
     public void markThatFigureMoved() {
@@ -103,8 +105,8 @@ public abstract class Piece {
         return position;
     }
 
-    public PlayerColor getColor() {
-        return this.playerColor;
+    public Color getColor() {
+        return this.color;
     }
 
     public boolean getDidNotMoveFlag() {
@@ -146,15 +148,15 @@ public abstract class Piece {
 
         for (int[] dir : directions) {
             // start from closest cell in this direction
-            int x = position.x + dir[0];
-            int y = position.y + dir[1];
+            int x = position.x() + dir[0];
+            int y = position.y() + dir[1];
 
             while (validPosition(x, y)) {
                 if (game.board[x][y] == null) {
                     // cell is free
                     moves.add(new BasicMove(
                             this, new Position(x, y), null, null));
-                } else if (game.board[x][y].playerColor != this.playerColor) {
+                } else if (game.board[x][y].color != this.color) {
                     // enemy figure blocks path
                     moves.add(new BasicMove(
                             this, new Position(x, y), game.board[x][y], new Position(x, y)));
@@ -184,12 +186,12 @@ public abstract class Piece {
         List<Move> moves = new LinkedList<>();
 
         for (int[] jump : jumps) {
-            int x = position.x + jump[0];
-            int y = position.y + jump[1];
+            int x = position.x() + jump[0];
+            int y = position.y() + jump[1];
 
             // if new position is valid and either cell is free or there is an enemy to kill
             if (validPosition(x, y) &&
-                    (game.board[x][y] == null || game.board[x][y].playerColor != this.playerColor)) {
+                    (game.board[x][y] == null || game.board[x][y].color != this.color)) {
 
                 moves.add(new BasicMove(this, new Position(x, y), game.board[x][y],
                         game.board[x][y] != null ? new Position(x, y) : null));
