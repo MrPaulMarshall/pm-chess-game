@@ -9,12 +9,15 @@ public final class Parser {
 
     private static final ObjectMapper jackson = new ObjectMapper();
 
-    public Message deserialize(byte[] data, int length) throws JsonProcessingException {
+    public static Message deserialize(byte[] data, int length) throws JsonProcessingException {
         String json = new String(data, 0, length, StandardCharsets.UTF_8);
-        return jackson.readValue(json, Message.class);
+        Message msg = jackson.readValue(json, Message.class);
+        if (msg == null)
+            throw new JsonProcessingException("Json \"null\" is not allowed") {};
+        return msg;
     }
 
-    public byte[] serialize(Message msg) {
+    public static byte[] serialize(Message msg) {
         try {
             String json = jackson.writeValueAsString(msg);
             return json.getBytes(StandardCharsets.UTF_8);
