@@ -26,4 +26,18 @@ public final class Parser {
                     "This exception should never have happened, because the Message objects are serializable", ex);
         }
     }
+
+    public static byte[] serializeLength(int length) {
+        byte[] buffer = new byte[2];
+        buffer[0] = (byte) (length & 0xFF);
+        buffer[1] = (byte) ((length >> 8) & 0xFF);
+        return buffer;
+    }
+
+    public static int deserializeLength(byte[] buffer) {
+        int length = 0;
+        length += buffer[0];
+        length += ((int) buffer[1]) << 8;
+        return length;
+    }
 }
