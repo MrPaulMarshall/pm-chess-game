@@ -14,6 +14,6 @@ public enum Color {
 
     @Override
     public String toString() {
-        return this == WHITE ? "White" : "Black";
+        return name().toLowerCase();
     }
 }
