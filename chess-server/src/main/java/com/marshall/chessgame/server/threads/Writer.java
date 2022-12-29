@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -25,17 +24,12 @@ public class Writer extends Thread {
 
 
     /* COMMUNICATION CHANNELS */
-    private final Semaphore semaphore;
-    private final BlockingQueue<GameOutcome> outcomeQueue; // capacity == 1
-    private final BlockingQueue<Message> queue;
+    private final Semaphore semaphore = new Semaphore(0);
+    private final BlockingQueue<GameOutcome> outcomeQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
 
     public Writer(Color color, String id, OutputStream out, Master masterThread) {
         super("Writer-" + id + "-" + color);
-
-        /* Initialize input channels for Writer thread */
-        this.semaphore = new Semaphore(0);
-        this.outcomeQueue = new LinkedBlockingQueue<>();
-        this.queue = new LinkedBlockingQueue<>();
 
         this.id = id;
         this.color = color;

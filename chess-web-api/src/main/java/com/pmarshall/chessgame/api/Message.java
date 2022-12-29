@@ -8,9 +8,10 @@ import com.pmarshall.chessgame.api.endrequest.Surrender;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.request.Move;
-import com.pmarshall.chessgame.api.move.request.PromotionDecision;
+import com.pmarshall.chessgame.api.move.request.Promotion;
 import com.pmarshall.chessgame.api.move.response.MoveAccepted;
 import com.pmarshall.chessgame.api.move.response.MoveRejected;
+import com.pmarshall.chessgame.api.move.response.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 
 @JsonTypeInfo(
@@ -24,9 +25,10 @@ import com.pmarshall.chessgame.api.outcome.GameOutcome;
         @Type(value = DrawRequest.class, name = "DrawRequest"),
         @Type(value = Surrender.class, name = "Surrender"),
         @Type(value = Move.class, name = "Move"),
-        @Type(value = PromotionDecision.class, name = "PromotionDecision"),
+        @Type(value = Promotion.class, name = "PromotionDecision"),
         @Type(value = MoveAccepted.class, name = "MoveAccepted"),
-        @Type(value = MoveRejected.class, name = "MoveRejected")
+        @Type(value = MoveRejected.class, name = "MoveRejected"),
+        @Type(value = OpponentMoved.class, name = "OpponentMoved")
 })
 public interface Message {
 }

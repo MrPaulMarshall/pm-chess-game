@@ -60,7 +60,6 @@ public class Reader extends Thread {
                 if (message instanceof ChatMessage) {
                     opponentWriter.pushMessage(message);
                 } else if (message instanceof Surrender) {
-                    // if blocks, that means the opponent has already surrendered
                     masterThread.notifySurrender(color);
                 } else if (message instanceof DrawRequest || message instanceof MoveRequest) {
                     masterThread.pushMessage(color, message);
