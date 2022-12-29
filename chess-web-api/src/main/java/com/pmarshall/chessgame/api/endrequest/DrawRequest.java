@@ -11,10 +11,8 @@ public record DrawRequest(
         Objects.requireNonNull(action);
     }
 
-    // TODO: consider splitting into two message types - request/response?
     public enum Action {
         PROPOSE,
-        ALREADY_PROPOSED,
         ACCEPT,
         REJECT
     }
