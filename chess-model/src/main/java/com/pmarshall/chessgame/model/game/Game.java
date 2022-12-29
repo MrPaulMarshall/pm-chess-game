@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.model.game;
 
+import com.pmarshall.chessgame.model.moves.Promotion;
 import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
@@ -118,6 +119,25 @@ public class Game {
     public void addPieceBack(Piece piece, Position pos) {
         this.getPlayerByColor(piece.getColor()).getPieces().add(piece);
         this.board[pos.x()][pos.y()] = piece;
+    }
+
+    public boolean isLegalMove(Position from, Position to) {
+        Piece piece = this.board[from.x()][from.y()];
+        if (piece == null)
+            return false;
+        return piece.findMoveByTargetPosition(to) != null;
+    }
+
+    public boolean isPromotionRequired(Position from, Position to) {
+        Piece piece = this.board[from.x()][from.y()];
+        if (piece == null)
+            return false;
+        return piece.findMoveByTargetPosition(to) instanceof Promotion;
+    }
+
+    public void executeMove(Position from, Position to) {
+        Piece piece = this.board[from.x()][from.y()];
+        executeMove(piece.findMoveByTargetPosition(to));
     }
 
     /**
