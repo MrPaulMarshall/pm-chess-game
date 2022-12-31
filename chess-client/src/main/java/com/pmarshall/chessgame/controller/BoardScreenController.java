@@ -1,8 +1,7 @@
 package com.pmarshall.chessgame.controller;
 
-import com.pmarshall.chessgame.model.game.Game;
-import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Chessboard;
 import com.pmarshall.chessgame.presenter.BoardCell;
@@ -57,9 +56,10 @@ public class BoardScreenController {
     private final BoardCell[][] boardCells;
     private BoardScreenView boardScreenView = null;
 
-    public BoardScreenController(Stage primaryStage) {
+    public BoardScreenController(Stage primaryStage, Chessboard game) {
         this.primaryStage = primaryStage;
         this.gameIsRunning = false;
+        this.game = game;
 
         this.boardCells = new BoardCell[8][8];
         for (int i = 0; i < 8; i++) {
@@ -76,7 +76,6 @@ public class BoardScreenController {
     public void initRootLayout() throws Exception {
         this.primaryStage.setTitle("Chess board");
 
-        this.game = new Game();
         this.pieceChosen = null;
         this.gameIsRunning = true;
         reloadBoard();

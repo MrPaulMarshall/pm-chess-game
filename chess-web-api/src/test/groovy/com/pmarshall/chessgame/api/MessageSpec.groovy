@@ -11,7 +11,7 @@ import com.pmarshall.chessgame.api.move.request.Promotion
 import com.pmarshall.chessgame.api.move.response.MoveAccepted
 import com.pmarshall.chessgame.api.move.response.MoveRejected
 import com.pmarshall.chessgame.api.outcome.GameOutcome
-import com.pmarshall.chessgame.model.pieces.PieceType
+import com.pmarshall.chessgame.model.properties.PieceType
 import com.pmarshall.chessgame.model.properties.Color
 import com.pmarshall.chessgame.model.properties.Position
 import spock.lang.Specification

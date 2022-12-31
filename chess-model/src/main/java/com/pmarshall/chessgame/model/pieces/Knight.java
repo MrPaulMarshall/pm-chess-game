@@ -2,6 +2,7 @@ package com.pmarshall.chessgame.model.pieces;
 
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.game.Game;
+import com.pmarshall.chessgame.model.properties.PieceType;
 
 /**
  * @author Paweł Marszał

@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.presenter;
 
 import com.pmarshall.chessgame.controller.BoardScreenController;
-import com.pmarshall.chessgame.model.pieces.PieceType;
+import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Chessboard;

@@ -3,6 +3,7 @@ package com.pmarshall.chessgame.model.game;
 import com.pmarshall.chessgame.model.moves.Promotion;
 import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.moves.Move;
 import com.pmarshall.chessgame.model.service.Chessboard;

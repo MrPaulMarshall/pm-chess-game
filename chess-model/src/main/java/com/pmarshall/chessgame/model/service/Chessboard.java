@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.service;
 
-import com.pmarshall.chessgame.model.pieces.PieceType;
+import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import org.apache.commons.lang3.tuple.Pair;

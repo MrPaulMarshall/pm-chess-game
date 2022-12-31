@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.controller;
 
 import com.pmarshall.chessgame.model.properties.Color;
-import com.pmarshall.chessgame.model.pieces.PieceType;
+import com.pmarshall.chessgame.model.properties.PieceType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
