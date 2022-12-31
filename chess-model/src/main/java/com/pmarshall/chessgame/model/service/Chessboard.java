@@ -16,6 +16,8 @@ public interface Chessboard {
 
     boolean gameEnded();
 
+    String lastMoveInNotation();
+
     /**
      * @return pair {winner, message}, where winner == null in case of a draw.
      */

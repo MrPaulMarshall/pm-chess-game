@@ -1,10 +1,10 @@
 package com.pmarshall.chessgame.controller;
 
 import com.pmarshall.chessgame.model.game.Game;
-import com.pmarshall.chessgame.model.game.Player;
 import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
+import com.pmarshall.chessgame.model.service.Chessboard;
 import com.pmarshall.chessgame.presenter.BoardCell;
 import com.pmarshall.chessgame.presenter.BoardScreenView;
 import javafx.fxml.FXMLLoader;
@@ -37,10 +37,15 @@ public class BoardScreenController {
     /**
      * References to model
      */
-    private Game game;
+    private Chessboard game;
 
     private Map<Position, Set<Position>> currentLegalMoves;
     private Set<Pair<Position, Position>> promotions;
+
+    public Pair<PieceType, Color>[][] getBoard() {
+        return board;
+    }
+
     private Pair<PieceType, Color>[][] board;
 
     private Position pieceChosen;
@@ -136,24 +141,20 @@ public class BoardScreenController {
         if (!successfulMove)
             return;
 
+        this.reloadBoard();
+
         this.boardScreenView.printLastMove();
         this.boardScreenView.reloadBoardView();
 
-        // check win condition etc.
-//        Pair<Color, String> gameOutcome = game.outcome();
-//        if (gameOutcome != null) {
-//            this.endGame(gameOutcome.getLeft(), gameOutcome.getRight());
-//        }
-        if (game.getWinner() != null) {
-            this.endGame(game.getWinner());
-        }
-        if (game.isDraw()) {
-            this.endGame(null);
+        // check win conditions
+        Pair<Color, String> gameOutcome = game.outcome();
+        if (gameOutcome != null) {
+            // TODO: use the message as well
+            this.endGame(gameOutcome.getLeft());
         }
 
-        // game still lasts
+        // game is still running
         this.pieceChosen = null;
-        this.reloadBoard();
     }
 
     /**
@@ -183,21 +184,22 @@ public class BoardScreenController {
      */
     public PieceType getPromotedPiece() {
         ChoosePromotionPieceController controller = new ChoosePromotionPieceController();
-        return controller.askForPromotionPiece(game.getCurrentPlayer().getColor());
+        return controller.askForPromotionPiece(game.currentPlayer());
     }
 
     /**
      * Disables board, creates dialog with result, and closes the program
-     * @param player winner of the game (or null, if draw)
+     * @param winner winner of the game (or null, if draw)
      */
-    public void endGame(Player player) {
+    public void endGame(Color winner) {
         // this disables 'Draw' and 'Surrender' buttons after end of the game, when board is still visible
         if (!this.gameIsRunning) return;
 
         this.gameIsRunning = false;
         this.boardScreenView.reloadBoardView();
 
-        String result = player == null ? "THE GAME HAS ENDED IN A DRAW" : (player + " HAS WON, CONGRATULATIONS");
+        String result = winner == null ? "THE GAME HAS ENDED IN A DRAW"
+                : (winner.toString().toUpperCase() + " HAS WON, CONGRATULATIONS");
 
         Stage endGameStage = new Stage();
         endGameStage.setTitle("End game dialog");

@@ -1,9 +1,10 @@
 package com.pmarshall.chessgame.presenter;
 
 import com.pmarshall.chessgame.controller.BoardScreenController;
-import com.pmarshall.chessgame.model.game.Game;
-import com.pmarshall.chessgame.model.pieces.Piece;
+import com.pmarshall.chessgame.model.pieces.PieceType;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
+import com.pmarshall.chessgame.model.service.Chessboard;
 import com.pmarshall.chessgame.services.ImageProvider;
 import com.pmarshall.chessgame.services.LocalResourceImageProvider;
 import javafx.event.ActionEvent;
@@ -11,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collection;
 
@@ -32,9 +34,9 @@ public class BoardScreenView {
     private BoardCell[][] boardCells;
 
     /**
-     * Reference to Game object, to read data to display from the model
+     * Reference to Chessboard object, to read data to display from the model
      */
-    private Game game;
+    private Chessboard game;
 
     /**
      * Source of the images to display the pieces
@@ -68,11 +70,7 @@ public class BoardScreenView {
      */
     public void printLastMove() {
         this.movesTextArea.setEditable(true);
-        this.movesTextArea.appendText(
-                game.getLastMove().getPieceToMove().getColor().toString() + ": "
-                        + (game.getCurrentPlayer().isKingChecked() ? "+" : "")
-                        + game.getLastMove().toString() + "\n"
-        );
+        this.movesTextArea.appendText(game.currentPlayer().next() + ": " + (game.activeCheck() ? "+" : "") + game.lastMoveInNotation() + "\n");
         this.movesTextArea.setEditable(false);
     }
 
@@ -86,10 +84,20 @@ public class BoardScreenView {
             }
         }
 
-        // check
         if (game.activeCheck()) {
-            Position p = game.getCurrentPlayer().getKing().getPosition();
-            this.boardCells[p.x()][p.y()].setCheckedBackground();
+            markCheckedKingsField();
+        }
+    }
+
+    private void markCheckedKingsField() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Pair<PieceType, Color> piece = boardScreenController.getBoard()[i][j];
+                if (piece != null && piece.getLeft() == PieceType.KING && piece.getRight() == game.currentPlayer()) {
+                    this.boardCells[i][j].setCheckedBackground();
+                    return;
+                }
+            }
         }
     }
 
@@ -98,12 +106,12 @@ public class BoardScreenView {
      */
     public void reloadBoardView() {
         this.refreshBackground();
-        this.currentPlayerName.setText(game.getCurrentPlayer().toString());
+        this.currentPlayerName.setText(game.currentPlayer().toString());
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                Piece piece = game.getPiece(i, j);
+                Pair<PieceType, Color> piece = boardScreenController.getBoard()[i][j];
                 this.boardCells[i][j].setImage(
-                        piece == null ? null : imageProvider.getImage(piece.getType(), piece.getColor()));
+                        piece == null ? null : imageProvider.getImage(piece.getLeft(), piece.getRight()));
             }
         }
     }
@@ -114,7 +122,7 @@ public class BoardScreenView {
         this.boardScreenController = boardScreenController;
     }
 
-    public void setGame(Game game) {
+    public void setGame(Chessboard game) {
         this.game = game;
     }
 
@@ -138,7 +146,7 @@ public class BoardScreenView {
 
     @FXML
     public void handleSurrenderAction(ActionEvent e) {
-        this.boardScreenController.endGame(this.game.getOtherPlayer());
+        this.boardScreenController.endGame(game.currentPlayer().next());
     }
 
     @FXML

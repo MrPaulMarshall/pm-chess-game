@@ -160,6 +160,11 @@ public class Game implements Chessboard {
     }
 
     @Override
+    public String lastMoveInNotation() {
+        return lastMove.toString();
+    }
+
+    @Override
     public Pair<Color, String> outcome() {
         if (draw)
             return Pair.of(null, "Stalemate");
