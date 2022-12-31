@@ -5,6 +5,11 @@ import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.moves.Move;
+import com.pmarshall.chessgame.model.service.Chessboard;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+
+import java.util.Collection;
 
 /**
  * @author Paweł Marszał
@@ -12,7 +17,7 @@ import com.pmarshall.chessgame.model.moves.Move;
  * Class that represent the totality of logical model of the game
  * It contains chessboard itself, players, and pieces.
  */
-public class Game {
+public class Game implements Chessboard {
     /**
      * If true, game is proceeding normally
      * If false, game is in simulation mode, in order to check if given move would leave own king in check
@@ -22,7 +27,7 @@ public class Game {
     /**
      * Reference to controller, needed to ask player for piece during promotion
      */
-    private final PiecePromotionSource piecePromotionSource;
+    private PieceType promotedPiece;
 
     /**
      * Array that represents board itself
@@ -53,11 +58,9 @@ public class Game {
 
     /**
      * Creates new Game
-     * @param piecePromotionSource allows to ask a user for a decision what Piece to promote the pawn into
      */
-    public Game(PiecePromotionSource piecePromotionSource) {
+    public Game() {
         this.gameMode = true;
-        this.piecePromotionSource = piecePromotionSource;
 
         this.board = new Piece[8][8];
         for (int i = 0; i < 8; i++) {
@@ -121,23 +124,91 @@ public class Game {
         this.board[pos.x()][pos.y()] = piece;
     }
 
-    public boolean isLegalMove(Position from, Position to) {
+    private boolean isIllegalMove(Position from, Position to, PieceType promotion) {
         Piece piece = this.board[from.x()][from.y()];
         if (piece == null)
-            return false;
-        return piece.findMoveByTargetPosition(to) != null;
+            return true;
+        Move move = piece.findMoveByTargetPosition(to);
+        if (move == null)
+            return true;
+
+        if (move instanceof Promotion) {
+            if (promotion == null)
+                return true;
+            return !switch (promotion) {
+                case QUEEN, ROOK, BISHOP, KNIGHT -> true;
+                default -> false;
+            };
+        } else {
+            return promotion != null;
+        }
     }
 
-    public boolean isPromotionRequired(Position from, Position to) {
-        Piece piece = this.board[from.x()][from.y()];
-        if (piece == null)
-            return false;
-        return piece.findMoveByTargetPosition(to) instanceof Promotion;
+    @Override
+    public Color currentPlayer() {
+        return currentPlayer.getColor();
     }
 
-    public void executeMove(Position from, Position to) {
+    @Override
+    public boolean activeCheck() {
+        return currentPlayer.isKingChecked();
+    }
+
+    @Override
+    public boolean gameEnded() {
+        return draw || winner != null;
+    }
+
+    @Override
+    public Pair<Color, String> outcome() {
+        if (draw)
+            return Pair.of(null, "Stalemate");
+        if (winner != null)
+            return Pair.of(winner.getColor(), "Checkmate");
+        return null;
+    }
+
+    @Override
+    public Pair<PieceType, Color>[][] getBoardWithPieces() {
+        Pair<PieceType, Color>[][] result = new Pair[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece piece = board[i][j];
+                if (piece != null) {
+                    result[i][j] = Pair.of(piece.getType(), piece.getColor());
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<Triple<Position, Position, Boolean>> legalMoves() {
+        return currentPlayer.getAllPossibleMoves().stream()
+                .map(move -> Triple.of(
+                        move.getPieceToMove().getPosition(), move.getNewPosition(), move instanceof Promotion))
+                .toList();
+    }
+
+    @Override
+    public boolean executeMove(Position from, Position to) {
+        if (isIllegalMove(from, to, null))
+            return false;
+
         Piece piece = this.board[from.x()][from.y()];
         executeMove(piece.findMoveByTargetPosition(to));
+        return true;
+    }
+
+    @Override
+    public boolean executeMove(Position from, Position to, PieceType promotion) {
+        if (isIllegalMove(from, to, promotion))
+            return false;
+
+        promotedPiece = promotion;
+        Piece piece = this.board[from.x()][from.y()];
+        executeMove(piece.findMoveByTargetPosition(to));
+        return true;
     }
 
     /**
@@ -241,9 +312,8 @@ public class Game {
      * @return piece chosen by player
      */
     public Piece askForPromotedPiece() {
-        Color color = this.currentPlayer.getColor();
-        PieceType type = this.piecePromotionSource.getPromotedPiece();
-        return switch (type) {
+        Color color = currentPlayer.getColor();
+        return switch (promotedPiece) {
             case QUEEN -> new Queen(color);
             case ROOK -> new Rook(color);
             case BISHOP -> new Bishop(color);

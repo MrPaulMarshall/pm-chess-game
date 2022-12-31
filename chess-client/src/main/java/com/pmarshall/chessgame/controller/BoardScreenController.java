@@ -1,10 +1,9 @@
 package com.pmarshall.chessgame.controller;
 
-import com.pmarshall.chessgame.model.game.PiecePromotionSource;
 import com.pmarshall.chessgame.model.game.Game;
 import com.pmarshall.chessgame.model.game.Player;
-import com.pmarshall.chessgame.model.moves.Move;
 import com.pmarshall.chessgame.model.pieces.*;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.presenter.BoardCell;
 import com.pmarshall.chessgame.presenter.BoardScreenView;
@@ -18,7 +17,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +30,7 @@ import java.util.stream.Collectors;
  *
  * Represents controller of main view of the application
  */
-public class BoardScreenController implements PiecePromotionSource {
+public class BoardScreenController {
 
     private final Stage primaryStage;
 
@@ -34,7 +38,12 @@ public class BoardScreenController implements PiecePromotionSource {
      * References to model
      */
     private Game game;
-    private Piece pieceChosen;
+
+    private Map<Position, Set<Position>> currentLegalMoves;
+    private Set<Pair<Position, Position>> promotions;
+    private Pair<PieceType, Color>[][] board;
+
+    private Position pieceChosen;
     private boolean gameIsRunning;
 
     /**
@@ -62,9 +71,10 @@ public class BoardScreenController implements PiecePromotionSource {
     public void initRootLayout() throws Exception {
         this.primaryStage.setTitle("Chess board");
 
-        this.game = new Game(this);
+        this.game = new Game();
         this.pieceChosen = null;
         this.gameIsRunning = true;
+        reloadBoard();
 
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(BoardScreenController.class
@@ -93,36 +103,47 @@ public class BoardScreenController implements PiecePromotionSource {
         if (!gameIsRunning)
             return;
 
-        Move move;
-        Piece piece;
+        Position clickedCell = new Position(i, j);
 
         // if player click on the chosen piece again, unmark it
-        if (this.game.board[i][j] == this.pieceChosen) {
+        if (clickedCell.equals(this.pieceChosen)) {
             this.pieceChosen = null;
             this.boardScreenView.refreshBackground();
         }
         // if player chosen valid move, execute it
         else if (this.pieceChosen != null
-                    && (move = this.pieceChosen.findMoveByTargetPosition(new Position(i, j))) != null) {
-            this.executeMove(move);
+                && this.currentLegalMoves.getOrDefault(this.pieceChosen, Set.of()).contains(clickedCell)) {
+            this.executeMove(this.pieceChosen, clickedCell);
         }
         // if player clicked on another of his pieces, mark it
-        else if ((piece = game.getPiece(i, j)) != null
-                && piece.getColor() == game.getCurrentPlayer().getColor()) {
-            choosePiece(piece);
+        else if (board[i][j] != null && board[i][j].getRight() == game.currentPlayer()) {
+            choosePiece(clickedCell);
         }
     }
 
     /**
-     * Executes move in the model, checks end-game conditions, and refreshes the board
-     * @param move move picked by player
+     * Executes move in the model, calls Promotion dialog window if needed,
+     * checks end-game conditions, and refreshes the board
      */
-    public void executeMove(Move move) {
-        this.game.executeMove(move);
+    public void executeMove(Position from, Position to) {
+        boolean successfulMove;
+        if (this.promotions.contains(Pair.of(from, to))) {
+            successfulMove = this.game.executeMove(from, to, getPromotedPiece());
+        } else {
+            successfulMove = this.game.executeMove(from, to);
+        }
+
+        if (!successfulMove)
+            return;
+
         this.boardScreenView.printLastMove();
         this.boardScreenView.reloadBoardView();
 
         // check win condition etc.
+//        Pair<Color, String> gameOutcome = game.outcome();
+//        if (gameOutcome != null) {
+//            this.endGame(gameOutcome.getLeft(), gameOutcome.getRight());
+//        }
         if (game.getWinner() != null) {
             this.endGame(game.getWinner());
         }
@@ -132,19 +153,28 @@ public class BoardScreenController implements PiecePromotionSource {
 
         // game still lasts
         this.pieceChosen = null;
+        this.reloadBoard();
     }
 
     /**
-     * Marks piece, so the player can move it
-     * @param piece picked by player
+     * Marks piece at specified position, so the player can move it
      */
-    public void choosePiece(Piece piece) {
+    public void choosePiece(Position pieceChosen) {
         this.boardScreenView.refreshBackground();
-        this.pieceChosen = piece;
+        this.pieceChosen = pieceChosen;
 
-        this.boardScreenView.setChosenPieceBackground(piece.getPosition());
-        this.boardScreenView.setClickableBackgrounds(
-                piece.getPossibleMoves().stream().map(Move::getNewPosition).collect(Collectors.toList()));
+        this.boardScreenView.setChosenPieceBackground(pieceChosen);
+        this.boardScreenView.setClickableBackgrounds(this.currentLegalMoves.getOrDefault(pieceChosen, Set.of()));
+    }
+
+    private void reloadBoard() {
+        this.board = game.getBoardWithPieces();
+
+        Collection<Triple<Position, Position, Boolean>> moves = game.legalMoves();
+        this.currentLegalMoves = moves.stream().collect(
+                Collectors.groupingBy(Triple::getLeft, Collectors.mapping(Triple::getMiddle, Collectors.toSet())));
+        this.promotions = moves.stream().filter(Triple::getRight)
+                .map(triple -> Pair.of(triple.getLeft(), triple.getMiddle())).collect(Collectors.toUnmodifiableSet());
     }
 
     /**

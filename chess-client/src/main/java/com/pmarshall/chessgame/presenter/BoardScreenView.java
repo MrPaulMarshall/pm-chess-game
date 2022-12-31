@@ -2,6 +2,7 @@ package com.pmarshall.chessgame.presenter;
 
 import com.pmarshall.chessgame.controller.BoardScreenController;
 import com.pmarshall.chessgame.model.game.Game;
+import com.pmarshall.chessgame.model.pieces.Piece;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.services.ImageProvider;
 import com.pmarshall.chessgame.services.LocalResourceImageProvider;
@@ -11,7 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author Paweł Marszał
@@ -86,7 +87,7 @@ public class BoardScreenView {
         }
 
         // check
-        if (game.getCurrentPlayer().isKingChecked()) {
+        if (game.activeCheck()) {
             Position p = game.getCurrentPlayer().getKing().getPosition();
             this.boardCells[p.x()][p.y()].setCheckedBackground();
         }
@@ -100,8 +101,9 @@ public class BoardScreenView {
         this.currentPlayerName.setText(game.getCurrentPlayer().toString());
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
+                Piece piece = game.getPiece(i, j);
                 this.boardCells[i][j].setImage(
-                        game.getPiece(i, j) == null ? null : imageProvider.getImage(game.getPiece(i, j)));
+                        piece == null ? null : imageProvider.getImage(piece.getType(), piece.getColor()));
             }
         }
     }
@@ -130,7 +132,7 @@ public class BoardScreenView {
         this.boardCells[position.x()][position.y()].setChosenBackground();
     }
 
-    public void setClickableBackgrounds(List<Position> positions) {
+    public void setClickableBackgrounds(Collection<Position> positions) {
         positions.forEach(pos -> this.boardCells[pos.x()][pos.y()].setClickableBackground());
     }
 

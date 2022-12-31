@@ -13,8 +13,6 @@ import com.pmarshall.chessgame.api.move.response.MoveRejected;
 import com.pmarshall.chessgame.api.move.response.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.model.game.Game;
-import com.pmarshall.chessgame.model.game.PiecePromotionSource;
-import com.pmarshall.chessgame.model.pieces.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -46,7 +44,6 @@ public class Master extends Thread {
 
     /* State of the game */
     private final Game game;
-    private final UpdatablePromotionSource promotionSource = new UpdatablePromotionSource();
     private Color drawProponent;
 
     /* Players metadata */
@@ -84,7 +81,7 @@ public class Master extends Thread {
         );
 
         /* Initialize logical representation of the game */
-        game = new Game(promotionSource);
+        game = new Game();
     }
 
     @Override
@@ -258,24 +255,18 @@ public class Master extends Thread {
             return false;
         }
 
-        boolean legalMove = game.isLegalMove(move.from(), move.to());
+        boolean legalMove;
+        if (move instanceof Promotion promotion) {
+            legalMove = game.executeMove(promotion.from(), promotion.to(), promotion.decision());
+        } else {
+            legalMove = game.executeMove(move.from(), move.to());
+        }
+
         if (!legalMove) {
             log.warn("Move {} is not legal", move);
             writerThreads.get(sender).pushMessage(new MoveRejected());
             return false;
         }
-
-        if (game.isPromotionRequired(move.from(), move.to())) {
-            if (move instanceof Promotion promotion) {
-                promotionSource.decision = promotion.decision();
-            } else {
-                log.warn("Promotion decision not supplied with move {}", move);
-                writerThreads.get(sender).pushMessage(new MoveRejected());
-                return false;
-            }
-        }
-
-        game.executeMove(move.from(), move.to());
 
         writerThreads.get(sender).pushMessage(new MoveAccepted());
 
@@ -344,17 +335,5 @@ public class Master extends Thread {
 
     public PlayerConnection[] getPlayers() {
         return new PlayerConnection[]{players.get(WHITE), players.get(BLACK)};
-    }
-
-    private static class UpdatablePromotionSource implements PiecePromotionSource {
-
-        private PieceType decision;
-
-        @Override
-        public PieceType getPromotedPiece() {
-            PieceType type = decision;
-            decision = null;
-            return type;
-        }
     }
 }
