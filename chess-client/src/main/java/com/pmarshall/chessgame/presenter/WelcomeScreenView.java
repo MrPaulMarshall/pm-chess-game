@@ -43,8 +43,16 @@ public class WelcomeScreenView {
 
 
     @FXML
-    public void handleOkAction(ActionEvent e) throws Exception {
+    public void handleLocalAction(ActionEvent e) throws Exception {
         dialogStage.close();
+        BoardScreenController boardScreenController = new BoardScreenController(primaryStage);
+        boardScreenController.initRootLayout();
+    }
+
+    @FXML
+    public void handleRemoteAction(ActionEvent e) throws Exception {
+        dialogStage.close();
+        // TODO: BoardScreenController should receive arguments differentiating remote connection from local play
         BoardScreenController boardScreenController = new BoardScreenController(primaryStage);
         boardScreenController.initRootLayout();
     }

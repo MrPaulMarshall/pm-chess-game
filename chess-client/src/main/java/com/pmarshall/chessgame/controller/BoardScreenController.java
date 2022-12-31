@@ -90,7 +90,8 @@ public class BoardScreenController implements PiecePromotionSource {
      */
     public void boardCellOnClick(int i, int j) {
         // if game has ended, board is disabled
-        if (!gameIsRunning) return;
+        if (!gameIsRunning)
+            return;
 
         Move move;
         Piece piece;

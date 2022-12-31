@@ -28,6 +28,8 @@ public class BoardCell {
             new BackgroundFill(Color.valueOf("#64764a"), CornerRadii.EMPTY, Insets.EMPTY));
 
     private static final Background MARKED_BACKGROUND = new Background(
+            new BackgroundFill(Color.valueOf("#5BBDD6"), CornerRadii.EMPTY, Insets.EMPTY));
+    private static final Background CHECKED_BACKGROUND = new Background(
             new BackgroundFill(Color.valueOf("#E2514C"), CornerRadii.EMPTY, Insets.EMPTY));
 
     /**
@@ -105,6 +107,13 @@ public class BoardCell {
      */
     public void setChosenBackground() {
         this.pane.setBackground(MARKED_BACKGROUND);
+    }
+
+    /**
+     * Marks that king on this cell is currently in check
+     */
+    public void setCheckedBackground() {
+        this.pane.setBackground(CHECKED_BACKGROUND);
     }
 
     /**

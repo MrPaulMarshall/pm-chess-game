@@ -47,6 +47,7 @@ public class ChoosePromotionPieceController {
         // create new window
         Stage stage = new Stage();
         stage.setTitle("Promoting piece dialog");
+        stage.setResizable(false);
 
         // hbox with text (at the bottom of the window)
         HBox labelHBox = new HBox();

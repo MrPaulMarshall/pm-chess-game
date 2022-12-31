@@ -32,6 +32,7 @@ public class WelcomeScreenController {
 
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Chess game - welcome screen");
+        dialogStage.setResizable(false);
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
         Scene scene = new Scene(page);

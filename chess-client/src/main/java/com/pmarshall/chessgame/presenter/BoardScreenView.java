@@ -66,11 +66,13 @@ public class BoardScreenView {
      * Prints last move into text area
      */
     public void printLastMove() {
+        this.movesTextArea.setEditable(true);
         this.movesTextArea.appendText(
                 game.getLastMove().getPieceToMove().getColor().toString() + ": "
                         + (game.getCurrentPlayer().isKingChecked() ? "+" : "")
                         + game.getLastMove().toString() + "\n"
         );
+        this.movesTextArea.setEditable(false);
     }
 
     /**
@@ -81,6 +83,12 @@ public class BoardScreenView {
             for (int j = 0; j < 8; j++) {
                 this.boardCells[i][j].refreshBackground();
             }
+        }
+
+        // check
+        if (game.getCurrentPlayer().isKingChecked()) {
+            Position p = game.getCurrentPlayer().getKing().getPosition();
+            this.boardCells[p.x()][p.y()].setCheckedBackground();
         }
     }
 
