@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.model.pieces;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.game.Game;
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.moves.BasicMove;
 import com.pmarshall.chessgame.model.moves.DoublePawnStart;
 import com.pmarshall.chessgame.model.moves.Promotion;
@@ -27,7 +27,7 @@ public final class Pawn extends Piece {
     }
 
     @Override
-    public void updateMovesWithoutProtectingKing(Game game) {
+    public void updateMovesWithoutProtectingKing(InMemoryChessGame game) {
         movesWithoutProtectingKing.clear();
 
         // 2 fields forward - as it is pawn's first move, positions ahead are certainly valid

@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.model.moves;
 import com.pmarshall.chessgame.model.pieces.King;
 import com.pmarshall.chessgame.model.pieces.Rook;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.game.Game;
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 
 /**
  * @author Paweł Marszał
@@ -34,7 +34,7 @@ public class Castling extends Move {
     }
 
     @Override
-    public void execute(Game game) {
+    public void execute(InMemoryChessGame game) {
         // King's jump
         game.board[newPosition.x()][newPosition.y()] = this.movedPiece;
         game.board[oldPosition.x()][oldPosition.y()] = null;
@@ -49,7 +49,7 @@ public class Castling extends Move {
     }
 
     @Override
-    public void undo(Game game) {
+    public void undo(InMemoryChessGame game) {
         // undo King's jump
         this.movedPiece.undoMarkThatFigureMoved();
         this.movedPiece.setPosition(oldPosition);

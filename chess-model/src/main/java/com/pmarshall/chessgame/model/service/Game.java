@@ -8,7 +8,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Collection;
 
-public interface Chessboard {
+public interface Game {
 
     Color currentPlayer();
 

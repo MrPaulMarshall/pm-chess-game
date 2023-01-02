@@ -12,7 +12,7 @@ import com.pmarshall.chessgame.api.move.response.MoveAccepted;
 import com.pmarshall.chessgame.api.move.response.MoveRejected;
 import com.pmarshall.chessgame.api.move.response.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
-import com.pmarshall.chessgame.model.game.Game;
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.properties.Color;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class Master extends Thread {
     private final int matchId;
 
     /* State of the game */
-    private final Game game;
+    private final InMemoryChessGame game;
     private Color drawProponent;
 
     /* Players metadata */
@@ -81,7 +81,7 @@ public class Master extends Thread {
         );
 
         /* Initialize logical representation of the game */
-        game = new Game();
+        game = new InMemoryChessGame();
     }
 
     @Override

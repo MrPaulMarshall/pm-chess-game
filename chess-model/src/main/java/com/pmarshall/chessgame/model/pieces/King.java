@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.model.pieces;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.game.Game;
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.moves.Castling;
 
 /**
@@ -42,7 +42,7 @@ public final class King extends Piece {
     }
 
     @Override
-    public void updateMovesWithoutProtectingKing(Game game) {
+    public void updateMovesWithoutProtectingKing(InMemoryChessGame game) {
         movesWithoutProtectingKing.clear();
 
         // normal moves in all directions, but only of length 1

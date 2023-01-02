@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.model.moves;
 
 import com.pmarshall.chessgame.model.pieces.Piece;
-import com.pmarshall.chessgame.model.game.Game;
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 
 /**
  * @author Paweł Marszał
@@ -33,7 +33,7 @@ public class Promotion extends Move {
     }
 
     @Override
-    public void execute(Game game) {
+    public void execute(InMemoryChessGame game) {
         // execute basic move
         this.basicMove.execute(game);
 
@@ -49,7 +49,7 @@ public class Promotion extends Move {
     }
 
     @Override
-    public void undo(Game game) {
+    public void undo(InMemoryChessGame game) {
         // undo exchanging pawn
         if (game.getGameMode()) {
             game.getCurrentPlayer().getPieces().remove(this.newPiece);

@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.model.pieces;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.game.Game;
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.moves.BasicMove;
 import com.pmarshall.chessgame.model.moves.Move;
 
@@ -57,9 +57,9 @@ public abstract class Piece {
     /**
      * Updates list of moves, that figure can legally make
      *
-     * @param game Game object, providing context for updating moves
+     * @param game InMemoryChessGame object, providing context for updating moves
      */
-    public void updatePossibleMoves(Game game) {
+    public void updatePossibleMoves(InMemoryChessGame game) {
         possibleMoves.clear();
         updateMovesWithoutProtectingKing(game);
 
@@ -74,9 +74,9 @@ public abstract class Piece {
      * Updates list of moves, that figure could take having ignored safety of its king
      * Needs to be implemented in each subclass
      *
-     * @param game Game object, providing context for updating moves
+     * @param game InMemoryChessGame object, providing context for updating moves
      */
-    abstract public void updateMovesWithoutProtectingKing(Game game);
+    abstract public void updateMovesWithoutProtectingKing(InMemoryChessGame game);
 
     public abstract PieceType getType();
 
@@ -139,12 +139,12 @@ public abstract class Piece {
     /**
      * Used by classes Bishop, Rook and Queen
      *
-     * @param game       Chessboard object to execute function on
+     * @param game       Game object to execute function on
      * @param directions array of pairs {horizontal step, vertical step}
      * @return list of accessible fields (all until blocked by other figure)
      * on straight lines determined by 'directions' array
      */
-    protected List<Move> unlimitedMovesInGivenDirections(Game game, int[][] directions) {
+    protected List<Move> unlimitedMovesInGivenDirections(InMemoryChessGame game, int[][] directions) {
         List<Move> moves = new LinkedList<>();
 
         for (int[] dir : directions) {
@@ -179,11 +179,11 @@ public abstract class Piece {
     /**
      * Used by classes Knight and King
      *
-     * @param game  Chessboard object to execute function on
+     * @param game  Game object to execute function on
      * @param jumps array of jumps - pairs of changes in position {horizontal step, vertical step}
      * @return list of fields determined by 'jumps' array, that can be occupied by figure
      */
-    protected List<Move> movesViaGivenJumps(Game game, int[][] jumps) {
+    protected List<Move> movesViaGivenJumps(InMemoryChessGame game, int[][] jumps) {
         List<Move> moves = new LinkedList<>();
 
         for (int[] jump : jumps) {

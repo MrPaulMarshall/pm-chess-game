@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.controller;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.service.Chessboard;
+import com.pmarshall.chessgame.model.service.Game;
 import com.pmarshall.chessgame.presenter.BoardCell;
 import com.pmarshall.chessgame.presenter.BoardScreenView;
 import javafx.fxml.FXMLLoader;
@@ -36,7 +36,7 @@ public class BoardScreenController {
     /**
      * References to model
      */
-    private Chessboard game;
+    private Game game;
 
     private Map<Position, Set<Position>> currentLegalMoves;
     private Set<Pair<Position, Position>> promotions;
@@ -56,7 +56,7 @@ public class BoardScreenController {
     private final BoardCell[][] boardCells;
     private BoardScreenView boardScreenView = null;
 
-    public BoardScreenController(Stage primaryStage, Chessboard game) {
+    public BoardScreenController(Stage primaryStage, Game game) {
         this.primaryStage = primaryStage;
         this.gameIsRunning = false;
         this.game = game;

@@ -4,7 +4,7 @@ import com.pmarshall.chessgame.controller.BoardScreenController;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.service.Chessboard;
+import com.pmarshall.chessgame.model.service.Game;
 import com.pmarshall.chessgame.services.ImageProvider;
 import com.pmarshall.chessgame.services.LocalResourceImageProvider;
 import javafx.event.ActionEvent;
@@ -34,9 +34,9 @@ public class BoardScreenView {
     private BoardCell[][] boardCells;
 
     /**
-     * Reference to Chessboard object, to read data to display from the model
+     * Reference to Game object, to read data to display from the model
      */
-    private Chessboard game;
+    private Game game;
 
     /**
      * Source of the images to display the pieces
@@ -122,7 +122,7 @@ public class BoardScreenView {
         this.boardScreenController = boardScreenController;
     }
 
-    public void setGame(Chessboard game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 

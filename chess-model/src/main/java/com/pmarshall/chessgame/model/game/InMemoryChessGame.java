@@ -6,7 +6,7 @@ import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.moves.Move;
-import com.pmarshall.chessgame.model.service.Chessboard;
+import com.pmarshall.chessgame.model.service.Game;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -18,7 +18,7 @@ import java.util.Collection;
  * Class that represent the totality of logical model of the game
  * It contains chessboard itself, players, and pieces.
  */
-public class Game implements Chessboard {
+public class InMemoryChessGame implements Game {
     /**
      * If true, game is proceeding normally
      * If false, game is in simulation mode, in order to check if given move would leave own king in check
@@ -58,9 +58,9 @@ public class Game implements Chessboard {
     private Move lastMove;
 
     /**
-     * Creates new Game
+     * Creates new InMemoryChessGame
      */
-    public Game() {
+    public InMemoryChessGame() {
         this.gameMode = true;
 
         this.board = new Piece[8][8];

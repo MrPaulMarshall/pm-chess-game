@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.model.moves;
 import com.pmarshall.chessgame.model.pieces.Pawn;
 import com.pmarshall.chessgame.model.pieces.Piece;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.game.Game;
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 
 /**
  * @author Paweł Marszał
@@ -23,7 +23,7 @@ public class BasicMove extends Move {
     }
 
     @Override
-    public void execute(Game game) {
+    public void execute(InMemoryChessGame game) {
         // remove piece, if there is any
         if (this.takenPiece != null) {
             game.removePiece(this.takenPiece);
@@ -37,7 +37,7 @@ public class BasicMove extends Move {
     }
 
     @Override
-    public void undo(Game game) {
+    public void undo(InMemoryChessGame game) {
         // restore flag
         if (this.pieceDidNotMoveBefore) {
             movedPiece.undoMarkThatFigureMoved();
