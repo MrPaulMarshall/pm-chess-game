@@ -14,6 +14,7 @@ import com.pmarshall.chessgame.api.move.response.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.service.Game;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class Master extends Thread {
     private final int matchId;
 
     /* State of the game */
-    private final InMemoryChessGame game;
+    private final Game game;
     private Color drawProponent;
 
     /* Players metadata */
@@ -249,7 +250,7 @@ public class Master extends Thread {
      * @return true if the game has ended, false if it continues
      */
     private boolean handleMoveRequest(Color sender, MoveRequest move) throws InterruptedException {
-        if (sender != game.getCurrentPlayer().getColor()) {
+        if (sender != game.currentPlayer()) {
             log.warn("Cannot push moves when because it's {} turn", sender.next());
             writerThreads.get(sender).pushMessage(new MoveRejected());
             return false;
@@ -270,32 +271,36 @@ public class Master extends Thread {
 
         writerThreads.get(sender).pushMessage(new MoveAccepted());
 
-        if (game.isDraw()) {
-            GameOutcome drawOutcome = new GameOutcome(GameOutcome.Type.DRAW, "The game ended in a stalemate");
-            terminateGame(Map.of(WHITE, drawOutcome, BLACK, drawOutcome));
+        // check if game ended
+        Pair<Color, String> gameResult = game.outcome();
+        if (gameResult != null) {
+            // TODO: remove GameOutcome.Type and use nullable "Color winner" instead, then the if-else will not be needed
+            if (gameResult.getLeft() == null) {
+                GameOutcome drawOutcome = new GameOutcome(GameOutcome.Type.DRAW, "Stalemate");
+                terminateGame(Map.of(WHITE, drawOutcome, BLACK, drawOutcome));
+            } else {
+                Color winner = gameResult.getLeft();
+                terminateGame(Map.of(
+                        winner, new GameOutcome(GameOutcome.Type.VICTORY, "Checkmate"),
+                        winner.next(), new GameOutcome(GameOutcome.Type.DEFEAT, "Checkmate")
+                ));
+            }
+
             return true;
         }
 
-        if (game.getWinner() != null) {
-            Color winner = game.getWinner().getColor();
-            terminateGame(Map.of(
-                    winner, new GameOutcome(GameOutcome.Type.VICTORY, "Checkmate"),
-                    winner.next(), new GameOutcome(GameOutcome.Type.DEFEAT, "Checkmate")
-            ));
-            return true;
-        }
-
-        List<MoveRequest> possibleMoves = game.getCurrentPlayer().getAllPossibleMoves().stream()
+        List<MoveRequest> possibleMoves = game.legalMoves().stream()
                 .map(domainMove -> {
-                    if (domainMove instanceof com.pmarshall.chessgame.model.moves.Promotion domainPromotion) {
-                        return new Promotion(domainPromotion.getPieceToMove().getPosition(), domainPromotion.getNewPosition(), null);
+                    // TODO: change messages Move
+                    if (domainMove.getRight()) {
+                        return new Promotion(domainMove.getLeft(), domainMove.getMiddle(), null);
                     } else {
-                        return new Move(domainMove.getPieceToMove().getPosition(), domainMove.getNewPosition());
+                        return new Move(domainMove.getLeft(), domainMove.getMiddle());
                     }
                 }).collect(Collectors.toUnmodifiableList());
 
-        writerThreads.get(sender.next()).pushMessage(new OpponentMoved(move.from(), move.to(),
-                game.getCurrentPlayer().isKingChecked(), possibleMoves));
+        writerThreads.get(sender.next()).pushMessage(
+                new OpponentMoved(move.from(), move.to(), game.activeCheck(), possibleMoves));
 
         return false;
     }
