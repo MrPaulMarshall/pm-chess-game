@@ -145,12 +145,12 @@ public class BoardScreenView {
     }
 
     @FXML
-    public void handleSurrenderAction(ActionEvent e) {
+    public void handleSurrenderAction(ActionEvent ignored) {
         this.boardScreenController.endGame(game.currentPlayer().next());
     }
 
     @FXML
-    public void handleDrawAction(ActionEvent e) {
+    public void handleDrawAction(ActionEvent ignored) {
         this.boardScreenController.endGame(null);
     }
 

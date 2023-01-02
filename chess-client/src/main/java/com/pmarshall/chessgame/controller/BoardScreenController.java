@@ -36,7 +36,7 @@ public class BoardScreenController {
     /**
      * References to model
      */
-    private Game game;
+    private final Game game;
 
     private Map<Position, Set<Position>> currentLegalMoves;
     private Set<Pair<Position, Position>> promotions;

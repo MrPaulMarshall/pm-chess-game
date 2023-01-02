@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 
 /**
  * @author Paweł Marszał
- *
+ * <p>
  * Class that creates and displays dialog when player chooses piece during promotion
  * It combines role of controller and the view (because it is small)
  */
@@ -49,14 +49,14 @@ public class ChoosePromotionPieceController {
         stage.setTitle("Promoting piece dialog");
         stage.setResizable(false);
 
-        // hbox with text (at the bottom of the window)
+        // horizontal box with text (at the bottom of the window)
         HBox labelHBox = new HBox();
         Label label = new Label("To choose piece double-click on it");
         label.setFont(Font.font(16));
         labelHBox.getChildren().add(label);
         labelHBox.setAlignment(Pos.CENTER);
 
-        // hbox with possible pieces (clickable)
+        // horizontal box with possible pieces (clickable)
         HBox piecesHBox = new HBox();
         piecesHBox.setMaxHeight(70);
         piecesHBox.spacingProperty().setValue(10);

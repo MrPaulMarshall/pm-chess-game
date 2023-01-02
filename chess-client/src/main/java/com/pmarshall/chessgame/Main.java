@@ -5,7 +5,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
- * @author Paweł Marszał https://github.com/MrPaulMarshall
+ * @author Paweł Marszał <a href="https://github.com/MrPaulMarshall">Github account</a>
  *
  * Main class that starts lifecycle of the game
  */

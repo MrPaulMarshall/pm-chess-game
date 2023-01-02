@@ -44,14 +44,14 @@ public class WelcomeScreenView {
 
 
     @FXML
-    public void handleLocalAction(ActionEvent e) throws Exception {
+    public void handleLocalAction(ActionEvent ignored) throws Exception {
         dialogStage.close();
         BoardScreenController boardScreenController = new BoardScreenController(primaryStage, new InMemoryChessGame());
         boardScreenController.initRootLayout();
     }
 
     @FXML
-    public void handleRemoteAction(ActionEvent e) throws Exception {
+    public void handleRemoteAction(ActionEvent ignored) throws Exception {
         dialogStage.close();
         // TODO: BoardScreenController should receive arguments differentiating remote connection from local play
         BoardScreenController boardScreenController = new BoardScreenController(primaryStage, new InMemoryChessGame());
@@ -59,7 +59,7 @@ public class WelcomeScreenView {
     }
 
     @FXML
-    public void handleCancelAction(ActionEvent e) {
+    public void handleCancelAction(ActionEvent ignored) {
         dialogStage.close();
         primaryStage.close();
     }
