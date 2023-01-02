@@ -1,4 +1,4 @@
 package com.pmarshall.chessgame.api.move.response;
 
-public record MoveAccepted() implements MoveResponse {
+public record MoveAccepted(boolean check, String moveRepresentation) implements MoveResponse {
 }

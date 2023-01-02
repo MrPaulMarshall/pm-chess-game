@@ -3,6 +3,7 @@ package com.pmarshall.chessgame.remote;
 import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
+import com.pmarshall.chessgame.controller.BoardScreenController;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
@@ -17,6 +18,8 @@ import java.net.Socket;
 import java.util.Collection;
 
 public class RemoteGameProxy implements Game {
+
+    private final BoardScreenController controller;
 
     private final Reader readerThread;
     private final Writer writerThread;
@@ -33,7 +36,10 @@ public class RemoteGameProxy implements Game {
     private Collection<Triple<Position, Position, Boolean>> legalMoves;
     private boolean activeCheck;
 
-    private RemoteGameProxy(Socket socket, InputStream in, OutputStream out, String id) {
+    private RemoteGameProxy(BoardScreenController controller,
+                            Socket socket, InputStream in, OutputStream out, String id) {
+        this.controller = controller;
+
         this.id = id;
         this.socket = socket;
 
@@ -41,14 +47,14 @@ public class RemoteGameProxy implements Game {
         this.readerThread = new Reader(in);
     }
 
-    public static RemoteGameProxy connectToServer() throws IOException {
+    public static RemoteGameProxy connectToServer(BoardScreenController controller) throws IOException {
         Socket socket = new Socket("127.0.0.1", 21370);
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
 
         String id = waitForIdAssignment(in);
 
-        return new RemoteGameProxy(socket, in, out, id);
+        return new RemoteGameProxy(controller, socket, in, out, id);
     }
 
     private static String waitForIdAssignment(InputStream in) throws IOException {
@@ -145,12 +151,16 @@ public class RemoteGameProxy implements Game {
 
     @Override
     public Pair<PieceType, Color>[][] getBoardWithPieces() {
-        return new Pair[0][];
+        Pair<PieceType, Color>[][] copy = new Pair[8][8];
+        for (int i = 0; i < 8; i++) {
+            System.arraycopy(board[i], 0, copy[i], 0, 8);
+        }
+        return copy;
     }
 
     @Override
     public Collection<Triple<Position, Position, Boolean>> legalMoves() {
-        return null;
+        return legalMoves;
     }
 
     @Override

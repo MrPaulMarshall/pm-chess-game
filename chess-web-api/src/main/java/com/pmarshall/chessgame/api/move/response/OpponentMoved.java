@@ -9,6 +9,7 @@ import java.util.List;
 public record OpponentMoved(
         Position from,
         Position to,
+        String moveRepresentation,
         boolean check,
         List<MoveRequest> possibleMoves
 ) implements Message {

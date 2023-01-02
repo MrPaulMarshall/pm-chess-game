@@ -112,9 +112,9 @@ public class Master extends Thread {
                 semaphore.acquire();
 
                 // check if any connection is down
-                Set<Color> deadConns = deadConnections.clone();
-                if (!deadConns.isEmpty()) {
-                    cleanUpAtDeadConnection(deadConns);
+                Set<Color> deadConnectionsCopy = deadConnections.clone();
+                if (!deadConnectionsCopy.isEmpty()) {
+                    cleanUpAtDeadConnection(deadConnectionsCopy);
                     joinWorkerThreads();
                     break;
                 }
@@ -186,11 +186,11 @@ public class Master extends Thread {
         joinWorkerThreads();
     }
 
-    private void cleanUpAtDeadConnection(Set<Color> deadConns) throws InterruptedException {
+    private void cleanUpAtDeadConnection(Set<Color> deadConnections) throws InterruptedException {
         readerThreads.values().forEach(Thread::interrupt);
 
-        if (deadConns.size() == 1) {
-            Color color = deadConns.iterator().next();
+        if (deadConnections.size() == 1) {
+            Color color = deadConnections.iterator().next();
 
             // Inform the active player that the opponent had quit
             writerThreads.get(color.next()).pushGameOutcome(
@@ -198,7 +198,7 @@ public class Master extends Thread {
         } // else there is no one to notify
 
         // Kill the Writer threads operating on broken connections
-        for (Color color : deadConns) {
+        for (Color color : deadConnections) {
             writerThreads.get(color).interrupt();
             try {
                 players.get(color).out().close();
@@ -271,7 +271,7 @@ public class Master extends Thread {
             return false;
         }
 
-        writerThreads.get(sender).pushMessage(new MoveAccepted());
+        writerThreads.get(sender).pushMessage(new MoveAccepted(game.activeCheck(), game.lastMoveInNotation()));
 
         // check if game ended
         Pair<Color, String> gameResult = game.outcome();
@@ -302,7 +302,7 @@ public class Master extends Thread {
                 }).collect(Collectors.toUnmodifiableList());
 
         writerThreads.get(sender.next()).pushMessage(
-                new OpponentMoved(move.from(), move.to(), game.activeCheck(), possibleMoves));
+                new OpponentMoved(move.from(), move.to(), game.lastMoveInNotation(), game.activeCheck(), possibleMoves));
 
         return false;
     }
