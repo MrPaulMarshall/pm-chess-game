@@ -92,8 +92,10 @@ public class Master extends Thread {
 
         /* Prepare init messages */
         try {
-            writerThreads.get(WHITE).pushMessage(new MatchFound(players.get(BLACK).id(), WHITE));
-            writerThreads.get(WHITE).pushMessage(new MatchFound(players.get(BLACK).id(), WHITE));
+            writerThreads.get(BLACK).pushMessage(
+                    new MatchFound(BLACK, players.get(WHITE).id(), Collections.emptyList()));
+            writerThreads.get(WHITE).pushMessage(
+                    new MatchFound(WHITE, players.get(BLACK).id(), game.legalMoves()));
         } catch (InterruptedException ignored) {
             log.warn("Thread {} interrupted before the game could start", Thread.currentThread().getName());
             return;
