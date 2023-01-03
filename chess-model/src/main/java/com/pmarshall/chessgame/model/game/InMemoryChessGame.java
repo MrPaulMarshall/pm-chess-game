@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.model.game;
 
+import com.pmarshall.chessgame.model.api.LegalMove;
 import com.pmarshall.chessgame.model.moves.Promotion;
 import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.properties.Color;
@@ -8,9 +9,8 @@ import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.moves.Move;
 import com.pmarshall.chessgame.model.service.Game;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Paweł Marszał
@@ -189,11 +189,10 @@ public class InMemoryChessGame implements Game {
     }
 
     @Override
-    public Collection<Triple<Position, Position, Boolean>> legalMoves() {
-        return currentPlayer.getAllPossibleMoves().stream()
-                .map(move -> Triple.of(
-                        move.getPieceToMove().getPosition(), move.getNewPosition(), move instanceof Promotion))
-                .toList();
+    public List<LegalMove> legalMoves() {
+        return currentPlayer.getAllPossibleMoves().stream().map(
+                move -> new LegalMove(move.getPieceToMove().getPosition(), move.getNewPosition(), move instanceof Promotion)
+        ).toList();
     }
 
     @Override

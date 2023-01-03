@@ -4,18 +4,18 @@ import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.controller.BoardScreenController;
+import com.pmarshall.chessgame.model.api.LegalMove;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Collection;
+import java.util.List;
 
 public class RemoteGameProxy implements Game {
 
@@ -33,7 +33,7 @@ public class RemoteGameProxy implements Game {
 
     private Pair<PieceType, Color>[][] board;
     private Color currentPlayer;
-    private Collection<Triple<Position, Position, Boolean>> legalMoves;
+    private List<LegalMove> legalMoves;
     private boolean activeCheck;
 
     private RemoteGameProxy(BoardScreenController controller,
@@ -159,7 +159,7 @@ public class RemoteGameProxy implements Game {
     }
 
     @Override
-    public Collection<Triple<Position, Position, Boolean>> legalMoves() {
+    public List<LegalMove> legalMoves() {
         return legalMoves;
     }
 

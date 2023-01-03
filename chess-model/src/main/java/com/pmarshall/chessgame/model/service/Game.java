@@ -1,12 +1,12 @@
 package com.pmarshall.chessgame.model.service;
 
+import com.pmarshall.chessgame.model.api.LegalMove;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface Game {
 
@@ -32,7 +32,7 @@ public interface Game {
     /**
      * @return collection of triples {from, to, promotionRequired} that represent legal moves in current turn
      */
-    Collection<Triple<Position, Position, Boolean>> legalMoves();
+    List<LegalMove> legalMoves();
 
     /**
      * @return true if move is legal and thus executed. In case promotion is required this call will fail.

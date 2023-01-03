@@ -5,7 +5,6 @@ import com.marshall.chessgame.server.PlayerConnection;
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.endrequest.DrawRequest;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
-import com.pmarshall.chessgame.api.move.request.Move;
 import com.pmarshall.chessgame.api.move.request.MoveRequest;
 import com.pmarshall.chessgame.api.move.request.Promotion;
 import com.pmarshall.chessgame.api.move.response.MoveAccepted;
@@ -22,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 import static com.pmarshall.chessgame.model.properties.Color.BLACK;
 import static com.pmarshall.chessgame.model.properties.Color.WHITE;
@@ -291,18 +289,9 @@ public class Master extends Thread {
             return true;
         }
 
-        List<MoveRequest> possibleMoves = game.legalMoves().stream()
-                .map(domainMove -> {
-                    // TODO: change messages Move
-                    if (domainMove.getRight()) {
-                        return new Promotion(domainMove.getLeft(), domainMove.getMiddle(), null);
-                    } else {
-                        return new Move(domainMove.getLeft(), domainMove.getMiddle());
-                    }
-                }).collect(Collectors.toUnmodifiableList());
-
-        writerThreads.get(sender.next()).pushMessage(
-                new OpponentMoved(move.from(), move.to(), game.lastMoveInNotation(), game.activeCheck(), possibleMoves));
+        OpponentMoved opponentNotification = new OpponentMoved(
+                move.from(), move.to(), game.lastMoveInNotation(), game.activeCheck(), game.legalMoves());
+        writerThreads.get(sender.next()).pushMessage(opponentNotification);
 
         return false;
     }

@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.controller;
 
+import com.pmarshall.chessgame.model.api.LegalMove;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
@@ -17,9 +18,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -170,11 +170,11 @@ public class BoardScreenController {
     private void reloadBoard() {
         this.board = game.getBoardWithPieces();
 
-        Collection<Triple<Position, Position, Boolean>> moves = game.legalMoves();
+        List<LegalMove> moves = game.legalMoves();
         this.currentLegalMoves = moves.stream().collect(
-                Collectors.groupingBy(Triple::getLeft, Collectors.mapping(Triple::getMiddle, Collectors.toSet())));
-        this.promotions = moves.stream().filter(Triple::getRight)
-                .map(triple -> Pair.of(triple.getLeft(), triple.getMiddle())).collect(Collectors.toUnmodifiableSet());
+                Collectors.groupingBy(LegalMove::from, Collectors.mapping(LegalMove::to, Collectors.toSet())));
+        this.promotions = moves.stream().filter(LegalMove::promotion)
+                .map(move -> Pair.of(move.from(), move.to())).collect(Collectors.toUnmodifiableSet());
     }
 
     /**
