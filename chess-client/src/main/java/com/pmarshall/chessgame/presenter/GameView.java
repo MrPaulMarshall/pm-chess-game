@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.presenter;
 
-import com.pmarshall.chessgame.controller.BoardScreenController;
+import com.pmarshall.chessgame.controller.GameController;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
@@ -21,17 +21,17 @@ import java.util.Collection;
  *
  * View class that displays main screen of the game (with board)
  */
-public class BoardScreenView {
+public class GameView {
 
     /**
      * Reference to controller
      */
-    private BoardScreenController boardScreenController;
+    private GameController gameController;
 
     /**
      * Board - arrays of cells (from GUI's perspective)
      */
-    private BoardCell[][] boardCells;
+    private ChessboardCell[][] chessboard;
 
     /**
      * Reference to Game object, to read data to display from the model
@@ -80,7 +80,7 @@ public class BoardScreenView {
     public void refreshBackground() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                this.boardCells[i][j].refreshBackground();
+                this.chessboard[i][j].refreshBackground();
             }
         }
 
@@ -92,9 +92,9 @@ public class BoardScreenView {
     private void markCheckedKingsField() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                Pair<PieceType, Color> piece = boardScreenController.getBoard()[i][j];
+                Pair<PieceType, Color> piece = gameController.getBoard()[i][j];
                 if (piece != null && piece.getLeft() == PieceType.KING && piece.getRight() == game.currentPlayer()) {
-                    this.boardCells[i][j].setCheckedBackground();
+                    this.chessboard[i][j].setCheckedBackground();
                     return;
                 }
             }
@@ -109,8 +109,8 @@ public class BoardScreenView {
         this.currentPlayerName.setText(game.currentPlayer().toString());
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                Pair<PieceType, Color> piece = boardScreenController.getBoard()[i][j];
-                this.boardCells[i][j].setImage(
+                Pair<PieceType, Color> piece = gameController.getBoard()[i][j];
+                this.chessboard[i][j].setImage(
                         piece == null ? null : imageProvider.getImage(piece.getLeft(), piece.getRight()));
             }
         }
@@ -118,40 +118,40 @@ public class BoardScreenView {
 
     // Setters
 
-    public void setBoardScreenAppController(BoardScreenController boardScreenController) {
-        this.boardScreenController = boardScreenController;
+    public void setBoardScreenAppController(GameController gameController) {
+        this.gameController = gameController;
     }
 
     public void setGame(Game game) {
         this.game = game;
     }
 
-    public void setBoardCells(BoardCell[][] boardCells) {
-        this.boardCells = boardCells;
+    public void setBoardCells(ChessboardCell[][] board) {
+        this.chessboard = board;
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                this.chessBoardGrid.add(this.boardCells[i][j].getPane(), i, j);
+                this.chessBoardGrid.add(this.chessboard[i][j].getPane(), i, j);
             }
         }
     }
 
     public void setChosenPieceBackground(Position position) {
-        this.boardCells[position.x()][position.y()].setChosenBackground();
+        this.chessboard[position.x()][position.y()].setChosenBackground();
     }
 
     public void setClickableBackgrounds(Collection<Position> positions) {
-        positions.forEach(pos -> this.boardCells[pos.x()][pos.y()].setClickableBackground());
+        positions.forEach(pos -> this.chessboard[pos.x()][pos.y()].setClickableBackground());
     }
 
     @FXML
     public void handleSurrenderAction(ActionEvent ignored) {
-        this.boardScreenController.endGame(game.currentPlayer().next());
+        this.gameController.endGame(game.currentPlayer().next());
     }
 
     @FXML
     public void handleDrawAction(ActionEvent ignored) {
-        this.boardScreenController.endGame(null);
+        this.gameController.endGame(null);
     }
 
 }

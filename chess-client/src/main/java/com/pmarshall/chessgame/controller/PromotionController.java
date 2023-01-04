@@ -18,7 +18,7 @@ import javafx.stage.Stage;
  * Class that creates and displays dialog when player chooses piece during promotion
  * It combines role of controller and the view (because it is small)
  */
-public class ChoosePromotionPieceController {
+public class PromotionController {
 
     /**
      * Background on which pieces to choose are displayed

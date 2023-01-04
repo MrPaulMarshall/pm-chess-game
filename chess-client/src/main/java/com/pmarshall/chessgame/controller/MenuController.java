@@ -5,18 +5,18 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import com.pmarshall.chessgame.presenter.WelcomeScreenView;
+import com.pmarshall.chessgame.presenter.MenuView;
 
 /**
  * @author Paweł Marszał
  *
  * Controller that initializes and displays 'welcome' screen
  */
-public class WelcomeScreenController {
+public class MenuController {
 
     private final Stage primaryStage;
 
-    public WelcomeScreenController(Stage primaryStage) {
+    public MenuController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
@@ -26,8 +26,8 @@ public class WelcomeScreenController {
      */
     public void initRootLayout() throws Exception {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(WelcomeScreenController.class
-                .getResource("/view/welcome_screen.fxml"));
+        loader.setLocation(MenuController.class
+                .getResource("/view/menu_screen.fxml"));
         BorderPane page = loader.load();
 
         Stage dialogStage = new Stage();
@@ -38,9 +38,9 @@ public class WelcomeScreenController {
         Scene scene = new Scene(page);
         dialogStage.setScene(scene);
 
-        WelcomeScreenView welcomeScreenView = loader.getController();
-        welcomeScreenView.setDialogStage(dialogStage);
-        welcomeScreenView.setPrimaryStage(primaryStage);
+        MenuView menuView = loader.getController();
+        menuView.setDialogStage(dialogStage);
+        menuView.setPrimaryStage(primaryStage);
 
         dialogStage.showAndWait();
     }

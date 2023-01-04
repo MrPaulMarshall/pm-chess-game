@@ -5,8 +5,8 @@ import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
-import com.pmarshall.chessgame.presenter.BoardCell;
-import com.pmarshall.chessgame.presenter.BoardScreenView;
+import com.pmarshall.chessgame.presenter.ChessboardCell;
+import com.pmarshall.chessgame.presenter.GameView;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  *
  * Represents controller of main view of the application
  */
-public class BoardScreenController {
+public class GameController {
 
     private final Stage primaryStage;
 
@@ -53,18 +53,18 @@ public class BoardScreenController {
     /**
      * References to view
      */
-    private final BoardCell[][] boardCells;
-    private BoardScreenView boardScreenView = null;
+    private final ChessboardCell[][] chessboardCells;
+    private GameView gameView = null;
 
-    public BoardScreenController(Stage primaryStage, Game game) {
+    public GameController(Stage primaryStage, Game game) {
         this.primaryStage = primaryStage;
         this.gameIsRunning = false;
         this.game = game;
 
-        this.boardCells = new BoardCell[8][8];
+        this.chessboardCells = new ChessboardCell[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                boardCells[i][j] = new BoardCell(i, j, this);
+                chessboardCells[i][j] = new ChessboardCell(i, j, this);
             }
         }
     }
@@ -81,16 +81,16 @@ public class BoardScreenController {
         reloadBoard();
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(BoardScreenController.class
+        loader.setLocation(GameController.class
                 .getResource("/view/board_screen.fxml"));
         BorderPane rootLayout = loader.load();
 
-        boardScreenView = loader.getController();
-        boardScreenView.setBoardScreenAppController(this);
-        boardScreenView.setBoardCells(boardCells);
-        boardScreenView.setGame(this.game);
+        gameView = loader.getController();
+        gameView.setBoardScreenAppController(this);
+        gameView.setBoardCells(chessboardCells);
+        gameView.setGame(this.game);
 
-        boardScreenView.reloadBoardView();
+        gameView.reloadBoardView();
 
         Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
@@ -112,7 +112,7 @@ public class BoardScreenController {
         // if player click on the chosen piece again, unmark it
         if (clickedCell.equals(this.pieceChosen)) {
             this.pieceChosen = null;
-            this.boardScreenView.refreshBackground();
+            this.gameView.refreshBackground();
         }
         // if player chosen valid move, execute it
         else if (this.pieceChosen != null
@@ -142,8 +142,8 @@ public class BoardScreenController {
 
         this.reloadBoard();
 
-        this.boardScreenView.printLastMove();
-        this.boardScreenView.reloadBoardView();
+        this.gameView.printLastMove();
+        this.gameView.reloadBoardView();
 
         // check win conditions
         Pair<Color, String> gameOutcome = game.outcome();
@@ -160,21 +160,23 @@ public class BoardScreenController {
      * Marks piece at specified position, so the player can move it
      */
     public void choosePiece(Position pieceChosen) {
-        this.boardScreenView.refreshBackground();
+        this.gameView.refreshBackground();
         this.pieceChosen = pieceChosen;
 
-        this.boardScreenView.setChosenPieceBackground(pieceChosen);
-        this.boardScreenView.setClickableBackgrounds(this.currentLegalMoves.getOrDefault(pieceChosen, Set.of()));
+        this.gameView.setChosenPieceBackground(pieceChosen);
+        this.gameView.setClickableBackgrounds(this.currentLegalMoves.getOrDefault(pieceChosen, Set.of()));
     }
 
     private void reloadBoard() {
         this.board = game.getBoardWithPieces();
 
         List<LegalMove> moves = game.legalMoves();
-        this.currentLegalMoves = moves.stream().collect(
-                Collectors.groupingBy(LegalMove::from, Collectors.mapping(LegalMove::to, Collectors.toSet())));
-        this.promotions = moves.stream().filter(LegalMove::promotion)
-                .map(move -> Pair.of(move.from(), move.to())).collect(Collectors.toUnmodifiableSet());
+        this.currentLegalMoves = moves.stream()
+                .collect(Collectors.groupingBy(LegalMove::from, Collectors.mapping(LegalMove::to, Collectors.toSet())));
+        this.promotions = moves.stream()
+                .filter(LegalMove::promotion)
+                .map(move -> Pair.of(move.from(), move.to()))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     /**
@@ -182,7 +184,7 @@ public class BoardScreenController {
      * @return piece chosen by player
      */
     public PieceType getPromotedPiece() {
-        ChoosePromotionPieceController controller = new ChoosePromotionPieceController();
+        PromotionController controller = new PromotionController();
         return controller.askForPromotionPiece(game.currentPlayer());
     }
 
@@ -195,7 +197,7 @@ public class BoardScreenController {
         if (!this.gameIsRunning) return;
 
         this.gameIsRunning = false;
-        this.boardScreenView.reloadBoardView();
+        this.gameView.reloadBoardView();
 
         String result = winner == null ? "THE GAME HAS ENDED IN A DRAW"
                 : (winner.toString().toUpperCase() + " HAS WON, CONGRATULATIONS");

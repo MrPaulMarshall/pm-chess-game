@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.remote;
 import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
-import com.pmarshall.chessgame.controller.BoardScreenController;
+import com.pmarshall.chessgame.controller.GameController;
 import com.pmarshall.chessgame.model.api.LegalMove;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class RemoteGameProxy implements Game {
 
-    private final BoardScreenController controller;
+    private final GameController controller;
 
     private final Reader readerThread;
     private final Writer writerThread;
@@ -36,7 +36,7 @@ public class RemoteGameProxy implements Game {
     private List<LegalMove> legalMoves;
     private boolean activeCheck;
 
-    private RemoteGameProxy(BoardScreenController controller,
+    private RemoteGameProxy(GameController controller,
                             Socket socket, InputStream in, OutputStream out, String id) {
         this.controller = controller;
 
@@ -47,7 +47,7 @@ public class RemoteGameProxy implements Game {
         this.readerThread = new Reader(in);
     }
 
-    public static RemoteGameProxy connectToServer(BoardScreenController controller) throws IOException {
+    public static RemoteGameProxy connectToServer(GameController controller) throws IOException {
         Socket socket = new Socket("127.0.0.1", 21370);
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();

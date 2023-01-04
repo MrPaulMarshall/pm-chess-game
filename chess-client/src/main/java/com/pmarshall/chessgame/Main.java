@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame;
 
-import com.pmarshall.chessgame.controller.WelcomeScreenController;
+import com.pmarshall.chessgame.controller.MenuController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -18,8 +18,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Chess game by Paweł Marszał");
-        WelcomeScreenController welcomeScreenController = new WelcomeScreenController(primaryStage);
-        welcomeScreenController.initRootLayout();
+        MenuController menuController = new MenuController(primaryStage);
+        menuController.initRootLayout();
     }
 
 }

@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="500.0" prefWidth="650.0" maxWidth="650.0"
             xmlns="http://javafx.com/javafx/8.0.40"
-            fx:controller="com.pmarshall.chessgame.presenter.BoardScreenView">
+            fx:controller="com.pmarshall.chessgame.presenter.GameView">
 
     <center>
         <VBox id="APP" prefWidth="500" maxWidth="500" minWidth="405"  >

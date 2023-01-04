@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.presenter;
 
-import com.pmarshall.chessgame.controller.BoardScreenController;
+import com.pmarshall.chessgame.controller.GameController;
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,7 +14,7 @@ import javafx.stage.Stage;
  *
  * Class that represents screen that welcomes players before game starts
  */
-public class WelcomeScreenView {
+public class MenuView {
 
     private Stage dialogStage;
     private Stage primaryStage;
@@ -46,16 +46,16 @@ public class WelcomeScreenView {
     @FXML
     public void handleLocalAction(ActionEvent ignored) throws Exception {
         dialogStage.close();
-        BoardScreenController boardScreenController = new BoardScreenController(primaryStage, new InMemoryChessGame());
-        boardScreenController.initRootLayout();
+        GameController gameController = new GameController(primaryStage, new InMemoryChessGame());
+        gameController.initRootLayout();
     }
 
     @FXML
     public void handleRemoteAction(ActionEvent ignored) throws Exception {
         dialogStage.close();
-        // TODO: BoardScreenController should receive arguments differentiating remote connection from local play
-        BoardScreenController boardScreenController = new BoardScreenController(primaryStage, new InMemoryChessGame());
-        boardScreenController.initRootLayout();
+        // TODO: GameController should receive arguments differentiating remote connection from local play
+        GameController gameController = new GameController(primaryStage, new InMemoryChessGame());
+        gameController.initRootLayout();
     }
 
     @FXML
