@@ -27,7 +27,7 @@ public class Server {
 
     private static void initializeServer() throws IOException {
         register = new MatchRegister();
-        serverSocket = new ServerSocket(0);
+        serverSocket = new ServerSocket(21370);
         register.start();
     }
 

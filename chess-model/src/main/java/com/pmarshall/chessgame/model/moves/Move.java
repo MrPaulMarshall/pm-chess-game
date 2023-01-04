@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.moves;
 
-import com.pmarshall.chessgame.model.game.Game;
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.pieces.Piece;
 import com.pmarshall.chessgame.model.properties.Position;
 
@@ -46,13 +46,13 @@ public abstract class Move {
      * Executes move
      * @param game provides context
      */
-    public abstract void execute(Game game);
+    public abstract void execute(InMemoryChessGame game);
 
     /**
      * Undoes execution of move
      * @param game provides context
      */
-    public abstract void undo(Game game);
+    public abstract void undo(InMemoryChessGame game);
 
     /**
      * Used to print move on the logger

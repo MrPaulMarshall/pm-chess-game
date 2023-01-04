@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.controller;
 
 import com.pmarshall.chessgame.model.properties.Color;
-import com.pmarshall.chessgame.model.pieces.PieceType;
+import com.pmarshall.chessgame.model.properties.PieceType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -14,11 +14,11 @@ import javafx.stage.Stage;
 
 /**
  * @author Paweł Marszał
- *
+ * <p>
  * Class that creates and displays dialog when player chooses piece during promotion
  * It combines role of controller and the view (because it is small)
  */
-public class ChoosePromotionPieceController {
+public class PromotionController {
 
     /**
      * Background on which pieces to choose are displayed
@@ -47,15 +47,16 @@ public class ChoosePromotionPieceController {
         // create new window
         Stage stage = new Stage();
         stage.setTitle("Promoting piece dialog");
+        stage.setResizable(false);
 
-        // hbox with text (at the bottom of the window)
+        // horizontal box with text (at the bottom of the window)
         HBox labelHBox = new HBox();
         Label label = new Label("To choose piece double-click on it");
         label.setFont(Font.font(16));
         labelHBox.getChildren().add(label);
         labelHBox.setAlignment(Pos.CENTER);
 
-        // hbox with possible pieces (clickable)
+        // horizontal box with possible pieces (clickable)
         HBox piecesHBox = new HBox();
         piecesHBox.setMaxHeight(70);
         piecesHBox.spacingProperty().setValue(10);

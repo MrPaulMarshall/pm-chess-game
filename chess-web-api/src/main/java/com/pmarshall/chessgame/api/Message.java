@@ -25,7 +25,7 @@ import com.pmarshall.chessgame.api.outcome.GameOutcome;
         @Type(value = DrawRequest.class, name = "DrawRequest"),
         @Type(value = Surrender.class, name = "Surrender"),
         @Type(value = Move.class, name = "Move"),
-        @Type(value = Promotion.class, name = "PromotionDecision"),
+        @Type(value = Promotion.class, name = "Promotion"),
         @Type(value = MoveAccepted.class, name = "MoveAccepted"),
         @Type(value = MoveRejected.class, name = "MoveRejected"),
         @Type(value = OpponentMoved.class, name = "OpponentMoved")

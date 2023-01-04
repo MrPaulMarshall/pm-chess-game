@@ -5,17 +5,15 @@ import com.marshall.chessgame.server.PlayerConnection;
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.endrequest.DrawRequest;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
-import com.pmarshall.chessgame.api.move.request.Move;
 import com.pmarshall.chessgame.api.move.request.MoveRequest;
 import com.pmarshall.chessgame.api.move.request.Promotion;
 import com.pmarshall.chessgame.api.move.response.MoveAccepted;
 import com.pmarshall.chessgame.api.move.response.MoveRejected;
 import com.pmarshall.chessgame.api.move.response.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
-import com.pmarshall.chessgame.model.game.Game;
-import com.pmarshall.chessgame.model.game.PiecePromotionSource;
-import com.pmarshall.chessgame.model.pieces.PieceType;
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.service.Game;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 import static com.pmarshall.chessgame.model.properties.Color.BLACK;
 import static com.pmarshall.chessgame.model.properties.Color.WHITE;
@@ -46,7 +43,6 @@ public class Master extends Thread {
 
     /* State of the game */
     private final Game game;
-    private final UpdatablePromotionSource promotionSource = new UpdatablePromotionSource();
     private Color drawProponent;
 
     /* Players metadata */
@@ -84,7 +80,7 @@ public class Master extends Thread {
         );
 
         /* Initialize logical representation of the game */
-        game = new Game(promotionSource);
+        game = new InMemoryChessGame();
     }
 
     @Override
@@ -94,8 +90,10 @@ public class Master extends Thread {
 
         /* Prepare init messages */
         try {
-            writerThreads.get(WHITE).pushMessage(new MatchFound(players.get(BLACK).id(), WHITE));
-            writerThreads.get(WHITE).pushMessage(new MatchFound(players.get(BLACK).id(), WHITE));
+            writerThreads.get(BLACK).pushMessage(
+                    new MatchFound(BLACK, players.get(WHITE).id(), Collections.emptyList()));
+            writerThreads.get(WHITE).pushMessage(
+                    new MatchFound(WHITE, players.get(BLACK).id(), game.legalMoves()));
         } catch (InterruptedException ignored) {
             log.warn("Thread {} interrupted before the game could start", Thread.currentThread().getName());
             return;
@@ -112,9 +110,9 @@ public class Master extends Thread {
                 semaphore.acquire();
 
                 // check if any connection is down
-                Set<Color> deadConns = deadConnections.clone();
-                if (!deadConns.isEmpty()) {
-                    cleanUpAtDeadConnection(deadConns);
+                Set<Color> deadConnectionsCopy = deadConnections.clone();
+                if (!deadConnectionsCopy.isEmpty()) {
+                    cleanUpAtDeadConnection(deadConnectionsCopy);
                     joinWorkerThreads();
                     break;
                 }
@@ -186,11 +184,11 @@ public class Master extends Thread {
         joinWorkerThreads();
     }
 
-    private void cleanUpAtDeadConnection(Set<Color> deadConns) throws InterruptedException {
+    private void cleanUpAtDeadConnection(Set<Color> deadConnections) throws InterruptedException {
         readerThreads.values().forEach(Thread::interrupt);
 
-        if (deadConns.size() == 1) {
-            Color color = deadConns.iterator().next();
+        if (deadConnections.size() == 1) {
+            Color color = deadConnections.iterator().next();
 
             // Inform the active player that the opponent had quit
             writerThreads.get(color.next()).pushGameOutcome(
@@ -198,7 +196,7 @@ public class Master extends Thread {
         } // else there is no one to notify
 
         // Kill the Writer threads operating on broken connections
-        for (Color color : deadConns) {
+        for (Color color : deadConnections) {
             writerThreads.get(color).interrupt();
             try {
                 players.get(color).out().close();
@@ -252,59 +250,48 @@ public class Master extends Thread {
      * @return true if the game has ended, false if it continues
      */
     private boolean handleMoveRequest(Color sender, MoveRequest move) throws InterruptedException {
-        if (sender != game.getCurrentPlayer().getColor()) {
+        if (sender != game.currentPlayer()) {
             log.warn("Cannot push moves when because it's {} turn", sender.next());
             writerThreads.get(sender).pushMessage(new MoveRejected());
             return false;
         }
 
-        boolean legalMove = game.isLegalMove(move.from(), move.to());
+        boolean legalMove;
+        if (move instanceof Promotion promotion) {
+            legalMove = game.executeMove(promotion.from(), promotion.to(), promotion.decision());
+        } else {
+            legalMove = game.executeMove(move.from(), move.to());
+        }
+
         if (!legalMove) {
             log.warn("Move {} is not legal", move);
             writerThreads.get(sender).pushMessage(new MoveRejected());
             return false;
         }
 
-        if (game.isPromotionRequired(move.from(), move.to())) {
-            if (move instanceof Promotion promotion) {
-                promotionSource.decision = promotion.decision();
+        writerThreads.get(sender).pushMessage(new MoveAccepted(game.activeCheck(), game.lastMoveInNotation()));
+
+        // check if game ended
+        Pair<Color, String> gameResult = game.outcome();
+        if (gameResult != null) {
+            // TODO: remove GameOutcome.Type and use nullable "Color winner" instead, then the if-else will not be needed
+            if (gameResult.getLeft() == null) {
+                GameOutcome drawOutcome = new GameOutcome(GameOutcome.Type.DRAW, "Stalemate");
+                terminateGame(Map.of(WHITE, drawOutcome, BLACK, drawOutcome));
             } else {
-                log.warn("Promotion decision not supplied with move {}", move);
-                writerThreads.get(sender).pushMessage(new MoveRejected());
-                return false;
+                Color winner = gameResult.getLeft();
+                terminateGame(Map.of(
+                        winner, new GameOutcome(GameOutcome.Type.VICTORY, "Checkmate"),
+                        winner.next(), new GameOutcome(GameOutcome.Type.DEFEAT, "Checkmate")
+                ));
             }
-        }
 
-        game.executeMove(move.from(), move.to());
-
-        writerThreads.get(sender).pushMessage(new MoveAccepted());
-
-        if (game.isDraw()) {
-            GameOutcome drawOutcome = new GameOutcome(GameOutcome.Type.DRAW, "The game ended in a stalemate");
-            terminateGame(Map.of(WHITE, drawOutcome, BLACK, drawOutcome));
             return true;
         }
 
-        if (game.getWinner() != null) {
-            Color winner = game.getWinner().getColor();
-            terminateGame(Map.of(
-                    winner, new GameOutcome(GameOutcome.Type.VICTORY, "Checkmate"),
-                    winner.next(), new GameOutcome(GameOutcome.Type.DEFEAT, "Checkmate")
-            ));
-            return true;
-        }
-
-        List<MoveRequest> possibleMoves = game.getCurrentPlayer().getAllPossibleMoves().stream()
-                .map(domainMove -> {
-                    if (domainMove instanceof com.pmarshall.chessgame.model.moves.Promotion domainPromotion) {
-                        return new Promotion(domainPromotion.getPieceToMove().getPosition(), domainPromotion.getNewPosition(), null);
-                    } else {
-                        return new Move(domainMove.getPieceToMove().getPosition(), domainMove.getNewPosition());
-                    }
-                }).collect(Collectors.toUnmodifiableList());
-
-        writerThreads.get(sender.next()).pushMessage(new OpponentMoved(move.from(), move.to(),
-                game.getCurrentPlayer().isKingChecked(), possibleMoves));
+        OpponentMoved opponentNotification = new OpponentMoved(
+                move.from(), move.to(), game.lastMoveInNotation(), game.activeCheck(), game.legalMoves());
+        writerThreads.get(sender.next()).pushMessage(opponentNotification);
 
         return false;
     }
@@ -344,17 +331,5 @@ public class Master extends Thread {
 
     public PlayerConnection[] getPlayers() {
         return new PlayerConnection[]{players.get(WHITE), players.get(BLACK)};
-    }
-
-    private static class UpdatablePromotionSource implements PiecePromotionSource {
-
-        private PieceType decision;
-
-        @Override
-        public PieceType getPromotedPiece() {
-            PieceType type = decision;
-            decision = null;
-            return type;
-        }
     }
 }

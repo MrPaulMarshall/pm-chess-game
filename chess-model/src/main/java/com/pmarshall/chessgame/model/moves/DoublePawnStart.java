@@ -1,8 +1,8 @@
 package com.pmarshall.chessgame.model.moves;
 
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.pieces.Pawn;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.game.Game;
 
 /**
  * @author Paweł Marszał
@@ -23,7 +23,7 @@ public class DoublePawnStart extends Move {
     }
 
     @Override
-    public void execute(Game game) {
+    public void execute(InMemoryChessGame game) {
         game.board[oldPosition.x()][oldPosition.y()] = null;
         game.board[newPosition.x()][newPosition.y()] = movedPiece;
         this.movedPiece.setPosition(newPosition);
@@ -32,7 +32,7 @@ public class DoublePawnStart extends Move {
     }
 
     @Override
-    public void undo(Game game) {
+    public void undo(InMemoryChessGame game) {
         if (this.pieceDidNotMoveBefore) {
             this.movedPiece.undoMarkThatFigureMoved();
         }

@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.model.pieces;
+package com.pmarshall.chessgame.model.properties;
 
 public enum PieceType {
     KING,

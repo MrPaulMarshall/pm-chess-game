@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.presenter;
 
-import com.pmarshall.chessgame.controller.BoardScreenController;
+import com.pmarshall.chessgame.controller.GameController;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
  *
  * Represents single cell on the board from the GUI's perspective
  */
-public class BoardCell {
+public class ChessboardCell {
 
     /**
      * Background with different colors, to inform user of current state of the game
@@ -28,12 +28,14 @@ public class BoardCell {
             new BackgroundFill(Color.valueOf("#64764a"), CornerRadii.EMPTY, Insets.EMPTY));
 
     private static final Background MARKED_BACKGROUND = new Background(
+            new BackgroundFill(Color.valueOf("#5BBDD6"), CornerRadii.EMPTY, Insets.EMPTY));
+    private static final Background CHECKED_BACKGROUND = new Background(
             new BackgroundFill(Color.valueOf("#E2514C"), CornerRadii.EMPTY, Insets.EMPTY));
 
     /**
      * Reference to controller
      */
-    private final BoardScreenController boardScreenController;
+    private final GameController gameController;
 
     /**
      * Pane that represents the cell, it contains background and potentially piece's image
@@ -52,14 +54,14 @@ public class BoardCell {
     private final Background clickableBackground;
 
     /**
-     * Create BoardCell object
+     * Create ChessboardCell object
      * @param i column coordinate
      * @param j row coordinate
-     * @param boardScreenController reference to controller
+     * @param gameController reference to controller
      */
-    public BoardCell(int i, int j, BoardScreenController boardScreenController) {
+    public ChessboardCell(int i, int j, GameController gameController) {
         this.pane = new StackPane();
-        this.boardScreenController = boardScreenController;
+        this.gameController = gameController;
         this.imageView = new ImageView();
 
         this.pane.setMaxWidth(50);
@@ -79,7 +81,7 @@ public class BoardCell {
 
         this.pane.setBackground(this.normalBackground);
 
-        this.pane.setOnMouseClicked(e -> this.boardScreenController.boardCellOnClick(i, j));
+        this.pane.setOnMouseClicked(e -> this.gameController.boardCellOnClick(i, j));
     }
 
     public Pane getPane() {
@@ -105,6 +107,13 @@ public class BoardCell {
      */
     public void setChosenBackground() {
         this.pane.setBackground(MARKED_BACKGROUND);
+    }
+
+    /**
+     * Marks that king on this cell is currently in check
+     */
+    public void setCheckedBackground() {
+        this.pane.setBackground(CHECKED_BACKGROUND);
     }
 
     /**

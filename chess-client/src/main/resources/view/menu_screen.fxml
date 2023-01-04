@@ -5,14 +5,14 @@
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="351.0" prefWidth="301.0"
             xmlns="http://javafx.com/javafx/11.0.1"
-            fx:controller="com.pmarshall.chessgame.presenter.WelcomeScreenView">
+            fx:controller="com.pmarshall.chessgame.presenter.MenuView">
 <top>
     <GridPane hgap="5.0" prefHeight="50.0" prefWidth="301.0" vgap="5.0" BorderPane.alignment="CENTER">
         <rowConstraints>
             <RowConstraints minHeight="10.0"/>
             <RowConstraints minHeight="10.0"/>
         </rowConstraints>
-        <Label style="-fx-font: NORMAL 35 TimesNewRoman; -fx-padding: 5" text="Welcome to Chess"
+        <Label style="-fx-font: NORMAL 38 TimesNewRoman; -fx-padding: 5" text="Marshall Chess"
                GridPane.columnIndex="0" GridPane.rowIndex="0" textAlignment="CENTER">
         </Label>
 
@@ -38,12 +38,17 @@
         <HBox alignment="BOTTOM_RIGHT" prefHeight="23.0" prefWidth="301.0" spacing="5.0"
                     GridPane.rowIndex="1" GridPane.columnIndex="0">
             <children>
-                <Button mnemonicParsing="false" onAction="#handleOkAction" prefWidth="60.0" text="PLAY">
+                <Button mnemonicParsing="false" onAction="#handleLocalAction" prefWidth="80.0" text="LOCAL">
                     <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </HBox.margin>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#handleCancelAction" prefWidth="60.0" text="Exit">
+                <Button mnemonicParsing="false" onAction="#handleRemoteAction" prefWidth="80.0" text="REMOTE">
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#handleCancelAction" prefWidth="80.0" text="Exit">
                     <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </HBox.margin>
