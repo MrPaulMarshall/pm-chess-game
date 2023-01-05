@@ -78,7 +78,7 @@ public class GameController {
 
         this.pieceChosen = null;
         this.gameIsRunning = true;
-        reloadBoard();
+        reloadBoardCopy();
 
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(GameController.class
@@ -140,7 +140,22 @@ public class GameController {
         if (!successfulMove)
             return;
 
-        this.reloadBoard();
+        refreshBoard();
+    }
+
+    /**
+     * Marks piece at specified position, so the player can move it
+     */
+    public void choosePiece(Position pieceChosen) {
+        this.gameView.refreshBackground();
+        this.pieceChosen = pieceChosen;
+
+        this.gameView.setChosenPieceBackground(pieceChosen);
+        this.gameView.setClickableBackgrounds(this.currentLegalMoves.getOrDefault(pieceChosen, Set.of()));
+    }
+
+    public void refreshBoard() {
+        reloadBoardCopy();
 
         this.gameView.printLastMove();
         this.gameView.reloadBoardView();
@@ -156,18 +171,7 @@ public class GameController {
         this.pieceChosen = null;
     }
 
-    /**
-     * Marks piece at specified position, so the player can move it
-     */
-    public void choosePiece(Position pieceChosen) {
-        this.gameView.refreshBackground();
-        this.pieceChosen = pieceChosen;
-
-        this.gameView.setChosenPieceBackground(pieceChosen);
-        this.gameView.setClickableBackgrounds(this.currentLegalMoves.getOrDefault(pieceChosen, Set.of()));
-    }
-
-    private void reloadBoard() {
+    private void reloadBoardCopy() {
         this.board = game.getBoardWithPieces();
 
         List<LegalMove> moves = game.legalMoves();
@@ -186,6 +190,19 @@ public class GameController {
     public PieceType getPromotedPiece() {
         PromotionController controller = new PromotionController();
         return controller.askForPromotionPiece(game.currentPlayer());
+    }
+
+    public void showDrawRequestedWindow() {
+        DrawRequestController controller = new DrawRequestController(this);
+        controller.displayWindow();
+    }
+
+    public void acceptDraw() {
+        // TODO
+    }
+
+    public void rejectDraw() {
+        // TODO
     }
 
     /**

@@ -1,8 +1,18 @@
 package com.pmarshall.chessgame.remote;
 
+import com.pmarshall.chessgame.api.ChatMessage;
+import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
+import com.pmarshall.chessgame.api.endrequest.DrawRequest;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
+import com.pmarshall.chessgame.api.move.request.Move;
+import com.pmarshall.chessgame.api.move.request.MoveRequest;
+import com.pmarshall.chessgame.api.move.request.Promotion;
+import com.pmarshall.chessgame.api.move.response.MoveAccepted;
+import com.pmarshall.chessgame.api.move.response.MoveRejected;
+import com.pmarshall.chessgame.api.move.response.OpponentMoved;
+import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.controller.GameController;
 import com.pmarshall.chessgame.model.api.LegalMove;
 import com.pmarshall.chessgame.model.properties.Color;
@@ -10,19 +20,27 @@ import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class RemoteGameProxy implements Game {
+
+    private static final Logger log = LoggerFactory.getLogger(RemoteGameProxy.class);
 
     private final GameController controller;
 
     private final Reader readerThread;
     private final Writer writerThread;
+
+    private final BlockingQueue<Message> messagesToServer;
 
     private final Socket socket;
 
@@ -33,8 +51,13 @@ public class RemoteGameProxy implements Game {
 
     private Pair<PieceType, Color>[][] board;
     private Color currentPlayer;
+
+    private MoveRequest submittedMove;
+
     private List<LegalMove> legalMoves;
+    private String lastMoveInNotation;
     private boolean activeCheck;
+    private GameOutcome outcome;
 
     private RemoteGameProxy(GameController controller,
                             Socket socket, InputStream in, OutputStream out, String id) {
@@ -43,6 +66,7 @@ public class RemoteGameProxy implements Game {
         this.id = id;
         this.socket = socket;
 
+        this.messagesToServer = new LinkedBlockingQueue<>();
         this.writerThread = new Writer(out);
         this.readerThread = new Reader(in);
     }
@@ -126,27 +150,27 @@ public class RemoteGameProxy implements Game {
 
     @Override
     public Color currentPlayer() {
-        return null;
+        return currentPlayer;
     }
 
     @Override
     public boolean activeCheck() {
-        return false;
+        return activeCheck;
     }
 
     @Override
     public boolean gameEnded() {
-        return false;
+        return outcome != null;
     }
 
     @Override
     public String lastMoveInNotation() {
-        return null;
+        return lastMoveInNotation;
     }
 
     @Override
     public Pair<Color, String> outcome() {
-        return null;
+        return Pair.of(null, outcome.message());
     }
 
     @Override
@@ -165,7 +189,20 @@ public class RemoteGameProxy implements Game {
 
     @Override
     public boolean executeMove(Position from, Position to) {
-        return false;
+        if (!legalMoves.contains(new LegalMove(from, to, false))) {
+            return false;
+        }
+
+
+
+        try {
+            messagesToServer.put(new Move(from, to));
+        } catch (InterruptedException ex) {
+            return false;
+        }
+
+        // wait for response
+        return true;
     }
 
     @Override
@@ -175,5 +212,139 @@ public class RemoteGameProxy implements Game {
 
     public String getId() {
         return id;
+    }
+
+    public void terminateGame() {
+        writerThread.interrupt();
+        readerThread.interrupt();
+        try {
+            socket.close();
+        } catch (IOException ex) {
+            log.warn("Could not close connection to server", ex);
+        }
+
+        // TODO: controller.endGame();
+    }
+
+    public class Reader extends Thread {
+
+        private static final Logger log = LoggerFactory.getLogger(Reader.class);
+
+        private final InputStream in;
+
+        public Reader(InputStream in) {
+            this.in = in;
+        }
+
+        @Override
+        public void run() {
+            while (!Thread.interrupted()) {
+                try {
+                    byte[] lengthHeader = in.readNBytes(2);
+                    int length = Parser.deserializeLength(lengthHeader);
+                    byte[] messageBytes = in.readNBytes(length);
+                    Message msg = Parser.deserialize(messageBytes, length);
+
+                    if (msg instanceof GameOutcome outcomeMsg) {
+                        outcome = outcomeMsg;
+                        terminateGame();
+                        break;
+                    }
+                    if (msg instanceof OpponentMoved move) {
+                        if (move.promotion() != null) {
+                            board[move.to().x()][move.to().y()] = Pair.of(move.promotion(), localPlayer.next());
+                        } else {
+                            board[move.to().x()][move.to().y()] = board[move.from().x()][move.from().y()];
+                        }
+                        board[move.from().x()][move.from().y()] = null;
+
+                        currentPlayer = localPlayer;
+                        activeCheck = move.check();
+                        legalMoves = move.legalMoves();
+                        lastMoveInNotation = move.moveRepresentation();
+
+                        controller.refreshBoard();
+
+                        continue;
+                    }
+                    if (msg instanceof MoveAccepted accepted) {
+                        Position from = submittedMove.from();
+                        Position to = submittedMove.to();
+
+                        if (submittedMove instanceof Promotion promotion) {
+                            board[to.x()][to.y()] = Pair.of(promotion.decision(), localPlayer);
+                        } else {
+                            board[to.x()][to.y()] = board[from.x()][from.y()];
+                        }
+                        board[from.x()][from.y()] = null;
+
+                        currentPlayer = localPlayer.next();
+                        activeCheck = accepted.check();
+                        legalMoves = List.of();
+                        lastMoveInNotation = accepted.moveRepresentation();
+
+                        controller.refreshBoard();
+
+                        continue;
+                    }
+                    if (msg instanceof MoveRejected) {
+                        submittedMove = null;
+                        continue;
+                    }
+                    if (msg instanceof ChatMessage chatMsg) {
+                        // TODO: add chat window
+                        log.info("CHAT: {} says {}", opponentId, chatMsg.text());
+                        continue;
+                    }
+                    if (msg instanceof DrawRequest drawReq) {
+                        // TODO: void controller::showDrawRequestWindow();
+                        continue;
+                    }
+
+                    log.warn("Unrecognized message: {}", msg);
+    //            } catch (InterruptedException ex) { // TODO: uncomment when the blocking operation will be added
+
+                } catch (IOException ex) {
+                    log.error("Connection with server was broken in Reader", ex);
+                    terminateGame();
+                }
+            }
+
+            log.info("Reader finishes");
+        }
+
+    }
+
+    public class Writer extends Thread {
+
+        private static final Logger log = LoggerFactory.getLogger(Writer.class);
+
+        private final OutputStream out;
+
+        public Writer(OutputStream out) {
+            this.out = out;
+        }
+
+        @Override
+        public void run() {
+            while (!Thread.interrupted()) {
+                try {
+                    Message msg = messagesToServer.take();
+
+                    byte[] messageBytes = Parser.serialize(msg);
+                    byte[] lengthHeader = Parser.serializeLength(messageBytes.length);
+
+                    out.write(lengthHeader);
+                    out.write(messageBytes);
+                } catch (InterruptedException ex) {
+                    log.warn("Thread Writer was interrupted");
+                } catch (IOException ex) {
+                    log.warn("Connection with server was broken in Writer", ex);
+                    terminateGame();
+                }
+            }
+
+            log.info("Writer finishes");
+        }
     }
 }

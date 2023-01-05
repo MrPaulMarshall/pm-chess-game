@@ -290,7 +290,9 @@ public class Master extends Thread {
         }
 
         OpponentMoved opponentNotification = new OpponentMoved(
-                move.from(), move.to(), game.lastMoveInNotation(), game.activeCheck(), game.legalMoves());
+                move.from(), move.to(),
+                move instanceof Promotion promotion ? promotion.decision() : null,
+                game.lastMoveInNotation(), game.activeCheck(), game.legalMoves());
         writerThreads.get(sender.next()).pushMessage(opponentNotification);
 
         return false;
