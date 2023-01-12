@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.api
 
 import com.fasterxml.jackson.core.JsonProcessingException
-import com.pmarshall.chessgame.api.endrequest.DrawRequest
+import com.pmarshall.chessgame.api.endrequest.DrawResponse
 import com.pmarshall.chessgame.api.move.request.Move
 import com.pmarshall.chessgame.model.properties.Position
 import spock.lang.Specification
@@ -25,7 +25,7 @@ class ParserSpec extends Specification {
 
         where:
         json                                                      | object
-        '{"type":"DrawRequest","action":"PROPOSE"}'               | new DrawRequest(DrawRequest.Action.PROPOSE)
+        '{"type":"DrawResponse","accepted":true}'               | new DrawResponse(true)
         '{"type":"Move","from":{"x":1,"y":4},"to":{"x":5,"y":4}}' | new Move(new Position(1,4), new Position(5,4))
     }
 
@@ -44,13 +44,13 @@ class ParserSpec extends Specification {
                 '',
                 '{}',
                 'null',
-                '{"type":"DrawRequest","action":"propose"}'
+                '{"type":"DrawResponse","action":tRue}'
         ]
     }
 
     def 'should successfully deserialize part of the buffer'() {
         given:
-        def bytes = '{"type":"DrawRequest","action":"PROPOSE"}'.getBytes()
+        def bytes = '{"type":"DrawResponse","accepted":true}'.getBytes()
         def buffer = new byte[bytes.length + 20]
         // fill with useful data
         for (int i = 0; i < bytes.length; i++) {
@@ -65,6 +65,6 @@ class ParserSpec extends Specification {
         def message = Parser.deserialize(buffer, bytes.length)
 
         then:
-        message == new DrawRequest(DrawRequest.Action.PROPOSE)
+        message == new DrawResponse(true)
     }
 }

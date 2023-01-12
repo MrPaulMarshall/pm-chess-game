@@ -3,7 +3,8 @@ package com.marshall.chessgame.server.threads;
 import com.marshall.chessgame.server.MatchRegister;
 import com.marshall.chessgame.server.PlayerConnection;
 import com.pmarshall.chessgame.api.Message;
-import com.pmarshall.chessgame.api.endrequest.DrawRequest;
+import com.pmarshall.chessgame.api.endrequest.DrawProposition;
+import com.pmarshall.chessgame.api.endrequest.DrawResponse;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.request.MoveRequest;
 import com.pmarshall.chessgame.api.move.request.Promotion;
@@ -129,9 +130,19 @@ public class Master extends Thread {
                 Color sender = messageFromPlayer.getLeft();
                 Message message = messageFromPlayer.getRight();
 
-                // check if draw dialog takes place
-                if (message instanceof DrawRequest drawMessage) {
-                    boolean gameEnded = handleDrawRequest(sender, drawMessage);
+                if (message instanceof DrawProposition) {
+                    if (drawProponent == null) {
+                        drawProponent = sender;
+                        writerThreads.get(sender.next()).pushMessage(message);
+                    } else {
+                        log.warn("Cannot receive draw proposition from {}, because {} has already proposed it",
+                                sender, drawProponent);
+                    }
+                    continue;
+                }
+
+                if (message instanceof DrawResponse drawResponse) {
+                    boolean gameEnded = handleDrawResponse(sender, drawResponse.accepted());
                     if (gameEnded)
                         break;
                     continue;
@@ -207,41 +218,27 @@ public class Master extends Thread {
     /**
      * @return true if game has ended, false if it continues
      */
-    private boolean handleDrawRequest(Color sender, DrawRequest message) throws InterruptedException {
-        DrawRequest.Action action = message.action();
-
-        if (drawProponent == null && action == DrawRequest.Action.PROPOSE) {
-            drawProponent = sender;
-            writerThreads.get(sender.next()).pushMessage(message);
-            return false;
-        }
-
+    private boolean handleDrawResponse(Color sender, boolean drawAccepted) throws InterruptedException {
         if (drawProponent == null) {
-            log.warn("Cannot {} draw request because currently there is none", action);
+            log.warn("{} cannot respond to draw proposition, because there was none", sender);
             return false;
         }
 
         if (drawProponent == sender) {
-            log.warn("Draw request already proposed by {}, cannot perform {}", sender, action);
+            log.warn("{} cannot respond to draw proposition made by himself", sender);
+            return false;
         }
 
-        return switch (action) {
-            case ACCEPT -> {
-                terminateGame(Map.of(
-                        sender, new GameOutcome(GameOutcome.Type.DRAW, "You accepted the draw offer"),
-                        sender.next(), new GameOutcome(GameOutcome.Type.DRAW, "Your draw offer was accepted")
-                ));
-                yield true;
-            }
-            case REJECT -> {
-                writerThreads.get(sender.next()).pushMessage(message);
-                yield false;
-            }
-            case PROPOSE -> {
-                log.warn("Cannot initiate draw negotiation by {} because {} has already started one", sender, drawProponent);
-                yield false;
-            }
-        };
+        if (drawAccepted) {
+            terminateGame(Map.of(
+                    sender, new GameOutcome(GameOutcome.Type.DRAW, "You accepted the draw offer"),
+                    sender.next(), new GameOutcome(GameOutcome.Type.DRAW, "Your draw offer was accepted")
+            ));
+            return true;
+        } else {
+            writerThreads.get(sender.next()).pushMessage(new DrawResponse(false));
+            return false;
+        }
     }
 
     /**

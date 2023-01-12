@@ -2,7 +2,8 @@ package com.pmarshall.chessgame.api
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.pmarshall.chessgame.api.endrequest.DrawRequest
+import com.pmarshall.chessgame.api.endrequest.DrawProposition
+import com.pmarshall.chessgame.api.endrequest.DrawResponse
 import com.pmarshall.chessgame.api.endrequest.Surrender
 import com.pmarshall.chessgame.api.lobby.AssignId
 import com.pmarshall.chessgame.api.lobby.MatchFound
@@ -32,7 +33,8 @@ class MessageSpec extends Specification {
         where:
         json                                                       | object
         'null'                                                     | null
-        '{"type":"DrawRequest","action":"PROPOSE"}'                | new DrawRequest(DrawRequest.Action.PROPOSE)
+        '{"type":"DrawProposition"}'                               | new DrawProposition()
+        '{"type":"DrawResponse","accepted":false}'                 | new DrawResponse(false)
         '{"type":"Surrender"}'                                     | new Surrender()
         '{"type":"AssignId","id":"abc123"}'                        | new AssignId('abc123')
         '{"type":"MatchFound","color":"WHITE","opponentId":"a1","legalMoves":[{"from":{"x":1,"y":4},"to":{"x":5,"y":4},"promotion":false,"withCheck":true,"stringRepresentation":"d4"}]}'  | new MatchFound(Color.WHITE, 'a1', List.of(new LegalMove(new Position (1,4), new Position(5,4), false, true, "d4")))
@@ -54,7 +56,7 @@ class MessageSpec extends Specification {
                 '{}',
                 '{"type":"unknown"}',
                 '{"type":"AssignId","id":null}',
-                '{"type":"DrawRequest","action":"propose"}'
+                '{"type":"DrawResponse","accepted":"string"}'
         ]
     }
 }

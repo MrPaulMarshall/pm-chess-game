@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.remote;
 import com.pmarshall.chessgame.api.ChatMessage;
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
-import com.pmarshall.chessgame.api.endrequest.DrawRequest;
+import com.pmarshall.chessgame.api.endrequest.DrawProposition;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.request.Move;
@@ -283,7 +283,7 @@ public class RemoteGameProxy implements Game {
                         log.info("CHAT: {} says {}", opponentId, chatMsg.text());
                         continue;
                     }
-                    if (msg instanceof DrawRequest drawReq) {
+                    if (msg instanceof DrawProposition drawProposition) {
                         // TODO: if exists, close the window opened by this player
                         // TODO: void controller::showDrawRequestWindow();
                         continue;
