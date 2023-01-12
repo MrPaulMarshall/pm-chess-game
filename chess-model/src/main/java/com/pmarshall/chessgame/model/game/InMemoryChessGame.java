@@ -194,7 +194,7 @@ public class InMemoryChessGame implements Game {
                 move.getPieceToMove().getPosition(),
                 move.getNewPosition(),
                 move instanceof Promotion,
-                false, // TODO: game should return this info
+                move.isWithCheck(),
                 move.toString()
         )).toList();
     }
@@ -287,8 +287,11 @@ public class InMemoryChessGame implements Game {
 
         // update moves (without concern for king's safety)
         this.getOtherPlayer().getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
-        // check is current king is now threatened
+        // check if current king is now threatened
         boolean isKingUnderCheck = this.isPosThreatened(this.currentPlayer.getKing().getPosition(), this.getOtherPlayer());
+
+        // if move puts opponent's king into check, mark it
+        move.setWithCheck(this.isPosThreatened(this.getOtherPlayer().getKing().getPosition(), this.currentPlayer));
 
         // undo move
         this.lastMove = trulyLastMove;
