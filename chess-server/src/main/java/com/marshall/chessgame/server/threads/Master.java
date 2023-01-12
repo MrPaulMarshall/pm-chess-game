@@ -7,9 +7,7 @@ import com.pmarshall.chessgame.api.endrequest.DrawRequest;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.request.MoveRequest;
 import com.pmarshall.chessgame.api.move.request.Promotion;
-import com.pmarshall.chessgame.api.move.response.MoveAccepted;
-import com.pmarshall.chessgame.api.move.response.MoveRejected;
-import com.pmarshall.chessgame.api.move.response.OpponentMoved;
+import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.properties.Color;
@@ -252,7 +250,6 @@ public class Master extends Thread {
     private boolean handleMoveRequest(Color sender, MoveRequest move) throws InterruptedException {
         if (sender != game.currentPlayer()) {
             log.warn("Cannot push moves when because it's {} turn", sender.next());
-            writerThreads.get(sender).pushMessage(new MoveRejected());
             return false;
         }
 
@@ -265,11 +262,8 @@ public class Master extends Thread {
 
         if (!legalMove) {
             log.warn("Move {} is not legal", move);
-            writerThreads.get(sender).pushMessage(new MoveRejected());
             return false;
         }
-
-        writerThreads.get(sender).pushMessage(new MoveAccepted(game.activeCheck(), game.lastMoveInNotation()));
 
         // check if game ended
         Pair<Color, String> gameResult = game.outcome();
@@ -292,7 +286,7 @@ public class Master extends Thread {
         OpponentMoved opponentNotification = new OpponentMoved(
                 move.from(), move.to(),
                 move instanceof Promotion promotion ? promotion.decision() : null,
-                game.lastMoveInNotation(), game.activeCheck(), game.legalMoves());
+                game.activeCheck(), game.lastMoveInNotation(), game.legalMoves());
         writerThreads.get(sender.next()).pushMessage(opponentNotification);
 
         return false;

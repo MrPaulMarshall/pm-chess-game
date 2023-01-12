@@ -190,9 +190,13 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public List<LegalMove> legalMoves() {
-        return currentPlayer.getAllPossibleMoves().stream().map(
-                move -> new LegalMove(move.getPieceToMove().getPosition(), move.getNewPosition(), move instanceof Promotion)
-        ).toList();
+        return currentPlayer.getAllPossibleMoves().stream().map(move -> new LegalMove(
+                move.getPieceToMove().getPosition(),
+                move.getNewPosition(),
+                move instanceof Promotion,
+                false, // TODO: game should return this info
+                move.toString()
+        )).toList();
     }
 
     @Override

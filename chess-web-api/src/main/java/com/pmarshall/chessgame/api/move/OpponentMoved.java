@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.api.move.response;
+package com.pmarshall.chessgame.api.move;
 
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.model.api.LegalMove;
@@ -11,8 +11,8 @@ public record OpponentMoved(
         Position from,
         Position to,
         PieceType promotion,
+        boolean withCheck,
         String moveRepresentation,
-        boolean check,
         List<LegalMove> legalMoves
 ) implements Message {
 }

@@ -7,11 +7,8 @@ import com.pmarshall.chessgame.api.endrequest.DrawRequest;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.request.Move;
-import com.pmarshall.chessgame.api.move.request.MoveRequest;
 import com.pmarshall.chessgame.api.move.request.Promotion;
-import com.pmarshall.chessgame.api.move.response.MoveAccepted;
-import com.pmarshall.chessgame.api.move.response.MoveRejected;
-import com.pmarshall.chessgame.api.move.response.OpponentMoved;
+import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.controller.GameController;
 import com.pmarshall.chessgame.model.api.LegalMove;
@@ -52,7 +49,7 @@ public class RemoteGameProxy implements Game {
     private Pair<PieceType, Color>[][] board;
     private Color currentPlayer;
 
-    private MoveRequest submittedMove;
+//    private MoveRequest submittedMove;
 
     private List<LegalMove> legalMoves;
     private String lastMoveInNotation;
@@ -189,17 +186,18 @@ public class RemoteGameProxy implements Game {
 
     @Override
     public boolean executeMove(Position from, Position to) {
-        if (!legalMoves.contains(new LegalMove(from, to, false))) {
+        if (!legalMoves.contains(new LegalMove(from, to, false, false, ""))) {
             return false;
         }
-
-
 
         try {
             messagesToServer.put(new Move(from, to));
         } catch (InterruptedException ex) {
+            // TODO: escalate exception to main Game-loop?
             return false;
         }
+
+        // TODO: update GUI
 
         // wait for response
         return true;
@@ -207,7 +205,20 @@ public class RemoteGameProxy implements Game {
 
     @Override
     public boolean executeMove(Position from, Position to, PieceType promotion) {
-        return false;
+        if (!legalMoves.contains(new LegalMove(from, to, true, false, ""))) {
+            return false;
+        }
+
+        try {
+            messagesToServer.put(new Promotion(from, to, promotion));
+        } catch (InterruptedException ex) {
+            // TODO: escalate exception to main Game-loop?
+            return false;
+        }
+
+        // TODO: update GUI
+
+        return true;
     }
 
     public String getId() {
@@ -259,36 +270,12 @@ public class RemoteGameProxy implements Game {
                         board[move.from().x()][move.from().y()] = null;
 
                         currentPlayer = localPlayer;
-                        activeCheck = move.check();
+                        activeCheck = move.withCheck();
                         legalMoves = move.legalMoves();
                         lastMoveInNotation = move.moveRepresentation();
 
                         controller.refreshBoard();
 
-                        continue;
-                    }
-                    if (msg instanceof MoveAccepted accepted) {
-                        Position from = submittedMove.from();
-                        Position to = submittedMove.to();
-
-                        if (submittedMove instanceof Promotion promotion) {
-                            board[to.x()][to.y()] = Pair.of(promotion.decision(), localPlayer);
-                        } else {
-                            board[to.x()][to.y()] = board[from.x()][from.y()];
-                        }
-                        board[from.x()][from.y()] = null;
-
-                        currentPlayer = localPlayer.next();
-                        activeCheck = accepted.check();
-                        legalMoves = List.of();
-                        lastMoveInNotation = accepted.moveRepresentation();
-
-                        controller.refreshBoard();
-
-                        continue;
-                    }
-                    if (msg instanceof MoveRejected) {
-                        submittedMove = null;
                         continue;
                     }
                     if (msg instanceof ChatMessage chatMsg) {
@@ -297,6 +284,7 @@ public class RemoteGameProxy implements Game {
                         continue;
                     }
                     if (msg instanceof DrawRequest drawReq) {
+                        // TODO: if exists, close the window opened by this player
                         // TODO: void controller::showDrawRequestWindow();
                         continue;
                     }
