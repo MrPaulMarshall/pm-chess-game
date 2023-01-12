@@ -6,8 +6,7 @@ import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.endrequest.DrawProposition;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
-import com.pmarshall.chessgame.api.move.request.Move;
-import com.pmarshall.chessgame.api.move.request.Promotion;
+import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.controller.GameController;
@@ -191,7 +190,7 @@ public class RemoteGameProxy implements Game {
         }
 
         try {
-            messagesToServer.put(new Move(from, to));
+            messagesToServer.put(new Move(from, to, null));
         } catch (InterruptedException ex) {
             // TODO: escalate exception to main Game-loop?
             return false;
@@ -210,7 +209,7 @@ public class RemoteGameProxy implements Game {
         }
 
         try {
-            messagesToServer.put(new Promotion(from, to, promotion));
+            messagesToServer.put(new Move(from, to, promotion));
         } catch (InterruptedException ex) {
             // TODO: escalate exception to main Game-loop?
             return false;

@@ -8,8 +8,7 @@ import com.pmarshall.chessgame.api.endrequest.DrawResponse;
 import com.pmarshall.chessgame.api.endrequest.Surrender;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
-import com.pmarshall.chessgame.api.move.request.Move;
-import com.pmarshall.chessgame.api.move.request.Promotion;
+import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 
@@ -25,7 +24,6 @@ import com.pmarshall.chessgame.api.outcome.GameOutcome;
         @Type(value = DrawResponse.class, name = "DrawResponse"),
         @Type(value = Surrender.class, name = "Surrender"),
         @Type(value = Move.class, name = "Move"),
-        @Type(value = Promotion.class, name = "Promotion"),
         @Type(value = OpponentMoved.class, name = "OpponentMoved")
 })
 public interface Message {

@@ -2,7 +2,7 @@ package com.pmarshall.chessgame.api
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.pmarshall.chessgame.api.endrequest.DrawResponse
-import com.pmarshall.chessgame.api.move.request.Move
+import com.pmarshall.chessgame.api.move.Move
 import com.pmarshall.chessgame.model.properties.Position
 import spock.lang.Specification
 
@@ -24,9 +24,9 @@ class ParserSpec extends Specification {
         parsedObject == object
 
         where:
-        json                                                      | object
-        '{"type":"DrawResponse","accepted":true}'               | new DrawResponse(true)
-        '{"type":"Move","from":{"x":1,"y":4},"to":{"x":5,"y":4}}' | new Move(new Position(1,4), new Position(5,4))
+        json                                                                       | object
+        '{"type":"DrawResponse","accepted":true}'                                  | new DrawResponse(true)
+        '{"type":"Move","from":{"x":1,"y":4},"to":{"x":5,"y":4},"promotion":null}' | new Move(new Position(1,4), new Position(5,4), null)
     }
 
     def 'should reject invalid messages'() {

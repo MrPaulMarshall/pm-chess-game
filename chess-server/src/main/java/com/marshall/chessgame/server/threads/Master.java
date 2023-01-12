@@ -6,8 +6,7 @@ import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.endrequest.DrawProposition;
 import com.pmarshall.chessgame.api.endrequest.DrawResponse;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
-import com.pmarshall.chessgame.api.move.request.MoveRequest;
-import com.pmarshall.chessgame.api.move.request.Promotion;
+import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
@@ -149,7 +148,7 @@ public class Master extends Thread {
                 }
 
                 // check if message was move
-                if (message instanceof MoveRequest move) {
+                if (message instanceof Move move) {
                     boolean gameEnded = handleMoveRequest(sender, move);
                     if (gameEnded)
                         break;
@@ -244,15 +243,15 @@ public class Master extends Thread {
     /**
      * @return true if the game has ended, false if it continues
      */
-    private boolean handleMoveRequest(Color sender, MoveRequest move) throws InterruptedException {
+    private boolean handleMoveRequest(Color sender, Move move) throws InterruptedException {
         if (sender != game.currentPlayer()) {
             log.warn("Cannot push moves when because it's {} turn", sender.next());
             return false;
         }
 
         boolean legalMove;
-        if (move instanceof Promotion promotion) {
-            legalMove = game.executeMove(promotion.from(), promotion.to(), promotion.decision());
+        if (move.promotion() != null) {
+            legalMove = game.executeMove(move.from(), move.to(), move.promotion());
         } else {
             legalMove = game.executeMove(move.from(), move.to());
         }
@@ -281,8 +280,7 @@ public class Master extends Thread {
         }
 
         OpponentMoved opponentNotification = new OpponentMoved(
-                move.from(), move.to(),
-                move instanceof Promotion promotion ? promotion.decision() : null,
+                move.from(), move.to(), move.promotion(),
                 game.activeCheck(), game.lastMoveInNotation(), game.legalMoves());
         writerThreads.get(sender.next()).pushMessage(opponentNotification);
 
