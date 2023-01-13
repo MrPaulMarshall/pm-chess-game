@@ -9,7 +9,7 @@ import com.pmarshall.chessgame.api.lobby.AssignId
 import com.pmarshall.chessgame.api.lobby.MatchFound
 import com.pmarshall.chessgame.api.move.Move
 import com.pmarshall.chessgame.api.outcome.GameOutcome
-import com.pmarshall.chessgame.model.api.LegalMove
+import com.pmarshall.chessgame.model.dto.LegalMove
 import com.pmarshall.chessgame.model.properties.PieceType
 import com.pmarshall.chessgame.model.properties.Color
 import com.pmarshall.chessgame.model.properties.Position
@@ -39,7 +39,7 @@ class MessageSpec extends Specification {
         '{"type":"GameOutcome","outcome":"DEFEAT","message":null}' | new GameOutcome(GameOutcome.Type.DEFEAT, null)
         '{"type":"Move","from":{"x":1,"y":4},"to":{"x":5,"y":4},"promotion":null}'     | new Move(new Position(1,4), new Position(5,4), null)
         '{"type":"Move","from":{"x":1,"y":4},"to":{"x":5,"y":4},"promotion":"KNIGHT"}' | new Move(new Position(1,4), new Position(5,4), PieceType.KNIGHT)
-        '{"type":"MatchFound","color":"WHITE","opponentId":"a1","legalMoves":[{"from":{"x":1,"y":4},"to":{"x":5,"y":4},"promotion":false,"withCheck":true,"stringRepresentation":"d4"}]}'  | new MatchFound(Color.WHITE, 'a1', List.of(new LegalMove(new Position (1,4), new Position(5,4), false, true, "d4")))
+        '{"type":"MatchFound","color":"WHITE","opponentId":"a1","legalMoves":[{"from":{"x":1,"y":4},"to":{"x":5,"y":4},"promotion":false,"withCheck":true,"notation":"d4"}]}'  | new MatchFound(Color.WHITE, 'a1', List.of(new LegalMove(new Position (1,4), new Position(5,4), false, true, "d4")))
     }
 
     def 'should throw JsonProcessingException when given invalid json'() {

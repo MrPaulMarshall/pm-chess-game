@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.controller;
 
-import com.pmarshall.chessgame.model.api.LegalMove;
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;

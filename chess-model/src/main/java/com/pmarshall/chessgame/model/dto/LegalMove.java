@@ -1,23 +1,21 @@
-package com.pmarshall.chessgame.model.api;
+package com.pmarshall.chessgame.model.dto;
 
 import com.pmarshall.chessgame.model.properties.Position;
 
 import java.util.Objects;
 
 public record LegalMove(
-        // Crucial data
         Position from,
         Position to,
-        // Metadata
         boolean promotion,
         boolean withCheck,
-        String stringRepresentation
+        String notation
 ) {
 
     public LegalMove {
         Objects.requireNonNull(from);
         Objects.requireNonNull(to);
-        Objects.requireNonNull(stringRepresentation);
+        Objects.requireNonNull(notation);
     }
 
     /**

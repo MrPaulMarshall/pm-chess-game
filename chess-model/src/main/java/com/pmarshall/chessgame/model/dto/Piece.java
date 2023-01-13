@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.model.api;
+package com.pmarshall.chessgame.model.dto;
 
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;

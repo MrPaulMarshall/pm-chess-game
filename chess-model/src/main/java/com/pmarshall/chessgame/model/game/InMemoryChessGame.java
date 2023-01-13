@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.model.game;
 
-import com.pmarshall.chessgame.model.api.LegalMove;
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.moves.Promotion;
 import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.properties.Color;

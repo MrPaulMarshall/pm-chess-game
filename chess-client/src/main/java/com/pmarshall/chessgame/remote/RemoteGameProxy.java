@@ -10,7 +10,7 @@ import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.controller.GameController;
-import com.pmarshall.chessgame.model.api.LegalMove;
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -185,9 +186,23 @@ public class RemoteGameProxy implements Game {
 
     @Override
     public boolean executeMove(Position from, Position to) {
-        if (!legalMoves.contains(new LegalMove(from, to, false, false, ""))) {
+        Optional<LegalMove> moveOptional = legalMoves.stream()
+                .filter(m -> m.from().equals(from) && m.to().equals(to) && !m.promotion()).findFirst();
+
+        if (moveOptional.isEmpty()) {
             return false;
         }
+        LegalMove move = moveOptional.get();
+
+        board[to.x()][to.y()] = board[from.x()][from.y()];
+        board[from.x()][from.y()] = null;
+
+        currentPlayer = localPlayer.next();
+        activeCheck = move.withCheck();
+        legalMoves = List.of();
+        lastMoveInNotation = move.notation();
+
+        controller.refreshBoard();
 
         try {
             messagesToServer.put(new Move(from, to, null));
@@ -204,9 +219,23 @@ public class RemoteGameProxy implements Game {
 
     @Override
     public boolean executeMove(Position from, Position to, PieceType promotion) {
-        if (!legalMoves.contains(new LegalMove(from, to, true, false, ""))) {
+        Optional<LegalMove> moveOptional = legalMoves.stream()
+                .filter(m -> m.from().equals(from) && m.to().equals(to) && m.promotion()).findFirst();
+
+        if (moveOptional.isEmpty()) {
             return false;
         }
+        LegalMove move = moveOptional.get();
+
+        board[to.x()][to.y()] = Pair.of(promotion, board[from.x()][from.y()].getRight());
+        board[from.x()][from.y()] = null;
+
+        currentPlayer = localPlayer.next();
+        activeCheck = move.withCheck();
+        legalMoves = List.of();
+        lastMoveInNotation = move.notation();
+
+        controller.refreshBoard();
 
         try {
             messagesToServer.put(new Move(from, to, promotion));
