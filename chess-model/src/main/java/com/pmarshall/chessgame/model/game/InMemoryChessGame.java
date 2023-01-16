@@ -1,8 +1,10 @@
 package com.pmarshall.chessgame.model.game;
 
-import com.pmarshall.chessgame.model.dto.LegalMove;
+import com.pmarshall.chessgame.model.dto.*;
 import com.pmarshall.chessgame.model.moves.Promotion;
+import com.pmarshall.chessgame.model.moves.Castling;
 import com.pmarshall.chessgame.model.pieces.*;
+import com.pmarshall.chessgame.model.pieces.Piece;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
@@ -11,6 +13,8 @@ import com.pmarshall.chessgame.model.service.Game;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Paweł Marszał
@@ -190,13 +194,19 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public List<LegalMove> legalMoves() {
-        return currentPlayer.getAllPossibleMoves().stream().map(move -> new LegalMove(
-                move.getPieceToMove().getPosition(),
-                move.getNewPosition(),
-                move instanceof Promotion,
-                move.isWithCheck(),
-                move.toString()
-        )).toList();
+        return currentPlayer.getAllPossibleMoves().stream().map(move -> {
+            if (move instanceof Promotion p) {
+                return new com.pmarshall.chessgame.model.dto.Promotion(
+                        move.getPieceToMove().getPosition(), move.getNewPosition(), Map.of()); // TODO: get possible checks from different promotions
+            }
+            if (move instanceof Castling c) {
+                return new com.pmarshall.chessgame.model.dto.Castling(
+                        move.getPieceToMove().getPosition(), move.getNewPosition(),
+                        c.getNewPosition().y() == 2, move.isWithCheck());
+            }
+            // TODO: en-passant needs to be handled here, because it's represented as BasicMove :/
+            return new DefaultMove(move.getPieceToMove().getPosition(), move.getNewPosition(), move.isWithCheck());
+        }).collect(Collectors.toList());
     }
 
     @Override

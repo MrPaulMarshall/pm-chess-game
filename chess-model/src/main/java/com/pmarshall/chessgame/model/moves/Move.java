@@ -65,6 +65,10 @@ public abstract class Move {
      */
     public abstract String toString();
 
+    public String notation() {
+        return toString();
+    }
+
     // Getters
 
     public Position getNewPosition() {

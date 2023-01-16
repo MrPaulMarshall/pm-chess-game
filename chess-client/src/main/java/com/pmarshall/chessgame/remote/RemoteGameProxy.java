@@ -24,9 +24,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 public class RemoteGameProxy implements Game {
 
@@ -49,9 +50,7 @@ public class RemoteGameProxy implements Game {
     private Pair<PieceType, Color>[][] board;
     private Color currentPlayer;
 
-//    private MoveRequest submittedMove;
-
-    private List<LegalMove> legalMoves;
+    private Map<Pair<Position, Position>, LegalMove> legalMoves;
     private String lastMoveInNotation;
     private boolean activeCheck;
     private GameOutcome outcome;
@@ -97,7 +96,8 @@ public class RemoteGameProxy implements Game {
         MatchFound message = (MatchFound) Parser.deserialize(messageBuffer, length);
         this.localPlayer = message.color();
         this.opponentId = message.opponentId();
-        this.legalMoves = message.legalMoves();
+        this.legalMoves = message.legalMoves().stream().collect(
+                Collectors.toUnmodifiableMap(move -> Pair.of(move.from(), move.to()), move -> move));
 
         // init local representation
         this.board = setUpBoard();
@@ -181,26 +181,24 @@ public class RemoteGameProxy implements Game {
 
     @Override
     public List<LegalMove> legalMoves() {
-        return legalMoves;
+        return legalMoves.values().stream().toList();
     }
 
     @Override
     public boolean executeMove(Position from, Position to) {
-        Optional<LegalMove> moveOptional = legalMoves.stream()
-                .filter(m -> m.from().equals(from) && m.to().equals(to) && !m.promotion()).findFirst();
-
-        if (moveOptional.isEmpty()) {
+        if (!legalMoves.containsKey(Pair.of(from, to))) {
             return false;
         }
-        LegalMove move = moveOptional.get();
+
+        LegalMove move = legalMoves.get(Pair.of(from, to));
 
         board[to.x()][to.y()] = board[from.x()][from.y()];
         board[from.x()][from.y()] = null;
 
         currentPlayer = localPlayer.next();
-        activeCheck = move.withCheck();
-        legalMoves = List.of();
-        lastMoveInNotation = move.notation();
+//        activeCheck = move.check();
+        legalMoves = Map.of();
+//        lastMoveInNotation = move.notation();
 
         controller.refreshBoard();
 
@@ -219,21 +217,19 @@ public class RemoteGameProxy implements Game {
 
     @Override
     public boolean executeMove(Position from, Position to, PieceType promotion) {
-        Optional<LegalMove> moveOptional = legalMoves.stream()
-                .filter(m -> m.from().equals(from) && m.to().equals(to) && m.promotion()).findFirst();
-
-        if (moveOptional.isEmpty()) {
+        if (!legalMoves.containsKey(Pair.of(from, to))) {
             return false;
         }
-        LegalMove move = moveOptional.get();
+
+        LegalMove move = legalMoves.get(Pair.of(from, to));
 
         board[to.x()][to.y()] = Pair.of(promotion, board[from.x()][from.y()].getRight());
         board[from.x()][from.y()] = null;
 
         currentPlayer = localPlayer.next();
-        activeCheck = move.withCheck();
-        legalMoves = List.of();
-        lastMoveInNotation = move.notation();
+//        activeCheck = move.withCheck();
+        legalMoves = Map.of();
+//        lastMoveInNotation = move.notation();
 
         controller.refreshBoard();
 
@@ -299,7 +295,8 @@ public class RemoteGameProxy implements Game {
 
                         currentPlayer = localPlayer;
                         activeCheck = move.withCheck();
-                        legalMoves = move.legalMoves();
+                        legalMoves = move.legalMoves().stream().collect(
+                                Collectors.toUnmodifiableMap(m -> Pair.of(m.from(), m.to()), m -> m));
                         lastMoveInNotation = move.moveRepresentation();
 
                         controller.refreshBoard();

@@ -1,6 +1,7 @@
 package com.pmarshall.chessgame.controller;
 
 import com.pmarshall.chessgame.model.dto.LegalMove;
+import com.pmarshall.chessgame.model.dto.Promotion;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
@@ -178,7 +179,7 @@ public class GameController {
         this.currentLegalMoves = moves.stream()
                 .collect(Collectors.groupingBy(LegalMove::from, Collectors.mapping(LegalMove::to, Collectors.toSet())));
         this.promotions = moves.stream()
-                .filter(LegalMove::promotion)
+                .filter(Promotion.class::isInstance)
                 .map(move -> Pair.of(move.from(), move.to()))
                 .collect(Collectors.toUnmodifiableSet());
     }

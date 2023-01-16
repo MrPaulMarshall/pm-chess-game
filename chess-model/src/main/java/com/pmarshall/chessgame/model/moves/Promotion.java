@@ -68,4 +68,9 @@ public class Promotion extends Move {
                 + this.newPosition.translateX() + this.newPosition.translateY() + this.newPiece.toString();
     }
 
+    @Override
+    public String notation() {
+        return (this.takenPiece == null ? "" : this.oldPosition.translateX() + "x")
+                + this.newPosition.translateX() + this.newPosition.translateY();
+    }
 }
