@@ -1,6 +1,7 @@
 package com.pmarshall.chessgame.controller;
 
 import com.pmarshall.chessgame.model.dto.LegalMove;
+import com.pmarshall.chessgame.model.dto.Piece;
 import com.pmarshall.chessgame.model.dto.Promotion;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
@@ -42,11 +43,11 @@ public class GameController {
     private Map<Position, Set<Position>> currentLegalMoves;
     private Set<Pair<Position, Position>> promotions;
 
-    public Pair<PieceType, Color>[][] getBoard() {
+    public Piece[][] getBoard() {
         return board;
     }
 
-    private Pair<PieceType, Color>[][] board;
+    private Piece[][] board;
 
     private Position pieceChosen;
     private boolean gameIsRunning;
@@ -121,7 +122,7 @@ public class GameController {
             this.executeMove(this.pieceChosen, clickedCell);
         }
         // if player clicked on another of his pieces, mark it
-        else if (board[i][j] != null && board[i][j].getRight() == game.currentPlayer()) {
+        else if (board[i][j] != null && board[i][j].color() == game.currentPlayer()) {
             choosePiece(clickedCell);
         }
     }
@@ -175,6 +176,7 @@ public class GameController {
     private void reloadBoardCopy() {
         this.board = game.getBoardWithPieces();
 
+        // TODO: change API of View
         List<LegalMove> moves = game.legalMoves();
         this.currentLegalMoves = moves.stream()
                 .collect(Collectors.groupingBy(LegalMove::from, Collectors.mapping(LegalMove::to, Collectors.toSet())));

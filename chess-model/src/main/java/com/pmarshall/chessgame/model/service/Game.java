@@ -1,12 +1,13 @@
 package com.pmarshall.chessgame.model.service;
 
 import com.pmarshall.chessgame.model.dto.LegalMove;
+import com.pmarshall.chessgame.model.dto.Piece;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface Game {
 
@@ -27,12 +28,19 @@ public interface Game {
      * @return 8x8 array of pairs {type, color} that fully represents current configuration on the board.
      *         If the cell is empty, it contains null
      */
-    Pair<PieceType, Color>[][] getBoardWithPieces();
+    Piece[][] getBoardWithPieces();
 
-    /**
-     * @return collection of triples {from, to, promotionRequired} that represent legal moves in current turn
-     */
-    List<LegalMove> legalMoves();
+//    /** TODO: this function is only needed on the server-side
+//     * @return collection of triples {from, to, promotionRequired} that represent legal moves in current turn
+//     */
+//    List<LegalMove> legalMoves();
+
+    boolean isPromotionRequired(Position from, Position to);
+
+    boolean isMoveLegal(Position from, Position to);
+
+//    TODO: this function is on client-side (all implementation)
+    Collection<Position> legalMovesFrom(Position from);
 
     /**
      * @return true if move is legal and thus executed. In case promotion is required this call will fail.

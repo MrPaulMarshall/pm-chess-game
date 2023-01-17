@@ -12,6 +12,8 @@ import com.pmarshall.chessgame.model.moves.Move;
 import com.pmarshall.chessgame.model.service.Game;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -179,20 +181,19 @@ public class InMemoryChessGame implements Game {
     }
 
     @Override
-    public Pair<PieceType, Color>[][] getBoardWithPieces() {
-        Pair<PieceType, Color>[][] result = new Pair[8][8];
+    public com.pmarshall.chessgame.model.dto.Piece[][] getBoardWithPieces() {
+        com.pmarshall.chessgame.model.dto.Piece[][] result = new com.pmarshall.chessgame.model.dto.Piece[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Piece piece = board[i][j];
                 if (piece != null) {
-                    result[i][j] = Pair.of(piece.getType(), piece.getColor());
+                    result[i][j] = new com.pmarshall.chessgame.model.dto.Piece(piece.getType(), piece.getColor());
                 }
             }
         }
         return result;
     }
 
-    @Override
     public List<LegalMove> legalMoves() {
         return currentPlayer.getAllPossibleMoves().stream().map(move -> {
             if (move instanceof Promotion p) {
@@ -207,6 +208,30 @@ public class InMemoryChessGame implements Game {
             // TODO: en-passant needs to be handled here, because it's represented as BasicMove :/
             return new DefaultMove(move.getPieceToMove().getPosition(), move.getNewPosition(), move.isWithCheck());
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Position> legalMovesFrom(Position from) {
+        Piece piece = this.board[from.x()][from.y()];
+        if (piece == null)
+            return Collections.emptyList();
+        return piece.getPossibleMoves().stream().map(Move::getNewPosition).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isMoveLegal(Position from, Position to) {
+        Piece piece = this.board[from.x()][from.y()];
+        if (piece == null)
+            return false;
+        return piece.findMoveByTargetPosition(to) != null;
+    }
+
+    @Override
+    public boolean isPromotionRequired(Position from, Position to) {
+        Piece piece = this.board[from.x()][from.y()];
+        if (piece == null)
+            return false;
+        return piece.findMoveByTargetPosition(to) instanceof Promotion;
     }
 
     @Override

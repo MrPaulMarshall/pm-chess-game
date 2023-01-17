@@ -11,6 +11,8 @@ import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.controller.GameController;
 import com.pmarshall.chessgame.model.dto.LegalMove;
+import com.pmarshall.chessgame.model.dto.Piece;
+import com.pmarshall.chessgame.model.dto.Promotion;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
@@ -23,7 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -47,7 +49,7 @@ public class RemoteGameProxy implements Game {
     private String id;
     private String opponentId;
 
-    private Pair<PieceType, Color>[][] board;
+    private Piece[][] board;
     private Color currentPlayer;
 
     private Map<Pair<Position, Position>, LegalMove> legalMoves;
@@ -109,38 +111,38 @@ public class RemoteGameProxy implements Game {
      * <br/>
      * BLACK occupies 6th and 7th rows
      */
-    private static Pair<PieceType, Color>[][] setUpBoard() {
-        Pair<PieceType, Color>[][] board = new Pair[8][8];
+    private static Piece[][] setUpBoard() {
+        Piece[][] board = new Piece[8][8];
 
         // pawns
         for (int j = 0; j < 8; j++) {
-            board[1][j] = Pair.of(PieceType.PAWN, Color.WHITE);
-            board[6][j] = Pair.of(PieceType.PAWN, Color.BLACK);
+            board[1][j] = new Piece(PieceType.PAWN, Color.WHITE);
+            board[6][j] = new Piece(PieceType.PAWN, Color.BLACK);
         }
 
         // rooks
-        board[0][0] = Pair.of(PieceType.ROOK, Color.WHITE);
-        board[0][7] = Pair.of(PieceType.ROOK, Color.WHITE);
-        board[7][0] = Pair.of(PieceType.ROOK, Color.BLACK);
-        board[7][7] = Pair.of(PieceType.ROOK, Color.BLACK);
+        board[0][0] = new Piece(PieceType.ROOK, Color.WHITE);
+        board[0][7] = new Piece(PieceType.ROOK, Color.WHITE);
+        board[7][0] = new Piece(PieceType.ROOK, Color.BLACK);
+        board[7][7] = new Piece(PieceType.ROOK, Color.BLACK);
 
         // knights
-        board[0][1] = Pair.of(PieceType.KNIGHT, Color.WHITE);
-        board[0][6] = Pair.of(PieceType.KNIGHT, Color.WHITE);
-        board[7][1] = Pair.of(PieceType.KNIGHT, Color.BLACK);
-        board[7][6] = Pair.of(PieceType.KNIGHT, Color.BLACK);
+        board[0][1] = new Piece(PieceType.KNIGHT, Color.WHITE);
+        board[0][6] = new Piece(PieceType.KNIGHT, Color.WHITE);
+        board[7][1] = new Piece(PieceType.KNIGHT, Color.BLACK);
+        board[7][6] = new Piece(PieceType.KNIGHT, Color.BLACK);
 
         // bishops
-        board[0][2] = Pair.of(PieceType.BISHOP, Color.WHITE);
-        board[0][5] = Pair.of(PieceType.BISHOP, Color.WHITE);
-        board[7][2] = Pair.of(PieceType.BISHOP, Color.BLACK);
-        board[7][5] = Pair.of(PieceType.BISHOP, Color.BLACK);
+        board[0][2] = new Piece(PieceType.BISHOP, Color.WHITE);
+        board[0][5] = new Piece(PieceType.BISHOP, Color.WHITE);
+        board[7][2] = new Piece(PieceType.BISHOP, Color.BLACK);
+        board[7][5] = new Piece(PieceType.BISHOP, Color.BLACK);
 
         // queens and kings
-        board[0][3] = Pair.of(PieceType.QUEEN, Color.WHITE);
-        board[0][4] = Pair.of(PieceType.KING, Color.WHITE);
-        board[7][3] = Pair.of(PieceType.QUEEN, Color.BLACK);
-        board[7][4] = Pair.of(PieceType.KING, Color.BLACK);
+        board[0][3] = new Piece(PieceType.QUEEN, Color.WHITE);
+        board[0][4] = new Piece(PieceType.KING, Color.WHITE);
+        board[7][3] = new Piece(PieceType.QUEEN, Color.BLACK);
+        board[7][4] = new Piece(PieceType.KING, Color.BLACK);
 
         return board;
     }
@@ -171,8 +173,8 @@ public class RemoteGameProxy implements Game {
     }
 
     @Override
-    public Pair<PieceType, Color>[][] getBoardWithPieces() {
-        Pair<PieceType, Color>[][] copy = new Pair[8][8];
+    public Piece[][] getBoardWithPieces() {
+        Piece[][] copy = new Piece[8][8];
         for (int i = 0; i < 8; i++) {
             System.arraycopy(board[i], 0, copy[i], 0, 8);
         }
@@ -180,8 +182,20 @@ public class RemoteGameProxy implements Game {
     }
 
     @Override
-    public List<LegalMove> legalMoves() {
-        return legalMoves.values().stream().toList();
+    public boolean isMoveLegal(Position from, Position to) {
+        return legalMoves.containsKey(Pair.of(from, to));
+    }
+
+    @Override
+    public Collection<Position> legalMovesFrom(Position from) {
+        return legalMoves.values().stream()
+                .filter(move -> move.from().equals(from))
+                .map(LegalMove::to).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isPromotionRequired(Position from, Position to) {
+        return legalMoves.get(Pair.of(from, to)) instanceof Promotion;
     }
 
     @Override
@@ -223,7 +237,7 @@ public class RemoteGameProxy implements Game {
 
         LegalMove move = legalMoves.get(Pair.of(from, to));
 
-        board[to.x()][to.y()] = Pair.of(promotion, board[from.x()][from.y()].getRight());
+        board[to.x()][to.y()] = new Piece(promotion, board[from.x()][from.y()].color());
         board[from.x()][from.y()] = null;
 
         currentPlayer = localPlayer.next();
@@ -287,7 +301,7 @@ public class RemoteGameProxy implements Game {
                     }
                     if (msg instanceof OpponentMoved move) {
                         if (move.promotion() != null) {
-                            board[move.to().x()][move.to().y()] = Pair.of(move.promotion(), localPlayer.next());
+                            board[move.to().x()][move.to().y()] = new Piece(move.promotion(), localPlayer.next());
                         } else {
                             board[move.to().x()][move.to().y()] = board[move.from().x()][move.from().y()];
                         }
