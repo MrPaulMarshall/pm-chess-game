@@ -54,8 +54,7 @@ public class GameController {
         gameIsRunning = true;
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(GameController.class
-                .getResource("/view/board_screen.fxml"));
+        loader.setLocation(GameController.class.getResource("/view/local_game_screen.fxml"));
         BorderPane rootLayout = loader.load();
 
         gameView = loader.getController();
