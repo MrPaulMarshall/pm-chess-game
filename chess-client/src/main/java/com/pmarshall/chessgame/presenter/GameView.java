@@ -1,10 +1,10 @@
 package com.pmarshall.chessgame.presenter;
 
 import com.pmarshall.chessgame.controller.GameController;
+import com.pmarshall.chessgame.model.dto.Piece;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.service.Game;
 import com.pmarshall.chessgame.services.ImageProvider;
 import com.pmarshall.chessgame.services.LocalResourceImageProvider;
 import javafx.event.ActionEvent;
@@ -12,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collection;
 
@@ -34,9 +33,14 @@ public class GameView {
     private ChessboardCell[][] chessboard;
 
     /**
-     * Reference to Game object, to read data to display from the model
+     * Counter of moves made during the game
      */
-    private Game game;
+    private int moveCounter = 1;
+
+    /**
+     * Position of the checked king
+     */
+    private Position checkedKing;
 
     /**
      * Source of the images to display the pieces
@@ -65,92 +69,110 @@ public class GameView {
     public void initialize() {
     }
 
-    /**
-     * Prints last move into text area
-     */
-    public void printLastMove() {
-        this.movesTextArea.setEditable(true);
-        this.movesTextArea.appendText(game.currentPlayer().next() + ": " + (game.activeCheck() ? "+" : "") + game.lastMoveInNotation() + "\n");
-        this.movesTextArea.setEditable(false);
+    public void refreshAfterMove(Color player, Piece[][] board, boolean check, String notation) {
+        checkedKing = check ? findCheckedKing(player, board) : null;
+
+        appendMoveToLedger(player, notation);
+        refreshAfterMove(player.next(), board);
     }
 
     /**
-     * Sets all cells into their idle state
+     * Reloads whole information about state of the game
      */
-    public void refreshBackground() {
+    public void refreshAfterMove(Color player, Piece[][] board) {
+        this.repaintBackground();
+        this.currentPlayerName.setText(player.toString());
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece piece = board[i][j];
+                this.chessboard[i][j].setImage(
+                        piece == null ? null : imageProvider.getImage(piece.piece(), piece.color()));
+            }
+        }
+    }
+
+    /**
+     * Sets all cells into their idle state, but shows the active check
+     */
+    public void repaintBackground() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 this.chessboard[i][j].refreshBackground();
             }
         }
 
-        if (game.activeCheck()) {
+        if (checkedKing != null) {
             markCheckedKingsField();
         }
     }
 
-    private void markCheckedKingsField() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Pair<PieceType, Color> piece = gameController.getBoard()[i][j];
-                if (piece != null && piece.getLeft() == PieceType.KING && piece.getRight() == game.currentPlayer()) {
-                    this.chessboard[i][j].setCheckedBackground();
-                    return;
-                }
-            }
+    /**
+     * Refreshes the board coloring, then marks chosen piece and possible destinations
+     */
+    public void choosePiece(Position picked, Collection<Position> legalTargets) {
+        repaintBackground();
+        chessboard[picked.x()][picked.y()].setChosenBackground();
+        for (Position target : legalTargets) {
+            chessboard[target.x()][target.y()].setClickableBackground();
         }
     }
 
     /**
-     * Reloads whole information about state of the game
+     * Prints last move into text area
      */
-    public void reloadBoardView() {
-        this.refreshBackground();
-        this.currentPlayerName.setText(game.currentPlayer().toString());
+    private void appendMoveToLedger(Color player, String notation) {
+        this.movesTextArea.setEditable(true);
+        if (player == Color.WHITE) {
+            this.movesTextArea.appendText(moveCounter + ". " + notation);
+        } else {
+            this.movesTextArea.appendText(" " + notation + "\n");
+            moveCounter++;
+        }
+        this.movesTextArea.setEditable(false);
+    }
+
+    private Position findCheckedKing(Color color, Piece[][] board) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                Pair<PieceType, Color> piece = gameController.getBoard()[i][j];
-                this.chessboard[i][j].setImage(
-                        piece == null ? null : imageProvider.getImage(piece.getLeft(), piece.getRight()));
+                Piece piece = board[i][j];
+                if (piece != null && piece.piece() == PieceType.KING && piece.color() == color) {
+                    return new Position(i, j);
+                }
             }
         }
+        throw new IllegalStateException("King must be on the board");
+    }
+
+    private void markCheckedKingsField() {
+        this.chessboard[checkedKing.x()][checkedKing.y()].setCheckedBackground();
     }
 
     // Setters
 
-    public void setBoardScreenAppController(GameController gameController) {
+    /**
+     * Provides reference to controller and initializes cells of the board
+     */
+    public void setController(GameController gameController) {
         this.gameController = gameController;
-    }
 
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-    public void setBoardCells(ChessboardCell[][] board) {
-        this.chessboard = board;
-
+        this.chessboard = new ChessboardCell[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                this.chessBoardGrid.add(this.chessboard[i][j].getPane(), i, j);
+                chessboard[i][j] = new ChessboardCell(i, j, gameController);
+                chessBoardGrid.add(chessboard[i][j].getPane(), i, j);
             }
         }
     }
 
-    public void setChosenPieceBackground(Position position) {
-        this.chessboard[position.x()][position.y()].setChosenBackground();
-    }
-
-    public void setClickableBackgrounds(Collection<Position> positions) {
-        positions.forEach(pos -> this.chessboard[pos.x()][pos.y()].setClickableBackground());
-    }
-
     @FXML
     public void handleSurrenderAction(ActionEvent ignored) {
-        this.gameController.endGame(game.currentPlayer().next());
+        // TODO: FIXME :(
+        this.gameController.endGame(null);
     }
 
     @FXML
     public void handleDrawAction(ActionEvent ignored) {
+        // TODO: FIXME :(
         this.gameController.endGame(null);
     }
 
