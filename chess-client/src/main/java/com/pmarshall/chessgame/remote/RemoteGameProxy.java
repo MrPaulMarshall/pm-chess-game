@@ -182,6 +182,11 @@ public class RemoteGameProxy implements Game {
     }
 
     @Override
+    public Piece getPiece(Position on) {
+        return board[on.x()][on.y()];
+    }
+
+    @Override
     public boolean isMoveLegal(Position from, Position to) {
         return legalMoves.containsKey(Pair.of(from, to));
     }

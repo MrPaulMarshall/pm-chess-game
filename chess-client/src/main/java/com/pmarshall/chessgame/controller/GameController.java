@@ -27,9 +27,6 @@ public class GameController {
 
     private final Stage primaryStage;
 
-    /**
-     * References to model
-     */
     private final Game game;
 
     private Position pieceChosen;
@@ -37,10 +34,13 @@ public class GameController {
 
     private GameView gameView = null;
 
-    public GameController(Stage primaryStage, Game game) {
+    private final boolean remoteMode;
+
+    public GameController(Stage primaryStage, Game game, boolean remoteMode) {
         this.primaryStage = primaryStage;
         this.gameIsRunning = false;
         this.game = game;
+        this.remoteMode = remoteMode;
     }
 
     /**
@@ -98,6 +98,22 @@ public class GameController {
         if (piece != null && piece.color() == game.currentPlayer()) {
             pieceChosen = clickedCell;
             gameView.choosePiece(pieceChosen, game.legalMovesFrom(pieceChosen));
+        }
+    }
+
+    public void surrenderButtonOnClick() {
+        if (remoteMode) {
+            game.surrender(); // notify server
+        } else {
+            endGame(game.currentPlayer().next());
+        }
+    }
+
+    public void drawButtonOnClick() {
+        if (remoteMode) {
+            game.draw();
+        } else {
+            endGame(null);
         }
     }
 

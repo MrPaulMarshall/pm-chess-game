@@ -166,14 +166,12 @@ public class GameView {
 
     @FXML
     public void handleSurrenderAction(ActionEvent ignored) {
-        // TODO: FIXME :(
-        this.gameController.endGame(null);
+        gameController.surrenderButtonOnClick();
     }
 
     @FXML
     public void handleDrawAction(ActionEvent ignored) {
-        // TODO: FIXME :(
-        this.gameController.endGame(null);
+        gameController.drawButtonOnClick();
     }
 
 }

@@ -46,15 +46,14 @@ public class MenuView {
     @FXML
     public void handleLocalAction(ActionEvent ignored) throws Exception {
         dialogStage.close();
-        GameController gameController = new GameController(primaryStage, new InMemoryChessGame());
+        GameController gameController = new GameController(primaryStage, new InMemoryChessGame(), false);
         gameController.initRootLayout();
     }
 
     @FXML
     public void handleRemoteAction(ActionEvent ignored) throws Exception {
         dialogStage.close();
-        // TODO: GameController should receive arguments differentiating remote connection from local play
-        GameController gameController = new GameController(primaryStage, new InMemoryChessGame());
+        GameController gameController = new GameController(primaryStage, new InMemoryChessGame(), true);
         gameController.initRootLayout();
     }
 

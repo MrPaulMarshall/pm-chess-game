@@ -94,10 +94,6 @@ public class InMemoryChessGame implements Game {
 
     // Getters
 
-    public Piece getPiece(int i, int j) {
-        return this.board[i][j];
-    }
-
     public Player getCurrentPlayer() {
         return this.currentPlayer;
     }
@@ -192,6 +188,16 @@ public class InMemoryChessGame implements Game {
             }
         }
         return result;
+    }
+
+    @Override
+    public com.pmarshall.chessgame.model.dto.Piece getPiece(Position on) {
+        Piece piece = board[on.x()][on.y()];
+        if (piece == null) {
+            return null;
+        } else {
+            return new com.pmarshall.chessgame.model.dto.Piece(piece.getType(), piece.getColor());
+        }
     }
 
     public List<LegalMove> legalMoves() {

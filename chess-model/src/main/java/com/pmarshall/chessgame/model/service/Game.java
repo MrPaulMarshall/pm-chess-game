@@ -1,6 +1,5 @@
 package com.pmarshall.chessgame.model.service;
 
-import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.dto.Piece;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
@@ -30,16 +29,12 @@ public interface Game {
      */
     Piece[][] getBoardWithPieces();
 
-//    /** TODO: this function is only needed on the server-side
-//     * @return collection of triples {from, to, promotionRequired} that represent legal moves in current turn
-//     */
-//    List<LegalMove> legalMoves();
+    Piece getPiece(Position on);
 
     boolean isPromotionRequired(Position from, Position to);
 
     boolean isMoveLegal(Position from, Position to);
 
-//    TODO: this function is on client-side (all implementation)
     Collection<Position> legalMovesFrom(Position from);
 
     /**
