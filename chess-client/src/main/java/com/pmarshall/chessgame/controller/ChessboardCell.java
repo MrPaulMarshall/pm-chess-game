@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.presenter;
+package com.pmarshall.chessgame.controller;
 
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  *
  * Represents single cell on the board from the GUI's perspective
  */
-public class ChessboardCell {
+class ChessboardCell {
 
     /**
      * Background with different colors, to inform user of current state of the game
@@ -53,7 +53,7 @@ public class ChessboardCell {
     /**
      * Create ChessboardCell object
      */
-    public ChessboardCell(boolean lightSquare, Consumer<MouseEvent> clickEventHandler) {
+    ChessboardCell(boolean lightSquare, Consumer<MouseEvent> clickEventHandler) {
         this.pane = new StackPane();
         this.imageView = new ImageView();
 
@@ -77,42 +77,42 @@ public class ChessboardCell {
         this.pane.setOnMouseClicked(clickEventHandler::accept);
     }
 
-    public Pane getPane() {
+    Pane getPane() {
         return this.pane;
     }
 
     /**
      * @param image image to display
      */
-    public void setImage(Image image) {
+    void setImage(Image image) {
         imageView.setImage(image);
     }
 
     /**
      * Sets background to idle state
      */
-    public void refreshBackground() {
+    void refreshBackground() {
         pane.setBackground(normalBackground);
     }
 
     /**
      * Marks that this cell is currently chosen
      */
-    public void setChosenBackground() {
+    void setChosenBackground() {
         pane.setBackground(MARKED_BACKGROUND);
     }
 
     /**
      * Marks that king on this cell is currently in check
      */
-    public void setCheckedBackground() {
+    void setCheckedBackground() {
         pane.setBackground(CHECKED_BACKGROUND);
     }
 
     /**
      * Marks that currently chosen piece can move to this cell
      */
-    public void setClickableBackground() {
+    void setClickableBackground() {
         pane.setBackground(clickableBackground);
     }
 }
