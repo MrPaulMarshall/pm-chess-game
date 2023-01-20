@@ -54,6 +54,7 @@ public class RemoteGameController {
     private int moveCounter = 1;
 
     private Position checkedKing;
+
     private final ImageProvider imageProvider = new LocalResourceImageProvider();
 
     /**
@@ -84,6 +85,7 @@ public class RemoteGameController {
         pieceChosen = null;
         gameIsRunning = true;
 
+        // TODO: should it be here??
         this.chessboard = new ChessboardCell[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -115,6 +117,14 @@ public class RemoteGameController {
         // TODO: disable interacting with the board
         DrawRequestController controller = new DrawRequestController(this);
         controller.displayWindow();
+    }
+
+    public void acceptDraw() {
+        // TODO: game.acceptDraw()
+    }
+
+    public void rejectDraw() {
+        // TODO: game.rejectDraw()
     }
 
     /**

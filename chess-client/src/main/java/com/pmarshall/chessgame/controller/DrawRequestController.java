@@ -10,9 +10,9 @@ import javafx.stage.Stage;
 
 public class DrawRequestController {
 
-    private final GameController gameController;
+    private final RemoteGameController gameController;
 
-    public DrawRequestController(GameController gameController) {
+    public DrawRequestController(RemoteGameController gameController) {
         this.gameController = gameController;
     }
 
