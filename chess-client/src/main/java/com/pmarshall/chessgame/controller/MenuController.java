@@ -1,11 +1,18 @@
 package com.pmarshall.chessgame.controller;
 
+import com.pmarshall.chessgame.model.game.InMemoryChessGame;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import com.pmarshall.chessgame.presenter.MenuView;
+
+import java.io.IOException;
 
 /**
  * @author Paweł Marszał
@@ -14,20 +21,57 @@ import com.pmarshall.chessgame.presenter.MenuView;
  */
 public class MenuController {
 
-    private final Stage primaryStage;
+    private Stage primaryStage;
 
-    public MenuController(Stage primaryStage) {
+    private Stage dialogStage;
+
+    @FXML
+    private StackPane imagePane;
+
+    @FXML
+    public void initialize() {
+        ImageView imageView = new ImageView();
+        imageView.setImage(
+                new Image("images/black-queen.png", 240, 240, false, true, false)
+        );
+        this.imagePane.getChildren().add(imageView);
+    }
+
+    @FXML
+    public void handleLocalAction(ActionEvent ignored) throws Exception {
+        dialogStage.close();
+        GameController gameController = new GameController(primaryStage, new InMemoryChessGame(), false);
+        gameController.initRootLayout();
+    }
+
+    @FXML
+    public void handleRemoteAction(ActionEvent ignored) throws Exception {
+        dialogStage.close();
+        GameController gameController = new GameController(primaryStage, new InMemoryChessGame(), true);
+        gameController.initRootLayout();
+    }
+
+    @FXML
+    public void handleCancelAction(ActionEvent ignored) {
+        dialogStage.close();
+        primaryStage.close();
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
+    }
+
+    public void setDialogStage(Stage dialogStage) {
+        this.dialogStage = dialogStage;
     }
 
     /**
      * Loads, initializes and displays 'welcome' screen
-     * @throws Exception if anything goes wrong
+     * @throws IOException if anything goes wrong
      */
-    public void initRootLayout() throws Exception {
+    public static void initRootLayout(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(MenuController.class
-                .getResource("/view/menu_screen.fxml"));
+        loader.setLocation(MenuController.class.getResource("/view/menu_screen.fxml"));
         BorderPane page = loader.load();
 
         Stage dialogStage = new Stage();
@@ -38,9 +82,9 @@ public class MenuController {
         Scene scene = new Scene(page);
         dialogStage.setScene(scene);
 
-        MenuView menuView = loader.getController();
-        menuView.setDialogStage(dialogStage);
-        menuView.setPrimaryStage(primaryStage);
+        MenuController controller = loader.getController();
+        controller.setPrimaryStage(primaryStage);
+        controller.setDialogStage(dialogStage);
 
         dialogStage.showAndWait();
     }
