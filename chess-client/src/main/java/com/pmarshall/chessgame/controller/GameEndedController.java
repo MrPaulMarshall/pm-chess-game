@@ -30,9 +30,8 @@ class GameEndedController {
         button.setOnAction((event) -> {
             endGameStage.close();
 
-            MenuController menuController = new MenuController(primaryStage);
             try {
-                menuController.initRootLayout();
+                MenuController.initRootLayout(primaryStage);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

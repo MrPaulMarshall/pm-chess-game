@@ -18,8 +18,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Chess game by Paweł Marszał");
-        MenuController menuController = new MenuController(primaryStage);
-        menuController.initRootLayout();
+        MenuController.initRootLayout(primaryStage);
     }
 
 }
