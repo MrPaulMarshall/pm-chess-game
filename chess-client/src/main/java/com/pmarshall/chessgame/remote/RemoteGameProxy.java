@@ -4,12 +4,13 @@ import com.pmarshall.chessgame.api.ChatMessage;
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.endrequest.DrawProposition;
+import com.pmarshall.chessgame.api.endrequest.Surrender;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
-import com.pmarshall.chessgame.controller.GameController;
+import com.pmarshall.chessgame.controller.RemoteGameController;
 import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.dto.Piece;
 import com.pmarshall.chessgame.model.dto.Promotion;
@@ -35,7 +36,7 @@ public class RemoteGameProxy implements Game {
 
     private static final Logger log = LoggerFactory.getLogger(RemoteGameProxy.class);
 
-    private final GameController controller;
+    private final RemoteGameController controller;
 
     private final Reader readerThread;
     private final Writer writerThread;
@@ -57,7 +58,7 @@ public class RemoteGameProxy implements Game {
     private boolean activeCheck;
     private GameOutcome outcome;
 
-    private RemoteGameProxy(GameController controller,
+    private RemoteGameProxy(RemoteGameController controller,
                             Socket socket, InputStream in, OutputStream out, String id) {
         this.controller = controller;
 
@@ -69,7 +70,7 @@ public class RemoteGameProxy implements Game {
         this.readerThread = new Reader(in);
     }
 
-    public static RemoteGameProxy connectToServer(GameController controller) throws IOException {
+    public static RemoteGameProxy connectToServer(RemoteGameController controller) throws IOException {
         Socket socket = new Socket("127.0.0.1", 21370);
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
@@ -145,6 +146,14 @@ public class RemoteGameProxy implements Game {
         board[7][4] = new Piece(PieceType.KING, Color.BLACK);
 
         return board;
+    }
+
+    public void surrender() throws InterruptedException {
+        messagesToServer.put(new Surrender());
+    }
+
+    public void proposeDraw() throws InterruptedException {
+        messagesToServer.put(new DrawProposition());
     }
 
     @Override
