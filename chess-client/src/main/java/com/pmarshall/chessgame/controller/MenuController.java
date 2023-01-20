@@ -1,6 +1,5 @@
 package com.pmarshall.chessgame.controller;
 
-import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,8 +39,7 @@ public class MenuController {
     @FXML
     public void handleLocalAction(ActionEvent ignored) throws Exception {
         dialogStage.close();
-        GameController gameController = new GameController(primaryStage, new InMemoryChessGame(), false);
-        gameController.initRootLayout();
+        LocalGameController.initRootLayout(primaryStage);
     }
 
     @FXML
