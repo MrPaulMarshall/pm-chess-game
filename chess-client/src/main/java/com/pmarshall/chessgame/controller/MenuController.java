@@ -45,10 +45,9 @@ public class MenuController {
     }
 
     @FXML
-    public void handleRemoteAction(ActionEvent ignored) throws Exception {
+    public void handleRemoteAction(ActionEvent ignored) throws IOException {
         dialogStage.close();
-        GameController gameController = new GameController(primaryStage, new InMemoryChessGame(), true);
-        gameController.initRootLayout();
+        RemoteGameController.initRootLayout(primaryStage);
     }
 
     @FXML

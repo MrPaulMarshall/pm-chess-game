@@ -4,7 +4,6 @@ import com.pmarshall.chessgame.model.dto.Piece;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.presenter.ChessboardCell;
 import com.pmarshall.chessgame.remote.RemoteGameProxy;
 import com.pmarshall.chessgame.services.ImageProvider;
 import com.pmarshall.chessgame.services.LocalResourceImageProvider;
@@ -21,9 +20,6 @@ import javafx.stage.Stage;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.util.Collection;
 
 /**
@@ -46,9 +42,9 @@ public class RemoteGameController {
     private TextArea movesTextArea;
 
 
-    private final Stage primaryStage;
+    private Stage primaryStage;
 
-    private final RemoteGameProxy game;
+    private RemoteGameProxy game;
 
     private Position pieceChosen;
     private boolean gameIsRunning;
@@ -60,28 +56,33 @@ public class RemoteGameController {
     private Position checkedKing;
     private final ImageProvider imageProvider = new LocalResourceImageProvider();
 
-    public RemoteGameController(Stage primaryStage, Socket socket, InputStream in, OutputStream out, String id) {
-        this.primaryStage = primaryStage;
-        this.gameIsRunning = false;
-        // TODO: where is the connection established??
-        //        this.game = new RemoteGameProxy(this, socket, in, out, id);
-        this.game = null;
-    }
-
     /**
      * Initializes game and displays view
      * @throws IOException if the view cannot be loaded
      */
-    public void initRootLayout() throws IOException {
+    public static void initRootLayout(Stage primaryStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(RemoteGameController.class.getResource("/view/remote_game_screen.fxml"));
+
+        BorderPane rootLayout = loader.load();
+        Scene scene = new Scene(rootLayout);
+
+        RemoteGameController controller = loader.getController();
+        RemoteGameProxy game = RemoteGameProxy.connectToServer(controller);
+        controller.injectDependencies(primaryStage, game);
+
         primaryStage.setTitle("Chess board");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void injectDependencies(Stage primaryStage, RemoteGameProxy game) {
+        this.primaryStage = primaryStage;
+        this.game = game;
 
         // TODO: init flags
         pieceChosen = null;
         gameIsRunning = true;
-
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(RemoteGameController.class.getResource("/view/remote_game_screen.fxml"));
-        BorderPane rootLayout = loader.load();
 
         this.chessboard = new ChessboardCell[8][8];
         for (int i = 0; i < 8; i++) {
@@ -94,10 +95,6 @@ public class RemoteGameController {
         }
 
         refreshAfterMove(game.currentPlayer(), game.getBoardWithPieces());
-
-        Scene scene = new Scene(rootLayout);
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
     @FXML
