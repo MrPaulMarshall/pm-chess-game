@@ -78,8 +78,6 @@ public abstract class GameControllerBase {
 
         GameEndedController gameEndedController = new GameEndedController(primaryStage);
         gameEndedController.initRootLayout(result);
-
-        primaryStage.close();
     }
 
     /**
