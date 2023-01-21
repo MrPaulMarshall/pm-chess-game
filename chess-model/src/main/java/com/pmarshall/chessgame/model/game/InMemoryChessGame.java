@@ -1,6 +1,7 @@
 package com.pmarshall.chessgame.model.game;
 
 import com.pmarshall.chessgame.model.dto.*;
+import com.pmarshall.chessgame.model.moves.BasicMove;
 import com.pmarshall.chessgame.model.moves.Promotion;
 import com.pmarshall.chessgame.model.moves.Castling;
 import com.pmarshall.chessgame.model.pieces.*;
@@ -211,7 +212,12 @@ public class InMemoryChessGame implements Game {
                         move.getPieceToMove().getPosition(), move.getNewPosition(),
                         c.getNewPosition().y() == 2, move.isWithCheck());
             }
-            // TODO: en-passant needs to be handled here, because it's represented as BasicMove :/
+            // FIXME: do it better, PLS :(
+            if (move.getPieceToMove().getType() == PieceType.PAWN && move.getPieceToTake() != null
+                    && !move.getPieceToMove().getPosition().equals(move.getPieceToTake().getPosition())) {
+                return new EnPassant(move.getPieceToMove().getPosition(), move.getNewPosition(),
+                        move.getPieceToTake().getPosition(), move.isWithCheck());
+            }
             return new DefaultMove(move.getPieceToMove().getPosition(), move.getNewPosition(), move.isWithCheck());
         }).collect(Collectors.toList());
     }
