@@ -4,6 +4,7 @@ import com.pmarshall.chessgame.api.ChatMessage;
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.endrequest.DrawProposition;
+import com.pmarshall.chessgame.api.endrequest.DrawResponse;
 import com.pmarshall.chessgame.api.endrequest.Surrender;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
@@ -32,7 +33,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
-public class RemoteGameProxy implements Game {
+public class RemoteGameProxy implements Game, ServerProxy {
 
     private static final Logger log = LoggerFactory.getLogger(RemoteGameProxy.class);
 
@@ -148,10 +149,17 @@ public class RemoteGameProxy implements Game {
         return board;
     }
 
+    @Override
+    public Color localPlayer() {
+        return localPlayer;
+    }
+
+    @Override
     public void surrender() throws InterruptedException {
         messagesToServer.put(new Surrender());
     }
 
+    @Override
     public void proposeDraw() throws InterruptedException {
         messagesToServer.put(new DrawProposition());
     }
@@ -277,6 +285,7 @@ public class RemoteGameProxy implements Game {
         return id;
     }
 
+//    @Override
     public void terminateGame() {
         writerThread.interrupt();
         readerThread.interrupt();
@@ -287,6 +296,16 @@ public class RemoteGameProxy implements Game {
         }
 
         // TODO: controller.endGame();
+    }
+
+    @Override
+    public void acceptDraw() throws InterruptedException {
+        messagesToServer.put(new DrawResponse(true));
+    }
+
+    @Override
+    public void rejectDraw() throws InterruptedException {
+        messagesToServer.put(new DrawResponse(false));
     }
 
     public class Reader extends Thread {
