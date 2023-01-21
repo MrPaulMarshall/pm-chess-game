@@ -2,17 +2,18 @@ package com.pmarshall.chessgame.api.move;
 
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.model.dto.LegalMove;
-import com.pmarshall.chessgame.model.properties.PieceType;
-import com.pmarshall.chessgame.model.properties.Position;
 
 import java.util.List;
+import java.util.Objects;
 
 public record OpponentMoved(
-        Position from,
-        Position to,
-        PieceType promotion,
-        boolean withCheck,
-        String moveRepresentation,
+        LegalMove move,
         List<LegalMove> legalMoves
 ) implements Message {
+
+    public OpponentMoved {
+        Objects.requireNonNull(move);
+        Objects.requireNonNull(legalMoves);
+        legalMoves = List.copyOf(legalMoves);
+    }
 }

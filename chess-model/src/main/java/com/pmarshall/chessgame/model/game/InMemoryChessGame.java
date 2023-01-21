@@ -1,7 +1,6 @@
 package com.pmarshall.chessgame.model.game;
 
 import com.pmarshall.chessgame.model.dto.*;
-import com.pmarshall.chessgame.model.moves.BasicMove;
 import com.pmarshall.chessgame.model.moves.Promotion;
 import com.pmarshall.chessgame.model.moves.Castling;
 import com.pmarshall.chessgame.model.pieces.*;
@@ -16,7 +15,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -202,23 +200,26 @@ public class InMemoryChessGame implements Game {
     }
 
     public List<LegalMove> legalMoves() {
+        // TODO: it's freaking terrible, pls fix this ASAP
+
         return currentPlayer.getAllPossibleMoves().stream().map(move -> {
             if (move instanceof Promotion p) {
                 return new com.pmarshall.chessgame.model.dto.Promotion(
-                        move.getPieceToMove().getPosition(), move.getNewPosition(), Map.of()); // TODO: get possible checks from different promotions
+                        move.getPieceToMove().getPosition(), move.getNewPosition(), null, // FIXME: promotions are broken
+                        move.isWithCheck(), move.notation());
             }
             if (move instanceof Castling c) {
                 return new com.pmarshall.chessgame.model.dto.Castling(
                         move.getPieceToMove().getPosition(), move.getNewPosition(),
-                        c.getNewPosition().y() == 2, move.isWithCheck());
+                        c.getNewPosition().y() == 2, move.isWithCheck(), move.notation());
             }
             // FIXME: do it better, PLS :(
             if (move.getPieceToMove().getType() == PieceType.PAWN && move.getPieceToTake() != null
                     && !move.getPieceToMove().getPosition().equals(move.getPieceToTake().getPosition())) {
                 return new EnPassant(move.getPieceToMove().getPosition(), move.getNewPosition(),
-                        move.getPieceToTake().getPosition(), move.isWithCheck());
+                        move.getPieceToTake().getPosition(), move.isWithCheck(), move.notation());
             }
-            return new DefaultMove(move.getPieceToMove().getPosition(), move.getNewPosition(), move.isWithCheck());
+            return new DefaultMove(move.getPieceToMove().getPosition(), move.getNewPosition(), move.isWithCheck(), move.notation());
         }).collect(Collectors.toList());
     }
 
