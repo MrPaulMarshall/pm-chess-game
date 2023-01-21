@@ -6,13 +6,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class DrawRequestController {
 
+    private final Stage primaryStage;
     private final RemoteGameController gameController;
 
-    public DrawRequestController(RemoteGameController gameController) {
+    public DrawRequestController(Stage primaryStage, RemoteGameController gameController) {
+        this.primaryStage = primaryStage;
         this.gameController = gameController;
     }
 
@@ -72,8 +75,11 @@ public class DrawRequestController {
         stage.setWidth(325);
         stage.setHeight(180);
 
+        stage.initOwner(primaryStage);
+        stage.initModality(Modality.WINDOW_MODAL);
+
         // display and wait for player's decision
-        stage.show();
+        stage.showAndWait();
     }
 
 }

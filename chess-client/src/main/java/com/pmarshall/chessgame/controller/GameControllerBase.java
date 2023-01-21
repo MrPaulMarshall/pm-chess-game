@@ -139,7 +139,8 @@ public abstract class GameControllerBase {
     }
 
     public void refreshBoard() {
-        refreshAfterMove(game.currentPlayer(), game.getBoardWithPieces(), game.activeCheck(), game.lastMoveInNotation());
+        refreshAfterMove(game.currentPlayer().next(),
+                game.getBoardWithPieces(), game.activeCheck(), game.lastMoveInNotation());
 
         // check win conditions
         Pair<Color, String> gameOutcome = game.outcome();
@@ -153,10 +154,10 @@ public abstract class GameControllerBase {
     }
 
     protected void refreshAfterMove(Color player, Piece[][] board, boolean check, String notation) {
-        checkedKing = check ? findCheckedKing(player, board) : null;
+        checkedKing = check ? findCheckedKing(player.next(), board) : null;
 
-        appendMoveToLedger(player.next(), notation); // TODO: argument 'player' should be the one that made move, not the other
-        refreshAfterMove(player.next(), board);
+        appendMoveToLedger(player, notation);
+        refreshAfterMove(player, board);
     }
 
     /**
