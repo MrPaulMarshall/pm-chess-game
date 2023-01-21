@@ -1,11 +1,16 @@
 package com.pmarshall.chessgame.controller;
 
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import com.pmarshall.chessgame.presenter.MenuView;
+
+import java.io.IOException;
 
 /**
  * @author Paweł Marszał
@@ -14,35 +19,56 @@ import com.pmarshall.chessgame.presenter.MenuView;
  */
 public class MenuController {
 
-    private final Stage primaryStage;
+    private Stage primaryStage;
 
-    public MenuController(Stage primaryStage) {
+    @FXML
+    private StackPane imagePane;
+
+    @FXML
+    public void initialize() {
+        ImageView imageView = new ImageView();
+        imageView.setImage(
+                new Image("images/black-queen.png", 240, 240, false, true, false)
+        );
+        this.imagePane.getChildren().add(imageView);
+    }
+
+    @FXML
+    public void handleLocalAction(ActionEvent ignored) throws Exception {
+        LocalGameController.initRootLayout(primaryStage);
+    }
+
+    @FXML
+    public void handleRemoteAction(ActionEvent ignored) throws IOException {
+        RemoteGameController.initRootLayout(primaryStage);
+    }
+
+    @FXML
+    public void handleCancelAction(ActionEvent ignored) {
+        primaryStage.close();
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
     /**
      * Loads, initializes and displays 'welcome' screen
-     * @throws Exception if anything goes wrong
+     * @throws IOException if anything goes wrong
      */
-    public void initRootLayout() throws Exception {
+    public static void initRootLayout(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(MenuController.class
-                .getResource("/view/menu_screen.fxml"));
+        loader.setLocation(MenuController.class.getResource("/view/menu_screen.fxml"));
         BorderPane page = loader.load();
-
-        Stage dialogStage = new Stage();
-        dialogStage.setTitle("Chess game - welcome screen");
-        dialogStage.setResizable(false);
-        dialogStage.initModality(Modality.WINDOW_MODAL);
-        dialogStage.initOwner(primaryStage);
         Scene scene = new Scene(page);
-        dialogStage.setScene(scene);
 
-        MenuView menuView = loader.getController();
-        menuView.setDialogStage(dialogStage);
-        menuView.setPrimaryStage(primaryStage);
+        MenuController controller = loader.getController();
+        controller.setPrimaryStage(primaryStage);
 
-        dialogStage.showAndWait();
+        primaryStage.setTitle("Chess game - welcome screen");
+        primaryStage.setResizable(false);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
 }

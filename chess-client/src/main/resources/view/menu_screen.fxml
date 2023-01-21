@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="351.0" prefWidth="301.0"
             xmlns="http://javafx.com/javafx/11.0.1"
-            fx:controller="com.pmarshall.chessgame.presenter.MenuView">
+            fx:controller="com.pmarshall.chessgame.controller.MenuController">
 <top>
     <GridPane hgap="5.0" prefHeight="50.0" prefWidth="301.0" vgap="5.0" BorderPane.alignment="CENTER">
         <rowConstraints>

@@ -6,7 +6,7 @@ import com.pmarshall.chessgame.model.properties.Position;
 
 /**
  * @author Paweł Marszał
- *
+ * <p>
  * Interface representing executable moves on the chessboard.
  * I used Command design pattern to create it.
  */
@@ -43,6 +43,11 @@ public abstract class Move {
     protected boolean pieceDidNotMoveBefore;
 
     /**
+     * Flag that tell whether enemy king would be put in check by this move
+     */
+    protected boolean withCheck;
+
+    /**
      * Executes move
      * @param game provides context
      */
@@ -60,6 +65,10 @@ public abstract class Move {
      */
     public abstract String toString();
 
+    public String notation() {
+        return toString();
+    }
+
     // Getters
 
     public Position getNewPosition() {
@@ -74,4 +83,11 @@ public abstract class Move {
         return this.takenPiece;
     }
 
+    public boolean isWithCheck() {
+        return this.withCheck;
+    }
+
+    public void setWithCheck(boolean check) {
+        this.withCheck = check;
+    }
 }

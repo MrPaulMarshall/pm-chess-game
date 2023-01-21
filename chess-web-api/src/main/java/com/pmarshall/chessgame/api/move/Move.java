@@ -1,19 +1,19 @@
-package com.pmarshall.chessgame.api.move.request;
+package com.pmarshall.chessgame.api.move;
 
+import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 
 import java.util.Objects;
 
-public record Promotion(
+public record Move(
         Position from,
         Position to,
-        PieceType decision
-) implements MoveRequest {
+        PieceType promotion // null means no promotion
+) implements Message {
 
-    public Promotion {
+    public Move {
         Objects.requireNonNull(from);
         Objects.requireNonNull(to);
-        Objects.requireNonNull(decision);
     }
 }

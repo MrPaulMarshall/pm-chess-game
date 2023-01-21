@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<!--
+TODO:
+    change the controller
+    add chat windows
+    include opponents id?
+-->
+
+<?import javafx.scene.text.Font?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="500.0" prefWidth="650.0" maxWidth="650.0"
+            xmlns="http://javafx.com/javafx/8.0.40"
+            fx:controller="com.pmarshall.chessgame.controller.RemoteGameController">
+
+    <center>
+        <VBox id="APP" prefWidth="500" maxWidth="500" minWidth="405"  >
+            <GridPane id="chessBoard" fx:id="chessBoardGrid">
+
+            </GridPane>
+        </VBox>
+    </center>
+
+    <right>
+        <BorderPane prefHeight="450.0" prefWidth="200.0" maxWidth="200.0" BorderPane.alignment="TOP_CENTER">
+            <opaqueInsets>
+                <Insets bottom="5.0" left="10.0" right="5.0" top="5.0"/>
+            </opaqueInsets>
+
+            <top>
+                <HBox maxHeight="-Infinity" prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="TOP_CENTER">
+                    <children>
+                        <Label fx:id="currentPlayerName" text="WHITES" BorderPane.alignment="CENTER_RIGHT">
+                            <font>
+                                <Font size="50"/>
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+            </top>
+
+            <center>
+                <TextArea fx:id="movesTextArea" editable="false" prefHeight="450.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
+            </center>
+        </BorderPane>
+    </right>
+
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="150.0" spacing="100" BorderPane.alignment="CENTER">
+            <opaqueInsets>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </opaqueInsets>
+            <children>
+                <Button fx:id="surrenderButton" alignment="TOP_CENTER" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#handleSurrenderAction" text="Surrender"
+                        prefHeight="40" prefWidth="170">
+                    <font>
+                        <Font size="20"/>
+                    </font>
+
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </VBox.margin>
+                </Button>
+                <Button fx:id="drawButton" alignment="TOP_CENTER" onAction="#handleDrawAction" contentDisplay="TOP"
+                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Propose draw" textAlignment="CENTER"
+                        prefHeight="40" prefWidth="170">
+                    <font>
+                        <Font size="20"/>
+                    </font>
+
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </VBox.margin>
+                </Button>
+            </children>
+        </HBox>
+    </bottom>
+
+</BorderPane>

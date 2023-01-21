@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.api.lobby;
 
 import com.pmarshall.chessgame.api.Message;
-import com.pmarshall.chessgame.model.api.LegalMove;
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.properties.Color;
 
 import java.util.List;

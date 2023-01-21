@@ -4,9 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pmarshall.chessgame.api.ChatMessage;
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
-import com.pmarshall.chessgame.api.endrequest.DrawRequest;
+import com.pmarshall.chessgame.api.endrequest.DrawProposition;
+import com.pmarshall.chessgame.api.endrequest.DrawResponse;
 import com.pmarshall.chessgame.api.endrequest.Surrender;
-import com.pmarshall.chessgame.api.move.request.MoveRequest;
+import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.model.properties.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,7 @@ public class Reader extends Thread {
                     opponentWriter.pushMessage(message);
                 } else if (message instanceof Surrender) {
                     masterThread.notifySurrender(color);
-                } else if (message instanceof DrawRequest || message instanceof MoveRequest) {
+                } else if (message instanceof DrawProposition || message instanceof DrawResponse || message instanceof Move) {
                     masterThread.pushMessage(color, message);
                 } else {
                     log.warn("Illegal message during match from player id={}, message={}", id, message);

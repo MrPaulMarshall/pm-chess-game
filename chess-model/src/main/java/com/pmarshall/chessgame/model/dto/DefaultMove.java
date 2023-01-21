@@ -1,12 +1,12 @@
-package com.pmarshall.chessgame.model.api;
+package com.pmarshall.chessgame.model.dto;
 
 import com.pmarshall.chessgame.model.properties.Position;
 
 import java.util.Objects;
 
-public record LegalMove(Position from, Position to, boolean promotion) {
+public record DefaultMove(Position from, Position to, boolean check) implements LegalMove {
 
-    public LegalMove {
+    public DefaultMove {
         Objects.requireNonNull(from);
         Objects.requireNonNull(to);
     }

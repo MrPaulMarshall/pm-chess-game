@@ -1,7 +1,8 @@
-package com.pmarshall.chessgame.api.move.response;
+package com.pmarshall.chessgame.api.move;
 
 import com.pmarshall.chessgame.api.Message;
-import com.pmarshall.chessgame.model.api.LegalMove;
+import com.pmarshall.chessgame.model.dto.LegalMove;
+import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 
 import java.util.List;
@@ -9,8 +10,9 @@ import java.util.List;
 public record OpponentMoved(
         Position from,
         Position to,
+        PieceType promotion,
+        boolean withCheck,
         String moveRepresentation,
-        boolean check,
         List<LegalMove> legalMoves
 ) implements Message {
 }
