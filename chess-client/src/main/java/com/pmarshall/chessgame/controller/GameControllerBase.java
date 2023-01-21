@@ -134,8 +134,7 @@ public abstract class GameControllerBase {
      * @return piece chosen by player
      */
     private PieceType getPromotedPiece() {
-        // TODO: disable interacting with the board
-        PromotionController controller = new PromotionController();
+        PromotionController controller = new PromotionController(primaryStage);
         return controller.askForPromotionPiece(game.currentPlayer());
     }
 
@@ -156,7 +155,7 @@ public abstract class GameControllerBase {
     protected void refreshAfterMove(Color player, Piece[][] board, boolean check, String notation) {
         checkedKing = check ? findCheckedKing(player, board) : null;
 
-        appendMoveToLedger(player, notation);
+        appendMoveToLedger(player.next(), notation); // TODO: argument 'player' should be the one that made move, not the other
         refreshAfterMove(player.next(), board);
     }
 

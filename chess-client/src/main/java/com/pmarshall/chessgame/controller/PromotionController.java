@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -26,6 +27,8 @@ public class PromotionController {
     private static final Background NORMAL_BACKGROUND = new Background(
             new BackgroundFill(javafx.scene.paint.Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY));
 
+    private final Stage primaryStage;
+
     /**
      * Stores information about player's decision
      */
@@ -35,6 +38,10 @@ public class PromotionController {
      * Pieces that player can choose
      */
     private final PieceType[] possiblePieces = {PieceType.QUEEN, PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT};
+
+    public PromotionController(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
 
     /**
      * Creates dialog window and waits for player's decision
@@ -94,6 +101,9 @@ public class PromotionController {
         stage.setScene(scene);
         stage.setWidth(325);
         stage.setHeight(180);
+
+        stage.initOwner(primaryStage);
+        stage.initModality(Modality.WINDOW_MODAL);
 
         // display and wait for player's decision
         stage.showAndWait();
