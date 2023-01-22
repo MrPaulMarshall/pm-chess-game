@@ -4,6 +4,8 @@ import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.pieces.Piece;
 import com.pmarshall.chessgame.model.properties.Position;
 
+// TODO: refactor the way moves are handled to accommodate parsing to DTOs etc.
+
 /**
  * @author Paweł Marszał
  * <p>

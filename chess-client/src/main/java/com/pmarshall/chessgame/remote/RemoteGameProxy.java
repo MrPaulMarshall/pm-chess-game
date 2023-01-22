@@ -17,6 +17,7 @@ import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
+import javafx.application.Platform;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
@@ -242,9 +243,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
         }
 
         LegalMove move = legalMoves.get(Pair.of(from, to));
-        renameThisExecuteMove(move);
+        executeMove(move);
 
-        controller.refreshBoard();
+        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
+                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
 
         try {
             messagesToServer.put(new Move(from, to, null));
@@ -266,9 +268,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
         }
 
         Promotion move = legalPromotions.get(Triple.of(from, to, promotion));
-        renameThisExecuteMove(move);
+        executeMove(move);
 
-        controller.refreshBoard();
+        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
+                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
 
         try {
             messagesToServer.put(new Move(from, to, promotion));
@@ -286,9 +289,8 @@ public class RemoteGameProxy implements Game, ServerProxy {
      * Updates the board and other data about the state of the game.
      * <p>
      * Sets the other player as the current one.
-     * TODO: rename this function to something good
      */
-    private void renameThisExecuteMove(LegalMove move) {
+    private void executeMove(LegalMove move) {
         board[move.to().x()][move.to().y()] = board[move.from().x()][move.from().y()];
         board[move.from().x()][move.from().y()] = null;
 
@@ -369,9 +371,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
                         break;
                     }
                     if (msg instanceof OpponentMoved opponentMoved) {
-                        renameThisExecuteMove(opponentMoved.move());
+                        executeMove(opponentMoved.move());
                         storeLegalMoves(opponentMoved.legalMoves());
-                        controller.refreshBoard();
+                        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
+                                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
                         continue;
                     }
                     if (msg instanceof ChatMessage chatMsg) {
