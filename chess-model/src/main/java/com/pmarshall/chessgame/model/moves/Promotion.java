@@ -1,7 +1,10 @@
 package com.pmarshall.chessgame.model.moves;
 
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.pieces.Piece;
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
+
+import java.util.List;
 
 /**
  * @author Paweł Marszał
@@ -38,6 +41,8 @@ public class Promotion extends Move {
         this.basicMove.execute(game);
 
         // exchange pawn for new piece
+
+        // TODO: THIS SHOULD HAPPEN ALSO IN SIMULATION MODE !!!
         if (game.getGameMode()) {
             game.getCurrentPlayer().getPieces().remove(basicMove.movedPiece);
 
@@ -63,14 +68,26 @@ public class Promotion extends Move {
     }
 
     @Override
-    public String toString() {
-        return (this.takenPiece == null ? "" : this.oldPosition.translateX() + "x")
-                + this.newPosition.translateX() + this.newPosition.translateY() + this.newPiece.toString();
+    public LegalMove toDto(List<Move> legalMoves) {
+        return new com.pmarshall.chessgame.model.dto.Promotion(movedPiece.getPosition(), newPosition, newPiece.getType(), withCheck, inNotation(legalMoves));
     }
 
     @Override
-    public String notation() {
-        return (this.takenPiece == null ? "" : this.oldPosition.translateX() + "x")
-                + this.newPosition.translateX() + this.newPosition.translateY();
+    public String inNotation(List<Move> legalMoves) {
+        StringBuilder builder = new StringBuilder();
+
+        if (basicMove.getPieceToTake() != null) {
+            builder.append(basicMove.getPieceToMove().getPosition().translateX()).append("x");
+        }
+
+        builder.append(newPosition.translateX());
+        builder.append(newPosition.translateY());
+        builder.append("=").append(newPiece.getType());
+
+        if (withCheck) {
+            builder.append("+");
+        }
+
+        return builder.toString();
     }
 }

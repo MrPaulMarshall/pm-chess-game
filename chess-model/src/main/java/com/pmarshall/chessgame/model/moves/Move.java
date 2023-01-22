@@ -1,8 +1,11 @@
 package com.pmarshall.chessgame.model.moves;
 
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.pieces.Piece;
 import com.pmarshall.chessgame.model.properties.Position;
+
+import java.util.List;
 
 // TODO: refactor the way moves are handled to accommodate parsing to DTOs etc.
 
@@ -61,16 +64,6 @@ public abstract class Move {
      */
     public abstract void undo(InMemoryChessGame game);
 
-    /**
-     * Used to print move on the logger
-     * @return representation of the move in 'chess notation'
-     */
-    public abstract String toString();
-
-    public String notation() {
-        return toString();
-    }
-
     // Getters
 
     public Position getNewPosition() {
@@ -92,4 +85,28 @@ public abstract class Move {
     public void setWithCheck(boolean check) {
         this.withCheck = check;
     }
+
+    // TODO: finish and use me
+    public boolean simulate(InMemoryChessGame game) {
+        execute(game);
+        game.getMoveHistory().addLast(this);
+
+        game.getOtherPlayer().getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(game));
+        boolean isLegal = game.isPosThreatened(game.getCurrentPlayer().getKing().getPosition(), game.getOtherPlayer());
+        withCheck = game.isPosThreatened(game.getOtherPlayer().getKing().getPosition(), game.getCurrentPlayer());
+
+        game.getMoveHistory().removeLast();
+        undo(game);
+
+        return isLegal;
+    }
+
+    public abstract LegalMove toDto(List<Move> legalMove);
+
+    /**
+     * @param legalMoves list of all legal moves in current turn.
+     *                   Needed to distinguish pieces of the same type that move into the same position
+     * @return representation of the move in algebraic notation
+     */
+    public abstract String inNotation(List<Move> legalMoves);
 }
