@@ -49,7 +49,10 @@ public final class Pawn extends Piece {
 
             if (position.y() + s == 0 || position.y() + s == 7) {
                 // if piece lands on the last row, promotion must be executed afterwards
-                movesWithoutProtectingKing.add(new Promotion(basicMove));
+                movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.QUEEN));
+                movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.ROOK));
+                movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.BISHOP));
+                movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.KNIGHT));
             }
             else {
                 // if piece is in the center, just move pawn
@@ -75,7 +78,10 @@ public final class Pawn extends Piece {
 
                 if (y == 0 || y == 7) {
                     // if piece lands on the last row, promotion must be executed afterwards
-                    movesWithoutProtectingKing.add(new Promotion(basicMove));
+                    movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.QUEEN));
+                    movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.ROOK));
+                    movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.BISHOP));
+                    movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.KNIGHT));
                 }
                 else {
                     movesWithoutProtectingKing.add(basicMove);

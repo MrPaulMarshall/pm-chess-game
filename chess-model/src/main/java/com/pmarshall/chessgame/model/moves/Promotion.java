@@ -1,8 +1,10 @@
 package com.pmarshall.chessgame.model.moves;
 
 import com.pmarshall.chessgame.model.dto.LegalMove;
-import com.pmarshall.chessgame.model.pieces.Piece;
+import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
+import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.PieceType;
 
 import java.util.List;
 
@@ -21,9 +23,9 @@ public class Promotion extends Move {
     /**
      * New piece, that player has chosen
      */
-    private Piece newPiece;
+    private final Piece newPiece;
 
-    public Promotion(BasicMove basicMove) {
+    public Promotion(BasicMove basicMove, PieceType newType) {
         this.basicMove = basicMove;
 
         this.movedPiece = basicMove.movedPiece;
@@ -32,7 +34,15 @@ public class Promotion extends Move {
         this.takenPiece = basicMove.takenPiece;
         this.takenPiecePosition = basicMove.takenPiecePosition;
 
-        this.newPiece = null;
+        Color color = basicMove.movedPiece.getColor();
+        this.newPiece = switch (newType) {
+            case QUEEN -> new Queen(color);
+            case ROOK -> new Rook(color);
+            case BISHOP -> new Bishop(color);
+            case KNIGHT -> new Knight(color);
+            default -> throw new IllegalArgumentException("Cannot promote pawn to " + newType);
+        };
+        this.newPiece.setPosition(basicMove.newPosition);
     }
 
     @Override
@@ -41,30 +51,24 @@ public class Promotion extends Move {
         this.basicMove.execute(game);
 
         // exchange pawn for new piece
-
-        // TODO: THIS SHOULD HAPPEN ALSO IN SIMULATION MODE !!!
-        if (game.getGameMode()) {
-            game.getCurrentPlayer().getPieces().remove(basicMove.movedPiece);
-
-            this.newPiece = game.askForPromotedPiece();
-            this.newPiece.setPosition(this.basicMove.newPosition);
-            game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = this.newPiece;
-            game.getCurrentPlayer().getPieces().add(this.newPiece);
-        }
+        game.getCurrentPlayer().getPieces().remove(basicMove.movedPiece);
+        game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = this.newPiece;
+        game.getCurrentPlayer().getPieces().add(this.newPiece);
     }
 
     @Override
     public void undo(InMemoryChessGame game) {
         // undo exchanging pawn
-        if (game.getGameMode()) {
-            game.getCurrentPlayer().getPieces().remove(this.newPiece);
-            game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = null;
-
-            game.getCurrentPlayer().getPieces().add(basicMove.movedPiece);
-        }
+        game.getCurrentPlayer().getPieces().remove(this.newPiece);
+        game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = basicMove.movedPiece;
+        game.getCurrentPlayer().getPieces().add(basicMove.movedPiece);
 
         // undo move that lead to pawn being on the last row
         this.basicMove.undo(game);
+    }
+
+    public PieceType getNewType() {
+        return newPiece.getType();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.model.pieces;
 
+import com.pmarshall.chessgame.model.moves.Promotion;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
@@ -206,12 +207,22 @@ public abstract class Piece {
      * Method used to check if player has chosen existing, legal move
      *
      * @param newPosition position chosen by the player
-     * @return legal move that results in currently chosen piece landing on given position
-     * rules of chess guarantee that at most one such move can exist
+     * @return legal move that results in currently chosen piece landing on given position.
+     *         Promotions are excluded, because they need new type to uniquely identify them
      */
     public Move findMoveByTargetPosition(Position newPosition) {
-        return this.possibleMoves.stream().filter(p -> p.getNewPosition().equals(newPosition))
+        return possibleMoves.stream()
+                .filter(m -> m.getNewPosition().equals(newPosition))
+                .filter(m -> !(m instanceof Promotion))
                 .findFirst().orElse(null);
     }
 
+    public Promotion findPromotionByTargetPositionAndType(Position newPosition, PieceType newType) {
+        return possibleMoves.stream()
+                .filter(m -> m instanceof Promotion)
+                .map(Promotion.class::cast)
+                .filter(p -> p.getNewPosition().equals(newPosition))
+                .filter(p -> p.getNewType() == newType)
+                .findFirst().orElse(null);
+    }
 }

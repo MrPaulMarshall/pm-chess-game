@@ -24,11 +24,6 @@ import java.util.stream.Collectors;
  * It contains chessboard itself, players, and pieces.
  */
 public class InMemoryChessGame implements Game {
-    /**
-     * If true, game is proceeding normally
-     * If false, game is in simulation mode, in order to check if given move would leave own king in check
-     */
-    private boolean gameMode;
 
     /**
      * Reference to controller, needed to ask player for piece during promotion
@@ -67,7 +62,6 @@ public class InMemoryChessGame implements Game {
      * Creates new InMemoryChessGame
      */
     public InMemoryChessGame() {
-        this.gameMode = true;
 
         this.board = new Piece[8][8];
         for (int i = 0; i < 8; i++) {
@@ -87,10 +81,6 @@ public class InMemoryChessGame implements Game {
     }
 
     // Setters
-
-    public void setGameMode(boolean gameMode) {
-        this.gameMode = gameMode;
-    }
 
     // Getters
 
@@ -112,10 +102,6 @@ public class InMemoryChessGame implements Game {
         return moveHistory.getLast();
     }
 
-    public boolean getGameMode() {
-        return this.gameMode;
-    }
-
     public LinkedList<Move> getMoveHistory() {
         return moveHistory;
     }
@@ -133,24 +119,20 @@ public class InMemoryChessGame implements Game {
         this.board[pos.x()][pos.y()] = piece;
     }
 
+    private boolean isIllegalMove(Position from, Position to) {
+        Piece piece = this.board[from.x()][from.y()];
+        if (piece == null)
+            return true;
+
+        return piece.findMoveByTargetPosition(to) == null;
+    }
+
     private boolean isIllegalMove(Position from, Position to, PieceType promotion) {
         Piece piece = this.board[from.x()][from.y()];
         if (piece == null)
             return true;
-        Move move = piece.findMoveByTargetPosition(to);
-        if (move == null)
-            return true;
 
-        if (move instanceof Promotion) {
-            if (promotion == null)
-                return true;
-            return !switch (promotion) {
-                case QUEEN, ROOK, BISHOP, KNIGHT -> true;
-                default -> false;
-            };
-        } else {
-            return promotion != null;
-        }
+        return piece.findPromotionByTargetPositionAndType(to, promotion) == null;
     }
 
     @Override
@@ -199,11 +181,10 @@ public class InMemoryChessGame implements Game {
     @Override
     public com.pmarshall.chessgame.model.dto.Piece getPiece(Position on) {
         Piece piece = board[on.x()][on.y()];
-        if (piece == null) {
+        if (piece == null)
             return null;
-        } else {
-            return new com.pmarshall.chessgame.model.dto.Piece(piece.getType(), piece.getColor());
-        }
+
+        return new com.pmarshall.chessgame.model.dto.Piece(piece.getType(), piece.getColor());
     }
 
     public List<LegalMove> legalMoves() {
@@ -216,7 +197,8 @@ public class InMemoryChessGame implements Game {
         Piece piece = this.board[from.x()][from.y()];
         if (piece == null)
             return Collections.emptyList();
-        return piece.getPossibleMoves().stream().map(Move::getNewPosition).collect(Collectors.toList());
+
+        return piece.getPossibleMoves().stream().map(Move::getNewPosition).distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -224,7 +206,8 @@ public class InMemoryChessGame implements Game {
         Piece piece = this.board[from.x()][from.y()];
         if (piece == null)
             return false;
-        return piece.findMoveByTargetPosition(to) != null;
+
+        return piece.getPossibleMoves().stream().anyMatch(m -> m.getNewPosition().equals(to));
     }
 
     @Override
@@ -232,12 +215,13 @@ public class InMemoryChessGame implements Game {
         Piece piece = this.board[from.x()][from.y()];
         if (piece == null)
             return false;
-        return piece.findMoveByTargetPosition(to) instanceof Promotion;
+
+        return piece.getPossibleMoves().stream().anyMatch(m -> m.getNewPosition().equals(to) && m instanceof Promotion);
     }
 
     @Override
     public boolean executeMove(Position from, Position to) {
-        if (isIllegalMove(from, to, null))
+        if (isIllegalMove(from, to))
             return false;
 
         Piece piece = this.board[from.x()][from.y()];
@@ -252,7 +236,7 @@ public class InMemoryChessGame implements Game {
 
         promotedPiece = promotion;
         Piece piece = this.board[from.x()][from.y()];
-        executeMove(piece.findMoveByTargetPosition(to));
+        executeMove(piece.findPromotionByTargetPositionAndType(to, promotion));
         return true;
     }
 
@@ -289,8 +273,9 @@ public class InMemoryChessGame implements Game {
         // change player
         this.changePlayer();
 
-        // calculate possible moves
-        this.currentPlayer.getPieces().forEach(f -> f.updatePossibleMoves(this));
+        // calculate possible moves - list of pieces is copied because simulations temporarily modify it,
+        //                            which causes ConcurrentModificationException to be thrown
+        List.copyOf(currentPlayer.getPieces()).forEach(f -> f.updatePossibleMoves(this));
 
         // check conditions of victory
         if (this.currentPlayer.getAllPossibleMoves().isEmpty()) {
@@ -309,8 +294,7 @@ public class InMemoryChessGame implements Game {
      * @return true if move can be executed safely, false if it would endanger the king
      */
     public boolean simulateMove(Move move) {
-        this.gameMode = false;
-//        Move trulyLastMove = this.lastMove;
+        //        Move trulyLastMove = this.lastMove;
 
         // potentially remove enemy piece
         if (move.getPieceToTake() != null) {
@@ -344,7 +328,6 @@ public class InMemoryChessGame implements Game {
             this.getOtherPlayer().getPieces().add(move.getPieceToTake());
         }
 
-        this.gameMode = true;
         return !isKingUnderCheck;
     }
 
