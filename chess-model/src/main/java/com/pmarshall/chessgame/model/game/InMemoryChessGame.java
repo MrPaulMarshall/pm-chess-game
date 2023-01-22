@@ -162,8 +162,10 @@ public class InMemoryChessGame implements Game {
     }
 
     @Override
-    public String lastMoveInNotation() {
-        return lastMove.toString();
+    public LegalMove lastMove() {
+        if (lastMove == null)
+            return null;
+        return lastMove.toDto();
     }
 
     @Override

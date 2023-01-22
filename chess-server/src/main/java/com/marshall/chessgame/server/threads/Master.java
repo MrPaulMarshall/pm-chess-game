@@ -278,9 +278,7 @@ public class Master extends Thread {
             return true;
         }
 
-        OpponentMoved opponentNotification = new OpponentMoved(
-                move.from(), move.to(), move.promotion(),
-                game.activeCheck(), game.lastMoveInNotation(), game.legalMoves());
+        OpponentMoved opponentNotification = new OpponentMoved(game.lastMove(), game.legalMoves());
         writerThreads.get(sender.next()).pushMessage(opponentNotification);
 
         return false;

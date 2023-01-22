@@ -56,8 +56,8 @@ public class RemoteGameProxy implements Game, ServerProxy {
     private Map<Pair<Position, Position>, LegalMove> legalMoves;
     private Map<Triple<Position, Position, PieceType>, Promotion> legalPromotions;
 
-    private String lastMoveInNotation;
     private boolean activeCheck;
+    private LegalMove lastMove;
     private GameOutcome outcome;
 
     private RemoteGameProxy(RemoteGameController controller,
@@ -181,6 +181,11 @@ public class RemoteGameProxy implements Game, ServerProxy {
     }
 
     @Override
+    public LegalMove lastMove() {
+        return lastMove;
+    }
+
+    @Override
     public boolean activeCheck() {
         return activeCheck;
     }
@@ -188,11 +193,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
     @Override
     public boolean gameEnded() {
         return outcome != null;
-    }
-
-    @Override
-    public String lastMoveInNotation() {
-        return lastMoveInNotation;
     }
 
     @Override
@@ -309,7 +309,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
         }
 
         activeCheck = move.check();
-        lastMoveInNotation = move.notation();
+        lastMove = move;
 
         legalMoves = Map.of();
         legalPromotions = Map.of();

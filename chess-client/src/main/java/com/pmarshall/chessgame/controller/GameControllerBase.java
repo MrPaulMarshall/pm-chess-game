@@ -139,8 +139,9 @@ public abstract class GameControllerBase {
     }
 
     public void refreshBoard() {
+        // TODO: maybe remove "activeCheck()" and use lastMove().check() instead?
         refreshAfterMove(game.currentPlayer().next(),
-                game.getBoardWithPieces(), game.activeCheck(), game.lastMoveInNotation());
+                game.getBoardWithPieces(), game.activeCheck(), game.lastMove().notation());
 
         // check win conditions
         Pair<Color, String> gameOutcome = game.outcome();

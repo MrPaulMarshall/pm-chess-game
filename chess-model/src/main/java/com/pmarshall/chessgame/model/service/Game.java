@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.model.service;
 
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.dto.Piece;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
@@ -16,7 +17,7 @@ public interface Game {
 
     boolean gameEnded();
 
-    String lastMoveInNotation();
+    LegalMove lastMove();
 
     /**
      * @return pair {winner, message}, where winner == null in case of a draw.
