@@ -26,11 +26,6 @@ import java.util.stream.Collectors;
 public class InMemoryChessGame implements Game {
 
     /**
-     * Reference to controller, needed to ask player for piece during promotion
-     */
-    private PieceType promotedPiece;
-
-    /**
      * Array that represents board itself
      * It contains pieces where there are such, and null elsewhere
      */
@@ -234,7 +229,6 @@ public class InMemoryChessGame implements Game {
         if (isIllegalMove(from, to, promotion))
             return false;
 
-        promotedPiece = promotion;
         Piece piece = this.board[from.x()][from.y()];
         executeMove(piece.findPromotionByTargetPositionAndType(to, promotion));
         return true;
@@ -253,32 +247,18 @@ public class InMemoryChessGame implements Game {
     public void executeMove(Move move) {
         lastMoveDto = move.toDto(currentPlayer.getAllPossibleMoves());
 
-        // potentially remove enemy piece
-        if (move.getPieceToTake() != null) {
-            Position posOfTakenPiece = move.getPieceToTake().getPosition();
-            this.board[posOfTakenPiece.x()][posOfTakenPiece.y()] = null;
-            this.getOtherPlayer().getPieces().remove(move.getPieceToTake());
-        }
-
-        // move piece to new position
         move.execute(this);
         moveHistory.addLast(move);
 
-        // update moves (without concern for king's safety)
-        this.currentPlayer.getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
-        // check is enemy king is now threatened
-        this.getOtherPlayer().getKing().setIsChecked(
-                this.isPosThreatened(this.getOtherPlayer().getKing().getPosition(), this.currentPlayer));
+        getOtherPlayer().getKing().setIsChecked(move.isWithCheck());
+        changePlayer();
 
-        // change player
-        this.changePlayer();
-
-        // calculate possible moves - list of pieces is copied because simulations temporarily modify it,
-        //                            which causes ConcurrentModificationException to be thrown
+        // List of pieces is copied because simulations temporarily modify it,
+        // which causes ConcurrentModificationException to be thrown
         List.copyOf(currentPlayer.getPieces()).forEach(f -> f.updatePossibleMoves(this));
 
         // check conditions of victory
-        if (this.currentPlayer.getAllPossibleMoves().isEmpty()) {
+        if (currentPlayer.getAllPossibleMoves().isEmpty()) {
             if (this.currentPlayer.isKingChecked()) {
                 this.winner = this.getOtherPlayer();
             }
@@ -289,46 +269,26 @@ public class InMemoryChessGame implements Game {
     }
 
     /**
-     * Simulates execution of move, to test if it is safe
+     * Simulates execution of move, to test if it is safe and if it puts the enemy in check
      * @param move move to test
      * @return true if move can be executed safely, false if it would endanger the king
      */
     public boolean simulateMove(Move move) {
-        //        Move trulyLastMove = this.lastMove;
-
-        // potentially remove enemy piece
-        if (move.getPieceToTake() != null) {
-            Position posOfTakenPiece = move.getPieceToTake().getPosition();
-            this.board[posOfTakenPiece.x()][posOfTakenPiece.y()] = null;
-            this.getOtherPlayer().getPieces().remove(move.getPieceToTake());
-        }
-
-        // move piece to new position
         move.execute(this);
         moveHistory.addLast(move);
-//        this.lastMove = move;
 
-        // update moves (without concern for king's safety)
-        this.getOtherPlayer().getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
-        // check if current king is now threatened
-        boolean isKingUnderCheck = this.isPosThreatened(this.currentPlayer.getKing().getPosition(), this.getOtherPlayer());
+        getOtherPlayer().getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
+        boolean isLegal = !isPosThreatened(currentPlayer.getKing().getPosition(), getOtherPlayer());
 
-        // if move puts opponent's king into check, mark it
-        move.setWithCheck(this.isPosThreatened(this.getOtherPlayer().getKing().getPosition(), this.currentPlayer));
+        if (isLegal) {
+            getCurrentPlayer().getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
+            move.setWithCheck(isPosThreatened(getOtherPlayer().getKing().getPosition(), currentPlayer));
+        }
 
-        // undo move
-//        this.lastMove = trulyLastMove;
         moveHistory.removeLast();
         move.undo(this);
 
-        // potentially return enemy piece
-        if (move.getPieceToTake() != null) {
-            Position posOfTakenPiece = move.getPieceToTake().getPosition();
-            this.board[posOfTakenPiece.x()][posOfTakenPiece.y()] = move.getPieceToTake();
-            this.getOtherPlayer().getPieces().add(move.getPieceToTake());
-        }
-
-        return !isKingUnderCheck;
+        return isLegal;
     }
 
     /**
@@ -340,21 +300,6 @@ public class InMemoryChessGame implements Game {
         return player.getPieces().stream().anyMatch(
                 piece -> piece.getMovesWithoutProtectingKing().stream().anyMatch(m -> m.getNewPosition().equals(position))
         );
-    }
-
-    /**
-     * Asks controller to obtain new piece from player
-     * @return piece chosen by player
-     */
-    public Piece askForPromotedPiece() {
-        Color color = currentPlayer.getColor();
-        return switch (promotedPiece) {
-            case QUEEN -> new Queen(color);
-            case ROOK -> new Rook(color);
-            case BISHOP -> new Bishop(color);
-            case KNIGHT -> new Knight(color);
-            default -> throw new IllegalStateException("Should never happen");
-        };
     }
 
     /**
