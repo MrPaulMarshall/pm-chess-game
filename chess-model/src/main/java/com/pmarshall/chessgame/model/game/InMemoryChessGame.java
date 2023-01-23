@@ -106,16 +106,16 @@ public class InMemoryChessGame implements Game {
      */
     public void removePiece(Piece piece) {
         this.getPlayerByColor(piece.getColor()).getPieces().remove(piece);
-        this.board[piece.getPosition().x()][piece.getPosition().y()] = null;
+        this.board[piece.getPosition().file()][piece.getPosition().rank()] = null;
     }
 
     public void addPieceBack(Piece piece, Position pos) {
         this.getPlayerByColor(piece.getColor()).getPieces().add(piece);
-        this.board[pos.x()][pos.y()] = piece;
+        this.board[pos.file()][pos.rank()] = piece;
     }
 
     private boolean isIllegalMove(Position from, Position to) {
-        Piece piece = this.board[from.x()][from.y()];
+        Piece piece = this.board[from.file()][from.rank()];
         if (piece == null)
             return true;
 
@@ -123,7 +123,7 @@ public class InMemoryChessGame implements Game {
     }
 
     private boolean isIllegalMove(Position from, Position to, PieceType promotion) {
-        Piece piece = this.board[from.x()][from.y()];
+        Piece piece = this.board[from.file()][from.rank()];
         if (piece == null)
             return true;
 
@@ -175,7 +175,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public com.pmarshall.chessgame.model.dto.Piece getPiece(Position on) {
-        Piece piece = board[on.x()][on.y()];
+        Piece piece = board[on.file()][on.rank()];
         if (piece == null)
             return null;
 
@@ -189,7 +189,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public Collection<Position> legalMovesFrom(Position from) {
-        Piece piece = this.board[from.x()][from.y()];
+        Piece piece = this.board[from.file()][from.rank()];
         if (piece == null)
             return Collections.emptyList();
 
@@ -198,7 +198,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public boolean isMoveLegal(Position from, Position to) {
-        Piece piece = this.board[from.x()][from.y()];
+        Piece piece = this.board[from.file()][from.rank()];
         if (piece == null)
             return false;
 
@@ -207,7 +207,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public boolean isPromotionRequired(Position from, Position to) {
-        Piece piece = this.board[from.x()][from.y()];
+        Piece piece = this.board[from.file()][from.rank()];
         if (piece == null)
             return false;
 
@@ -219,7 +219,7 @@ public class InMemoryChessGame implements Game {
         if (isIllegalMove(from, to))
             return false;
 
-        Piece piece = this.board[from.x()][from.y()];
+        Piece piece = this.board[from.file()][from.rank()];
         executeMove(piece.findMoveByTargetPosition(to));
         return true;
     }
@@ -229,7 +229,7 @@ public class InMemoryChessGame implements Game {
         if (isIllegalMove(from, to, promotion))
             return false;
 
-        Piece piece = this.board[from.x()][from.y()];
+        Piece piece = this.board[from.file()][from.rank()];
         executeMove(piece.findPromotionByTargetPositionAndType(to, promotion));
         return true;
     }
@@ -323,7 +323,7 @@ public class InMemoryChessGame implements Game {
      * @param position where piece should be inserted
      */
     private void addNewPiece(Piece piece, Player player, Position position) {
-        this.board[position.x()][position.y()] = piece;
+        this.board[position.file()][position.rank()] = piece;
         piece.setPosition(position);
         player.getPieces().add(piece);
     }

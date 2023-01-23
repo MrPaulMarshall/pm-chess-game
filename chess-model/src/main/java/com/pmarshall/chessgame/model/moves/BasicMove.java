@@ -35,8 +35,8 @@ public class BasicMove extends Move {
         }
 
         // change piece's position
-        game.board[oldPosition.x()][oldPosition.y()] = null;
-        game.board[newPosition.x()][newPosition.y()] = movedPiece;
+        game.board[oldPosition.file()][oldPosition.rank()] = null;
+        game.board[newPosition.file()][newPosition.rank()] = movedPiece;
         movedPiece.setPosition(newPosition);
         movedPiece.markThatFigureMoved();
     }
@@ -50,8 +50,8 @@ public class BasicMove extends Move {
 
         // change piece's position
         movedPiece.setPosition(oldPosition);
-        game.board[oldPosition.x()][oldPosition.y()] = this.movedPiece;
-        game.board[newPosition.x()][newPosition.y()] = null;
+        game.board[oldPosition.file()][oldPosition.rank()] = this.movedPiece;
+        game.board[newPosition.file()][newPosition.rank()] = null;
 
         // restore piece, if one was taken
         if (this.takenPiece != null) {
@@ -78,11 +78,11 @@ public class BasicMove extends Move {
         differentiateConflictingMoves(builder, legalMoves);
 
         if (takenPiece != null) {
-            builder.append("x");
+            builder.append("file");
         }
 
-        builder.append(newPosition.translateX());
-        builder.append(newPosition.translateY());
+        builder.append(newPosition.strFile());
+        builder.append(newPosition.strRank());
 
         if (withCheck) {
             builder.append("+");
@@ -100,7 +100,7 @@ public class BasicMove extends Move {
 
         if (movedPiece instanceof Pawn) {
             if (takenPiece != null) {
-                builder.append(from.translateX());
+                builder.append(from.strFile());
             }
             return;
         }
@@ -114,24 +114,24 @@ public class BasicMove extends Move {
                 .toList();
 
         boolean conflictOnRank = conflictingMovesStartingPositions.stream()
-                .anyMatch(position -> position.x() != from.x() && position.y() == from.y());
+                .anyMatch(position -> position.file() != from.file() && position.rank() == from.rank());
         boolean conflictOnFile = conflictingMovesStartingPositions.stream()
-                .anyMatch(position -> position.x() == from.x() && position.y() != from.y());
+                .anyMatch(position -> position.file() == from.file() && position.rank() != from.rank());
         boolean conflictElsewhere = conflictingMovesStartingPositions.stream()
-                .anyMatch(position -> position.x() != from.x() && position.y() != from.y());
+                .anyMatch(position -> position.file() != from.file() && position.rank() != from.rank());
 
         if (conflictOnFile && conflictOnRank) {
-            builder.append(from.translateX()).append(from.translateY());
+            builder.append(from.strFile()).append(from.strRank());
             return;
         }
 
         if (conflictOnFile) {
-            builder.append(from.translateY());
+            builder.append(from.strRank());
             return;
         }
 
         if (conflictOnRank || conflictElsewhere) {
-            builder.append(from.translateX());
+            builder.append(from.strFile());
         }
     }
 }

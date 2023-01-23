@@ -150,8 +150,8 @@ public abstract class Piece {
 
         for (int[] dir : directions) {
             // start from the closest cell in this direction
-            int x = position.x() + dir[0];
-            int y = position.y() + dir[1];
+            int x = position.file() + dir[0];
+            int y = position.rank() + dir[1];
 
             while (validPosition(x, y)) {
                 if (game.board[x][y] == null) {
@@ -188,8 +188,8 @@ public abstract class Piece {
         List<Move> moves = new LinkedList<>();
 
         for (int[] jump : jumps) {
-            int x = position.x() + jump[0];
-            int y = position.y() + jump[1];
+            int x = position.file() + jump[0];
+            int y = position.rank() + jump[1];
 
             // if new position is valid and either cell is free or there is an enemy to kill
             if (validPosition(x, y) &&

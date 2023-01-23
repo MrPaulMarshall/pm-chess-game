@@ -188,9 +188,9 @@ public abstract class GameControllerBase {
      */
     private void choosePiece(Position picked, Collection<Position> legalTargets) {
         repaintBackground();
-        chessboard[picked.x()][picked.y()].setChosenBackground();
+        chessboard[picked.file()][picked.rank()].setChosenBackground();
         for (Position target : legalTargets) {
-            chessboard[target.x()][target.y()].setClickableBackground();
+            chessboard[target.file()][target.rank()].setClickableBackground();
         }
     }
 
@@ -221,7 +221,7 @@ public abstract class GameControllerBase {
     }
 
     private void markCheckedKingsField() {
-        this.chessboard[checkedKing.x()][checkedKing.y()].setCheckedBackground();
+        this.chessboard[checkedKing.file()][checkedKing.rank()].setCheckedBackground();
     }
 
 }

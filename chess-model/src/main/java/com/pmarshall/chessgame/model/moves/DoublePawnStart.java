@@ -28,8 +28,8 @@ public class DoublePawnStart extends Move {
 
     @Override
     public void execute(InMemoryChessGame game) {
-        game.board[oldPosition.x()][oldPosition.y()] = null;
-        game.board[newPosition.x()][newPosition.y()] = movedPiece;
+        game.board[oldPosition.file()][oldPosition.rank()] = null;
+        game.board[newPosition.file()][newPosition.rank()] = movedPiece;
         this.movedPiece.setPosition(newPosition);
 
         this.movedPiece.markThatFigureMoved();
@@ -42,8 +42,8 @@ public class DoublePawnStart extends Move {
         }
 
         this.movedPiece.setPosition(oldPosition);
-        game.board[oldPosition.x()][oldPosition.y()] = movedPiece;
-        game.board[newPosition.x()][newPosition.y()] = null;
+        game.board[oldPosition.file()][oldPosition.rank()] = movedPiece;
+        game.board[newPosition.file()][newPosition.rank()] = null;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class DoublePawnStart extends Move {
 
     @Override
     public String inNotation(List<Move> legalMoves) {
-        return this.newPosition.translateX() + this.newPosition.translateY();
+        return this.newPosition.strFile() + this.newPosition.strRank();
     }
 
 }

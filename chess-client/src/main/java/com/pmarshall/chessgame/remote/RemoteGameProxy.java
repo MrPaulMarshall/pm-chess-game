@@ -212,7 +212,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
     @Override
     public Piece getPiece(Position on) {
-        return board[on.x()][on.y()];
+        return board[on.file()][on.rank()];
     }
 
     @Override
@@ -291,23 +291,23 @@ public class RemoteGameProxy implements Game, ServerProxy {
      * Sets the other player as the current one.
      */
     private void executeMove(LegalMove move) {
-        board[move.to().x()][move.to().y()] = board[move.from().x()][move.from().y()];
-        board[move.from().x()][move.from().y()] = null;
+        board[move.to().file()][move.to().rank()] = board[move.from().file()][move.from().rank()];
+        board[move.from().file()][move.from().rank()] = null;
 
         if (move instanceof Promotion p) {
-            board[move.to().x()][move.to().y()] = new Piece(p.newType(), currentPlayer);
+            board[move.to().file()][move.to().rank()] = new Piece(p.newType(), currentPlayer);
         }
         if (move instanceof Castling c) {
             if (c.queenSide()) {
-                board[move.from().x()][3] = board[move.from().x()][0];
-                board[move.from().x()][0] = null;
+                board[move.from().file()][3] = board[move.from().file()][0];
+                board[move.from().file()][0] = null;
             } else {
-                board[move.from().x()][5] = board[move.from().x()][7];
-                board[move.from().x()][7] = null;
+                board[move.from().file()][5] = board[move.from().file()][7];
+                board[move.from().file()][7] = null;
             }
         }
         if (move instanceof EnPassant e) {
-            board[e.takenPawn().x()][e.takenPawn().y()] = null;
+            board[e.takenPawn().file()][e.takenPawn().rank()] = null;
         }
 
         activeCheck = move.check();
