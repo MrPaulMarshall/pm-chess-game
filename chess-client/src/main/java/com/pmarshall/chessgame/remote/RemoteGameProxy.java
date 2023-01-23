@@ -129,34 +129,34 @@ public class RemoteGameProxy implements Game, ServerProxy {
         Piece[][] board = new Piece[8][8];
 
         // pawns
-        for (int j = 0; j < 8; j++) {
-            board[1][j] = new Piece(PieceType.PAWN, Color.WHITE);
-            board[6][j] = new Piece(PieceType.PAWN, Color.BLACK);
+        for (int file = 0; file < 8; file++) {
+            board[6][file] = new Piece(PieceType.PAWN, Color.WHITE);
+            board[1][file] = new Piece(PieceType.PAWN, Color.BLACK);
         }
 
         // rooks
-        board[0][0] = new Piece(PieceType.ROOK, Color.WHITE);
-        board[0][7] = new Piece(PieceType.ROOK, Color.WHITE);
-        board[7][0] = new Piece(PieceType.ROOK, Color.BLACK);
-        board[7][7] = new Piece(PieceType.ROOK, Color.BLACK);
+        board[7][0] = new Piece(PieceType.ROOK, Color.WHITE);
+        board[7][7] = new Piece(PieceType.ROOK, Color.WHITE);
+        board[0][0] = new Piece(PieceType.ROOK, Color.BLACK);
+        board[0][7] = new Piece(PieceType.ROOK, Color.BLACK);
 
         // knights
-        board[0][1] = new Piece(PieceType.KNIGHT, Color.WHITE);
-        board[0][6] = new Piece(PieceType.KNIGHT, Color.WHITE);
-        board[7][1] = new Piece(PieceType.KNIGHT, Color.BLACK);
-        board[7][6] = new Piece(PieceType.KNIGHT, Color.BLACK);
+        board[7][1] = new Piece(PieceType.KNIGHT, Color.WHITE);
+        board[7][6] = new Piece(PieceType.KNIGHT, Color.WHITE);
+        board[0][1] = new Piece(PieceType.KNIGHT, Color.BLACK);
+        board[0][6] = new Piece(PieceType.KNIGHT, Color.BLACK);
 
         // bishops
-        board[0][2] = new Piece(PieceType.BISHOP, Color.WHITE);
-        board[0][5] = new Piece(PieceType.BISHOP, Color.WHITE);
-        board[7][2] = new Piece(PieceType.BISHOP, Color.BLACK);
-        board[7][5] = new Piece(PieceType.BISHOP, Color.BLACK);
+        board[7][2] = new Piece(PieceType.BISHOP, Color.WHITE);
+        board[7][5] = new Piece(PieceType.BISHOP, Color.WHITE);
+        board[0][2] = new Piece(PieceType.BISHOP, Color.BLACK);
+        board[0][5] = new Piece(PieceType.BISHOP, Color.BLACK);
 
         // queens and kings
-        board[0][3] = new Piece(PieceType.QUEEN, Color.WHITE);
-        board[0][4] = new Piece(PieceType.KING, Color.WHITE);
-        board[7][3] = new Piece(PieceType.QUEEN, Color.BLACK);
-        board[7][4] = new Piece(PieceType.KING, Color.BLACK);
+        board[7][3] = new Piece(PieceType.QUEEN, Color.WHITE);
+        board[7][4] = new Piece(PieceType.KING, Color.WHITE);
+        board[0][3] = new Piece(PieceType.QUEEN, Color.BLACK);
+        board[0][4] = new Piece(PieceType.KING, Color.BLACK);
 
         return board;
     }
@@ -212,7 +212,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
     @Override
     public Piece getPiece(Position on) {
-        return board[on.file()][on.rank()];
+        return board[on.rank()][on.file()];
     }
 
     @Override
@@ -291,23 +291,23 @@ public class RemoteGameProxy implements Game, ServerProxy {
      * Sets the other player as the current one.
      */
     private void executeMove(LegalMove move) {
-        board[move.to().file()][move.to().rank()] = board[move.from().file()][move.from().rank()];
-        board[move.from().file()][move.from().rank()] = null;
+        board[move.to().rank()][move.to().file()] = board[move.from().rank()][move.from().file()];
+        board[move.from().rank()][move.from().file()] = null;
 
         if (move instanceof Promotion p) {
-            board[move.to().file()][move.to().rank()] = new Piece(p.newType(), currentPlayer);
+            board[move.to().rank()][move.to().file()] = new Piece(p.newType(), currentPlayer);
         }
         if (move instanceof Castling c) {
             if (c.queenSide()) {
-                board[move.from().file()][3] = board[move.from().file()][0];
-                board[move.from().file()][0] = null;
+                board[move.from().rank()][3] = board[move.from().rank()][0];
+                board[move.from().rank()][0] = null;
             } else {
-                board[move.from().file()][5] = board[move.from().file()][7];
-                board[move.from().file()][7] = null;
+                board[move.from().rank()][5] = board[move.from().rank()][7];
+                board[move.from().rank()][7] = null;
             }
         }
         if (move instanceof EnPassant e) {
-            board[e.takenPawn().file()][e.takenPawn().rank()] = null;
+            board[e.takenPawn().rank()][e.takenPawn().file()] = null;
         }
 
         activeCheck = move.check();
