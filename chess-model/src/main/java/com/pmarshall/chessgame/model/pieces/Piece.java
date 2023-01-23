@@ -64,7 +64,7 @@ public abstract class Piece {
         possibleMoves.clear();
         updateMovesWithoutProtectingKing(game);
 
-        for (Move move : movesWithoutProtectingKing) {
+        for (Move move : List.copyOf(movesWithoutProtectingKing)) {
             if (game.simulateMove(move)) {
                 possibleMoves.add(move);
             }
@@ -149,7 +149,7 @@ public abstract class Piece {
         List<Move> moves = new LinkedList<>();
 
         for (int[] dir : directions) {
-            // start from closest cell in this direction
+            // start from the closest cell in this direction
             int x = position.x() + dir[0];
             int y = position.y() + dir[1];
 
