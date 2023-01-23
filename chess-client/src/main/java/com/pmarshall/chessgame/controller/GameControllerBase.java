@@ -56,10 +56,10 @@ public abstract class GameControllerBase {
         this.chessboard = new ChessboardCell[8][8];
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
-                final int constRank = forward ? rank : 7-rank, constFile = file;
+                final int constRank = rank, constFile = file;
                 chessboard[rank][file] = new ChessboardCell(
                         (rank+file) % 2 == 0, e -> boardCellOnClick(constRank, constFile));
-                chessBoardGrid.add(chessboard[rank][file].getPane(), file, rank);
+                chessBoardGrid.add(chessboard[constRank][constFile].getPane(), file, forward ? rank : 7-rank);
             }
         }
     }
