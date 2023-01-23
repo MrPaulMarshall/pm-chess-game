@@ -33,7 +33,7 @@ public class LocalGameController extends GameControllerBase {
         Game game = new InMemoryChessGame();
         controller.injectDependencies(primaryStage, game);
         controller.createBoardGrid(true);
-        controller.refreshAfterMove(game.currentPlayer(), game.getBoardWithPieces());
+        controller.refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
 
         primaryStage.setTitle("Chess board");
         primaryStage.setScene(scene);

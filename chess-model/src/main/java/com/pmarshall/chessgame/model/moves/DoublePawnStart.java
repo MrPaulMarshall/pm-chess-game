@@ -1,8 +1,12 @@
 package com.pmarshall.chessgame.model.moves;
 
+import com.pmarshall.chessgame.model.dto.DefaultMove;
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.pieces.Pawn;
 import com.pmarshall.chessgame.model.properties.Position;
+
+import java.util.List;
 
 /**
  * @author Paweł Marszał
@@ -43,7 +47,12 @@ public class DoublePawnStart extends Move {
     }
 
     @Override
-    public String toString() {
+    public LegalMove toDto(List<Move> legalMoves) {
+        return new DefaultMove(movedPiece.getPosition(), newPosition, withCheck, inNotation(legalMoves));
+    }
+
+    @Override
+    public String inNotation(List<Move> legalMoves) {
         return this.newPosition.translateX() + this.newPosition.translateY();
     }
 

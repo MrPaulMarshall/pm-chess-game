@@ -38,7 +38,7 @@ public class RemoteGameController extends GameControllerBase {
         RemoteGameProxy game = RemoteGameProxy.connectToServer(controller);
         controller.injectDependencies(primaryStage, game);
         controller.createBoardGrid(game.localPlayer() == Color.WHITE);
-        controller.refreshAfterMove(game.currentPlayer(), game.getBoardWithPieces());
+        controller.refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
 
         primaryStage.setTitle("Chess board");
         primaryStage.setScene(scene);

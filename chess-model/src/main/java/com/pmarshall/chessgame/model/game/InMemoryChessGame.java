@@ -2,7 +2,6 @@ package com.pmarshall.chessgame.model.game;
 
 import com.pmarshall.chessgame.model.dto.*;
 import com.pmarshall.chessgame.model.moves.Promotion;
-import com.pmarshall.chessgame.model.moves.Castling;
 import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.pieces.Piece;
 import com.pmarshall.chessgame.model.properties.Color;
@@ -14,8 +13,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -25,11 +24,6 @@ import java.util.stream.Collectors;
  * It contains chessboard itself, players, and pieces.
  */
 public class InMemoryChessGame implements Game {
-    /**
-     * If true, game is proceeding normally
-     * If false, game is in simulation mode, in order to check if given move would leave own king in check
-     */
-    private boolean gameMode;
 
     /**
      * Reference to controller, needed to ask player for piece during promotion
@@ -61,13 +55,13 @@ public class InMemoryChessGame implements Game {
     /**
      * Reference to last executed move, used by log and capturing EnPassant
      */
-    private Move lastMove;
+    private final LinkedList<Move> moveHistory = new LinkedList<>();
+    private LegalMove lastMoveDto;
 
     /**
      * Creates new InMemoryChessGame
      */
     public InMemoryChessGame() {
-        this.gameMode = true;
 
         this.board = new Piece[8][8];
         for (int i = 0; i < 8; i++) {
@@ -88,10 +82,6 @@ public class InMemoryChessGame implements Game {
 
     // Setters
 
-    public void setGameMode(boolean gameMode) {
-        this.gameMode = gameMode;
-    }
-
     // Getters
 
     public Player getCurrentPlayer() {
@@ -107,11 +97,13 @@ public class InMemoryChessGame implements Game {
     }
 
     public Move getLastMove() {
-        return this.lastMove;
+        if (moveHistory.isEmpty())
+            return null;
+        return moveHistory.getLast();
     }
 
-    public boolean getGameMode() {
-        return this.gameMode;
+    public LinkedList<Move> getMoveHistory() {
+        return moveHistory;
     }
 
     /**
@@ -127,24 +119,20 @@ public class InMemoryChessGame implements Game {
         this.board[pos.x()][pos.y()] = piece;
     }
 
+    private boolean isIllegalMove(Position from, Position to) {
+        Piece piece = this.board[from.x()][from.y()];
+        if (piece == null)
+            return true;
+
+        return piece.findMoveByTargetPosition(to) == null;
+    }
+
     private boolean isIllegalMove(Position from, Position to, PieceType promotion) {
         Piece piece = this.board[from.x()][from.y()];
         if (piece == null)
             return true;
-        Move move = piece.findMoveByTargetPosition(to);
-        if (move == null)
-            return true;
 
-        if (move instanceof Promotion) {
-            if (promotion == null)
-                return true;
-            return !switch (promotion) {
-                case QUEEN, ROOK, BISHOP, KNIGHT -> true;
-                default -> false;
-            };
-        } else {
-            return promotion != null;
-        }
+        return piece.findPromotionByTargetPositionAndType(to, promotion) == null;
     }
 
     @Override
@@ -163,8 +151,8 @@ public class InMemoryChessGame implements Game {
     }
 
     @Override
-    public String lastMoveInNotation() {
-        return lastMove.toString();
+    public LegalMove lastMove() {
+        return lastMoveDto;
     }
 
     @Override
@@ -193,27 +181,15 @@ public class InMemoryChessGame implements Game {
     @Override
     public com.pmarshall.chessgame.model.dto.Piece getPiece(Position on) {
         Piece piece = board[on.x()][on.y()];
-        if (piece == null) {
+        if (piece == null)
             return null;
-        } else {
-            return new com.pmarshall.chessgame.model.dto.Piece(piece.getType(), piece.getColor());
-        }
+
+        return new com.pmarshall.chessgame.model.dto.Piece(piece.getType(), piece.getColor());
     }
 
     public List<LegalMove> legalMoves() {
-        return currentPlayer.getAllPossibleMoves().stream().map(move -> {
-            if (move instanceof Promotion p) {
-                return new com.pmarshall.chessgame.model.dto.Promotion(
-                        move.getPieceToMove().getPosition(), move.getNewPosition(), Map.of()); // TODO: get possible checks from different promotions
-            }
-            if (move instanceof Castling c) {
-                return new com.pmarshall.chessgame.model.dto.Castling(
-                        move.getPieceToMove().getPosition(), move.getNewPosition(),
-                        c.getNewPosition().y() == 2, move.isWithCheck());
-            }
-            // TODO: en-passant needs to be handled here, because it's represented as BasicMove :/
-            return new DefaultMove(move.getPieceToMove().getPosition(), move.getNewPosition(), move.isWithCheck());
-        }).collect(Collectors.toList());
+        List<Move> legalMoves = currentPlayer.getAllPossibleMoves();
+        return legalMoves.stream().map(move -> move.toDto(legalMoves)).collect(Collectors.toList());
     }
 
     @Override
@@ -221,7 +197,8 @@ public class InMemoryChessGame implements Game {
         Piece piece = this.board[from.x()][from.y()];
         if (piece == null)
             return Collections.emptyList();
-        return piece.getPossibleMoves().stream().map(Move::getNewPosition).collect(Collectors.toList());
+
+        return piece.getPossibleMoves().stream().map(Move::getNewPosition).distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -229,7 +206,8 @@ public class InMemoryChessGame implements Game {
         Piece piece = this.board[from.x()][from.y()];
         if (piece == null)
             return false;
-        return piece.findMoveByTargetPosition(to) != null;
+
+        return piece.getPossibleMoves().stream().anyMatch(m -> m.getNewPosition().equals(to));
     }
 
     @Override
@@ -237,12 +215,13 @@ public class InMemoryChessGame implements Game {
         Piece piece = this.board[from.x()][from.y()];
         if (piece == null)
             return false;
-        return piece.findMoveByTargetPosition(to) instanceof Promotion;
+
+        return piece.getPossibleMoves().stream().anyMatch(m -> m.getNewPosition().equals(to) && m instanceof Promotion);
     }
 
     @Override
     public boolean executeMove(Position from, Position to) {
-        if (isIllegalMove(from, to, null))
+        if (isIllegalMove(from, to))
             return false;
 
         Piece piece = this.board[from.x()][from.y()];
@@ -257,7 +236,7 @@ public class InMemoryChessGame implements Game {
 
         promotedPiece = promotion;
         Piece piece = this.board[from.x()][from.y()];
-        executeMove(piece.findMoveByTargetPosition(to));
+        executeMove(piece.findPromotionByTargetPositionAndType(to, promotion));
         return true;
     }
 
@@ -272,6 +251,8 @@ public class InMemoryChessGame implements Game {
      * @param move move to execute
      */
     public void executeMove(Move move) {
+        lastMoveDto = move.toDto(currentPlayer.getAllPossibleMoves());
+
         // potentially remove enemy piece
         if (move.getPieceToTake() != null) {
             Position posOfTakenPiece = move.getPieceToTake().getPosition();
@@ -281,7 +262,7 @@ public class InMemoryChessGame implements Game {
 
         // move piece to new position
         move.execute(this);
-        this.lastMove = move;
+        moveHistory.addLast(move);
 
         // update moves (without concern for king's safety)
         this.currentPlayer.getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
@@ -292,8 +273,9 @@ public class InMemoryChessGame implements Game {
         // change player
         this.changePlayer();
 
-        // calculate possible moves
-        this.currentPlayer.getPieces().forEach(f -> f.updatePossibleMoves(this));
+        // calculate possible moves - list of pieces is copied because simulations temporarily modify it,
+        //                            which causes ConcurrentModificationException to be thrown
+        List.copyOf(currentPlayer.getPieces()).forEach(f -> f.updatePossibleMoves(this));
 
         // check conditions of victory
         if (this.currentPlayer.getAllPossibleMoves().isEmpty()) {
@@ -312,8 +294,7 @@ public class InMemoryChessGame implements Game {
      * @return true if move can be executed safely, false if it would endanger the king
      */
     public boolean simulateMove(Move move) {
-        this.gameMode = false;
-        Move trulyLastMove = this.lastMove;
+        //        Move trulyLastMove = this.lastMove;
 
         // potentially remove enemy piece
         if (move.getPieceToTake() != null) {
@@ -324,7 +305,8 @@ public class InMemoryChessGame implements Game {
 
         // move piece to new position
         move.execute(this);
-        this.lastMove = move;
+        moveHistory.addLast(move);
+//        this.lastMove = move;
 
         // update moves (without concern for king's safety)
         this.getOtherPlayer().getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
@@ -335,7 +317,8 @@ public class InMemoryChessGame implements Game {
         move.setWithCheck(this.isPosThreatened(this.getOtherPlayer().getKing().getPosition(), this.currentPlayer));
 
         // undo move
-        this.lastMove = trulyLastMove;
+//        this.lastMove = trulyLastMove;
+        moveHistory.removeLast();
         move.undo(this);
 
         // potentially return enemy piece
@@ -345,7 +328,6 @@ public class InMemoryChessGame implements Game {
             this.getOtherPlayer().getPieces().add(move.getPieceToTake());
         }
 
-        this.gameMode = true;
         return !isKingUnderCheck;
     }
 
@@ -446,11 +428,6 @@ public class InMemoryChessGame implements Game {
         addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(5, 0));
         addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(6, 0));
         addNewPiece(new Rook(Color.BLACK), this.blackPlayer, new Position(7, 0));
-
-        // Set initial flags
-        this.winner = null;
-        this.draw = false;
-        this.lastMove = null;
 
         // Calculate initial moves
         this.currentPlayer = this.whitePlayer;

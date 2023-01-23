@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.controller;
 
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.dto.Piece;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
@@ -71,7 +72,7 @@ public abstract class GameControllerBase {
         if (gameEnded) return;
 
         gameEnded = true;
-        refreshAfterMove(game.currentPlayer(), game.getBoardWithPieces());
+        refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
 
         String result = winner == null ? "THE GAME HAS ENDED IN A DRAW"
                 : (winner.toString().toUpperCase() + " HAS WON, CONGRATULATIONS");
@@ -126,7 +127,7 @@ public abstract class GameControllerBase {
         if (!successfulMove)
             return;
 
-        refreshBoard();
+        refreshStageAfterMove(game.currentPlayer().next(), game.lastMove(), game.getBoardWithPieces(), game.outcome());
     }
 
     /**
@@ -138,32 +139,24 @@ public abstract class GameControllerBase {
         return controller.askForPromotionPiece(game.currentPlayer());
     }
 
-    public void refreshBoard() {
-        refreshAfterMove(game.currentPlayer().next(),
-                game.getBoardWithPieces(), game.activeCheck(), game.lastMoveInNotation());
+    public void refreshStageAfterMove(Color player, LegalMove move, Piece[][] board, Pair<Color, String> gameOutcome) {
+        pieceChosen = null;
+        checkedKing = move.check() ? findCheckedKing(player.next(), board) : null;
+
+        appendMoveToLedger(player, move.notation());
+        refreshBoard(player, board);
 
         // check win conditions
-        Pair<Color, String> gameOutcome = game.outcome();
         if (gameOutcome != null) {
             // TODO: use the message as well
             endGame(gameOutcome.getLeft());
         }
-
-        // game is still running
-        pieceChosen = null;
-    }
-
-    protected void refreshAfterMove(Color player, Piece[][] board, boolean check, String notation) {
-        checkedKing = check ? findCheckedKing(player.next(), board) : null;
-
-        appendMoveToLedger(player, notation);
-        refreshAfterMove(player, board);
     }
 
     /**
      * Reloads whole information about state of the game
      */
-    protected void refreshAfterMove(Color player, Piece[][] board) {
+    protected void refreshBoard(Color player, Piece[][] board) {
         repaintBackground();
         currentPlayerName.setText(player.toString());
         for (int i = 0; i < 8; i++) {

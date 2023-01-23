@@ -1,7 +1,12 @@
 package com.pmarshall.chessgame.model.moves;
 
-import com.pmarshall.chessgame.model.pieces.Piece;
+import com.pmarshall.chessgame.model.dto.LegalMove;
+import com.pmarshall.chessgame.model.pieces.*;
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
+import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.PieceType;
+
+import java.util.List;
 
 /**
  * @author Paweł Marszał
@@ -18,9 +23,9 @@ public class Promotion extends Move {
     /**
      * New piece, that player has chosen
      */
-    private Piece newPiece;
+    private final Piece newPiece;
 
-    public Promotion(BasicMove basicMove) {
+    public Promotion(BasicMove basicMove, PieceType newType) {
         this.basicMove = basicMove;
 
         this.movedPiece = basicMove.movedPiece;
@@ -29,7 +34,15 @@ public class Promotion extends Move {
         this.takenPiece = basicMove.takenPiece;
         this.takenPiecePosition = basicMove.takenPiecePosition;
 
-        this.newPiece = null;
+        Color color = basicMove.movedPiece.getColor();
+        this.newPiece = switch (newType) {
+            case QUEEN -> new Queen(color);
+            case ROOK -> new Rook(color);
+            case BISHOP -> new Bishop(color);
+            case KNIGHT -> new Knight(color);
+            default -> throw new IllegalArgumentException("Cannot promote pawn to " + newType);
+        };
+        this.newPiece.setPosition(basicMove.newPosition);
     }
 
     @Override
@@ -38,39 +51,52 @@ public class Promotion extends Move {
         this.basicMove.execute(game);
 
         // exchange pawn for new piece
-        if (game.getGameMode()) {
-            game.getCurrentPlayer().getPieces().remove(basicMove.movedPiece);
-
-            this.newPiece = game.askForPromotedPiece();
-            this.newPiece.setPosition(this.basicMove.newPosition);
-            game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = this.newPiece;
-            game.getCurrentPlayer().getPieces().add(this.newPiece);
-        }
+        game.getCurrentPlayer().getPieces().remove(basicMove.movedPiece);
+        game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = this.newPiece;
+        game.getCurrentPlayer().getPieces().add(this.newPiece);
     }
 
     @Override
     public void undo(InMemoryChessGame game) {
         // undo exchanging pawn
-        if (game.getGameMode()) {
-            game.getCurrentPlayer().getPieces().remove(this.newPiece);
-            game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = null;
-
-            game.getCurrentPlayer().getPieces().add(basicMove.movedPiece);
-        }
+        game.getCurrentPlayer().getPieces().remove(this.newPiece);
+        game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = basicMove.movedPiece;
+        game.getCurrentPlayer().getPieces().add(basicMove.movedPiece);
 
         // undo move that lead to pawn being on the last row
         this.basicMove.undo(game);
     }
 
-    @Override
-    public String toString() {
-        return (this.takenPiece == null ? "" : this.oldPosition.translateX() + "x")
-                + this.newPosition.translateX() + this.newPosition.translateY() + this.newPiece.toString();
+    public PieceType getNewType() {
+        return newPiece.getType();
     }
 
     @Override
-    public String notation() {
-        return (this.takenPiece == null ? "" : this.oldPosition.translateX() + "x")
-                + this.newPosition.translateX() + this.newPosition.translateY();
+    public LegalMove toDto(List<Move> legalMoves) {
+        return new com.pmarshall.chessgame.model.dto.Promotion(movedPiece.getPosition(), newPosition, newPiece.getType(), withCheck, inNotation(legalMoves));
+    }
+
+    @Override
+    public String inNotation(List<Move> legalMoves) {
+        StringBuilder builder = new StringBuilder();
+
+        if (basicMove.getPieceToTake() != null) {
+            builder.append(basicMove.getPieceToMove().getPosition().translateX()).append("x");
+        }
+
+        builder.append(newPosition.translateX());
+        builder.append(newPosition.translateY());
+        builder.append("=");
+        if (newPiece.getType() == PieceType.KNIGHT) {
+            builder.append("N");
+        } else {
+            builder.append(newPiece.getType().toString().charAt(0));
+        }
+
+        if (withCheck) {
+            builder.append("+");
+        }
+
+        return builder.toString();
     }
 }

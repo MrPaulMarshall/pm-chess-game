@@ -12,14 +12,14 @@ import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.controller.RemoteGameController;
-import com.pmarshall.chessgame.model.dto.LegalMove;
-import com.pmarshall.chessgame.model.dto.Piece;
-import com.pmarshall.chessgame.model.dto.Promotion;
+import com.pmarshall.chessgame.model.dto.*;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
+import javafx.application.Platform;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RemoteGameProxy implements Game, ServerProxy {
 
@@ -55,8 +55,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
     private Color currentPlayer;
 
     private Map<Pair<Position, Position>, LegalMove> legalMoves;
-    private String lastMoveInNotation;
+    private Map<Triple<Position, Position, PieceType>, Promotion> legalPromotions;
+
     private boolean activeCheck;
+    private LegalMove lastMove;
     private GameOutcome outcome;
 
     private RemoteGameProxy(RemoteGameController controller,
@@ -100,12 +102,22 @@ public class RemoteGameProxy implements Game, ServerProxy {
         MatchFound message = (MatchFound) Parser.deserialize(messageBuffer, length);
         this.localPlayer = message.color();
         this.opponentId = message.opponentId();
-        this.legalMoves = message.legalMoves().stream().collect(
-                Collectors.toUnmodifiableMap(move -> Pair.of(move.from(), move.to()), move -> move));
+
+        storeLegalMoves(message.legalMoves());
 
         // init local representation
         this.board = setUpBoard();
         this.currentPlayer = Color.WHITE;
+    }
+
+    private void storeLegalMoves(List<LegalMove> moves) {
+        this.legalMoves = moves.stream()
+                .filter(move -> !(move instanceof Promotion))
+                .collect(Collectors.toUnmodifiableMap(m -> Pair.of(m.from(), m.to()), move -> move));
+        this.legalPromotions = moves.stream()
+                .filter(move -> move instanceof Promotion)
+                .map(Promotion.class::cast)
+                .collect(Collectors.toUnmodifiableMap(m -> Triple.of(m.from(), m.to(), m.newType()), move -> move));
     }
 
     /**
@@ -170,6 +182,11 @@ public class RemoteGameProxy implements Game, ServerProxy {
     }
 
     @Override
+    public LegalMove lastMove() {
+        return lastMove;
+    }
+
+    @Override
     public boolean activeCheck() {
         return activeCheck;
     }
@@ -177,11 +194,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
     @Override
     public boolean gameEnded() {
         return outcome != null;
-    }
-
-    @Override
-    public String lastMoveInNotation() {
-        return lastMoveInNotation;
     }
 
     @Override
@@ -210,14 +222,18 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
     @Override
     public Collection<Position> legalMovesFrom(Position from) {
-        return legalMoves.values().stream()
-                .filter(move -> move.from().equals(from))
-                .map(LegalMove::to).collect(Collectors.toList());
+        Stream<Position> destinations = legalMoves.values().stream()
+                .filter(move -> move.from().equals(from)).map(LegalMove::to).distinct();
+
+        Stream<Position> promotionsDestinations = legalPromotions.values().stream().map(Promotion::to).distinct();
+
+        return Stream.concat(destinations, promotionsDestinations).collect(Collectors.toList());
     }
 
     @Override
     public boolean isPromotionRequired(Position from, Position to) {
-        return legalMoves.get(Pair.of(from, to)) instanceof Promotion;
+        return legalPromotions.keySet().stream().anyMatch(
+                triple -> triple.getLeft().equals(from) && triple.getMiddle().equals(to));
     }
 
     @Override
@@ -227,16 +243,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
         }
 
         LegalMove move = legalMoves.get(Pair.of(from, to));
+        executeMove(move);
 
-        board[to.x()][to.y()] = board[from.x()][from.y()];
-        board[from.x()][from.y()] = null;
-
-        currentPlayer = localPlayer.next();
-//        activeCheck = move.check();
-        legalMoves = Map.of();
-//        lastMoveInNotation = move.notation();
-
-        controller.refreshBoard();
+        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
+                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
 
         try {
             messagesToServer.put(new Move(from, to, null));
@@ -253,21 +263,15 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
     @Override
     public boolean executeMove(Position from, Position to, PieceType promotion) {
-        if (!legalMoves.containsKey(Pair.of(from, to))) {
+        if (!legalPromotions.containsKey(Triple.of(from, to, promotion))) {
             return false;
         }
 
-        LegalMove move = legalMoves.get(Pair.of(from, to));
+        Promotion move = legalPromotions.get(Triple.of(from, to, promotion));
+        executeMove(move);
 
-        board[to.x()][to.y()] = new Piece(promotion, board[from.x()][from.y()].color());
-        board[from.x()][from.y()] = null;
-
-        currentPlayer = localPlayer.next();
-//        activeCheck = move.withCheck();
-        legalMoves = Map.of();
-//        lastMoveInNotation = move.notation();
-
-        controller.refreshBoard();
+        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
+                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
 
         try {
             messagesToServer.put(new Move(from, to, promotion));
@@ -281,11 +285,45 @@ public class RemoteGameProxy implements Game, ServerProxy {
         return true;
     }
 
+    /**
+     * Updates the board and other data about the state of the game.
+     * <p>
+     * Sets the other player as the current one.
+     */
+    private void executeMove(LegalMove move) {
+        board[move.to().x()][move.to().y()] = board[move.from().x()][move.from().y()];
+        board[move.from().x()][move.from().y()] = null;
+
+        if (move instanceof Promotion p) {
+            board[move.to().x()][move.to().y()] = new Piece(p.newType(), currentPlayer);
+        }
+        if (move instanceof Castling c) {
+            if (c.queenSide()) {
+                board[move.from().x()][3] = board[move.from().x()][0];
+                board[move.from().x()][0] = null;
+            } else {
+                board[move.from().x()][5] = board[move.from().x()][7];
+                board[move.from().x()][7] = null;
+            }
+        }
+        if (move instanceof EnPassant e) {
+            board[e.takenPawn().x()][e.takenPawn().y()] = null;
+        }
+
+        activeCheck = move.check();
+        lastMove = move;
+
+        legalMoves = Map.of();
+        legalPromotions = Map.of();
+
+        currentPlayer = currentPlayer.next();
+    }
+
+
     public String getId() {
         return id;
     }
 
-//    @Override
     public void terminateGame() {
         writerThread.interrupt();
         readerThread.interrupt();
@@ -332,22 +370,11 @@ public class RemoteGameProxy implements Game, ServerProxy {
                         terminateGame();
                         break;
                     }
-                    if (msg instanceof OpponentMoved move) {
-                        if (move.promotion() != null) {
-                            board[move.to().x()][move.to().y()] = new Piece(move.promotion(), localPlayer.next());
-                        } else {
-                            board[move.to().x()][move.to().y()] = board[move.from().x()][move.from().y()];
-                        }
-                        board[move.from().x()][move.from().y()] = null;
-
-                        currentPlayer = localPlayer;
-                        activeCheck = move.withCheck();
-                        legalMoves = move.legalMoves().stream().collect(
-                                Collectors.toUnmodifiableMap(m -> Pair.of(m.from(), m.to()), m -> m));
-                        lastMoveInNotation = move.moveRepresentation();
-
-                        controller.refreshBoard();
-
+                    if (msg instanceof OpponentMoved opponentMoved) {
+                        executeMove(opponentMoved.move());
+                        storeLegalMoves(opponentMoved.legalMoves());
+                        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
+                                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
                         continue;
                     }
                     if (msg instanceof ChatMessage chatMsg) {

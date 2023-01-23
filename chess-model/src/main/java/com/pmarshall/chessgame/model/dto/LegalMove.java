@@ -5,4 +5,6 @@ import com.pmarshall.chessgame.model.properties.Position;
 public interface LegalMove {
     Position from();
     Position to();
+    boolean check();
+    String notation();
 }
