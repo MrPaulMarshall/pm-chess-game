@@ -52,7 +52,7 @@ public class Promotion extends Move {
 
         // exchange pawn for new piece
         game.getCurrentPlayer().getPieces().remove(basicMove.movedPiece);
-        game.board[this.basicMove.newPosition.file()][this.basicMove.newPosition.rank()] = this.newPiece;
+        game.board[this.basicMove.newPosition.rank()][this.basicMove.newPosition.file()] = this.newPiece;
         game.getCurrentPlayer().getPieces().add(this.newPiece);
     }
 
@@ -60,7 +60,7 @@ public class Promotion extends Move {
     public void undo(InMemoryChessGame game) {
         // undo exchanging pawn
         game.getCurrentPlayer().getPieces().remove(this.newPiece);
-        game.board[this.basicMove.newPosition.file()][this.basicMove.newPosition.rank()] = basicMove.movedPiece;
+        game.board[this.basicMove.newPosition.rank()][this.basicMove.newPosition.file()] = basicMove.movedPiece;
         game.getCurrentPlayer().getPieces().add(basicMove.movedPiece);
 
         // undo move that lead to pawn being on the last row

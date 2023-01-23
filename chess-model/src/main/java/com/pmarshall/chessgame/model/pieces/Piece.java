@@ -150,18 +150,18 @@ public abstract class Piece {
 
         for (int[] dir : directions) {
             // start from the closest cell in this direction
-            int x = position.file() + dir[0];
-            int y = position.rank() + dir[1];
+            int rank = position.rank() + dir[1];
+            int file = position.file() + dir[0];
 
-            while (validPosition(x, y)) {
-                if (game.board[x][y] == null) {
+            while (validPosition(rank, file)) {
+                if (game.board[rank][file] == null) {
                     // cell is free
                     moves.add(new BasicMove(
-                            this, new Position(x, y), null, null));
-                } else if (game.board[x][y].color != this.color) {
+                            this, new Position(rank, file), null, null));
+                } else if (game.board[rank][file].color != this.color) {
                     // enemy figure blocks path
                     moves.add(new BasicMove(
-                            this, new Position(x, y), game.board[x][y], new Position(x, y)));
+                            this, new Position(rank, file), game.board[rank][file], new Position(rank, file)));
                     break;
                 } else {
                     // allied figure blocks path
@@ -169,8 +169,8 @@ public abstract class Piece {
                 }
 
                 // go to next cell
-                x += dir[0];
-                y += dir[1];
+                rank += dir[1];
+                file += dir[0];
             }
         }
 
@@ -188,15 +188,15 @@ public abstract class Piece {
         List<Move> moves = new LinkedList<>();
 
         for (int[] jump : jumps) {
-            int x = position.file() + jump[0];
-            int y = position.rank() + jump[1];
+            int rank = position.rank() + jump[1];
+            int file = position.file() + jump[0];
 
             // if new position is valid and either cell is free or there is an enemy to kill
-            if (validPosition(x, y) &&
-                    (game.board[x][y] == null || game.board[x][y].color != this.color)) {
+            if (validPosition(rank, file) &&
+                    (game.board[rank][file] == null || game.board[rank][file].color != this.color)) {
 
-                moves.add(new BasicMove(this, new Position(x, y), game.board[x][y],
-                        game.board[x][y] != null ? new Position(x, y) : null));
+                moves.add(new BasicMove(this, new Position(rank, file), game.board[rank][file],
+                        game.board[rank][file] != null ? new Position(rank, file) : null));
             }
         }
 

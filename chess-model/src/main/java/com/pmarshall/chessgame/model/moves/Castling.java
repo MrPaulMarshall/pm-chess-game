@@ -41,14 +41,14 @@ public class Castling extends Move {
     @Override
     public void execute(InMemoryChessGame game) {
         // King's jump
-        game.board[newPosition.file()][newPosition.rank()] = this.movedPiece;
-        game.board[oldPosition.file()][oldPosition.rank()] = null;
+        game.board[newPosition.rank()][newPosition.file()] = this.movedPiece;
+        game.board[oldPosition.rank()][oldPosition.file()] = null;
         this.movedPiece.setPosition(newPosition);
         this.movedPiece.markThatFigureMoved();
 
         // Rook's jump
-        game.board[newPositionForRook.file()][newPositionForRook.rank()] = this.rookToMove;
-        game.board[oldPositionOfRook.file()][oldPositionOfRook.rank()] = null;
+        game.board[newPositionForRook.rank()][newPositionForRook.file()] = this.rookToMove;
+        game.board[oldPositionOfRook.rank()][oldPositionOfRook.file()] = null;
         this.rookToMove.setPosition(newPositionForRook);
         this.rookToMove.markThatFigureMoved();
     }
@@ -58,14 +58,14 @@ public class Castling extends Move {
         // undo King's jump
         this.movedPiece.undoMarkThatFigureMoved();
         this.movedPiece.setPosition(oldPosition);
-        game.board[newPosition.file()][newPosition.rank()] = null;
-        game.board[oldPosition.file()][oldPosition.rank()] = this.movedPiece;
+        game.board[newPosition.rank()][newPosition.file()] = null;
+        game.board[oldPosition.rank()][oldPosition.file()] = this.movedPiece;
 
         // undo Rook's jump
         this.rookToMove.undoMarkThatFigureMoved();
         this.rookToMove.setPosition(oldPositionOfRook);
-        game.board[newPositionForRook.file()][newPositionForRook.rank()] = null;
-        game.board[oldPositionOfRook.file()][oldPositionOfRook.rank()] = this.rookToMove;
+        game.board[newPositionForRook.rank()][newPositionForRook.file()] = null;
+        game.board[oldPositionOfRook.rank()][oldPositionOfRook.file()] = this.rookToMove;
     }
 
     @Override

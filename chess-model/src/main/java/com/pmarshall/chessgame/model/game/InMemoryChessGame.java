@@ -59,9 +59,9 @@ public class InMemoryChessGame implements Game {
     public InMemoryChessGame() {
 
         this.board = new Piece[8][8];
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                this.board[i][j] = null;
+        for (int rank = 0; rank < 8; rank++) {
+            for (int file = 0; file < 8; file++) {
+                this.board[rank][file] = null;
             }
         }
 
@@ -106,16 +106,16 @@ public class InMemoryChessGame implements Game {
      */
     public void removePiece(Piece piece) {
         this.getPlayerByColor(piece.getColor()).getPieces().remove(piece);
-        this.board[piece.getPosition().file()][piece.getPosition().rank()] = null;
+        this.board[piece.getPosition().rank()][piece.getPosition().file()] = null;
     }
 
     public void addPieceBack(Piece piece, Position pos) {
         this.getPlayerByColor(piece.getColor()).getPieces().add(piece);
-        this.board[pos.file()][pos.rank()] = piece;
+        this.board[pos.rank()][pos.file()] = piece;
     }
 
     private boolean isIllegalMove(Position from, Position to) {
-        Piece piece = this.board[from.file()][from.rank()];
+        Piece piece = this.board[from.rank()][from.file()];
         if (piece == null)
             return true;
 
@@ -123,7 +123,7 @@ public class InMemoryChessGame implements Game {
     }
 
     private boolean isIllegalMove(Position from, Position to, PieceType promotion) {
-        Piece piece = this.board[from.file()][from.rank()];
+        Piece piece = this.board[from.rank()][from.file()];
         if (piece == null)
             return true;
 
@@ -162,11 +162,11 @@ public class InMemoryChessGame implements Game {
     @Override
     public com.pmarshall.chessgame.model.dto.Piece[][] getBoardWithPieces() {
         com.pmarshall.chessgame.model.dto.Piece[][] result = new com.pmarshall.chessgame.model.dto.Piece[8][8];
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Piece piece = board[i][j];
+        for (int rank = 0; rank < 8; rank++) {
+            for (int file = 0; file < 8; file++) {
+                Piece piece = board[rank][file];
                 if (piece != null) {
-                    result[i][j] = new com.pmarshall.chessgame.model.dto.Piece(piece.getType(), piece.getColor());
+                    result[rank][file] = new com.pmarshall.chessgame.model.dto.Piece(piece.getType(), piece.getColor());
                 }
             }
         }
@@ -175,7 +175,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public com.pmarshall.chessgame.model.dto.Piece getPiece(Position on) {
-        Piece piece = board[on.file()][on.rank()];
+        Piece piece = board[on.rank()][on.file()];
         if (piece == null)
             return null;
 
@@ -189,7 +189,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public Collection<Position> legalMovesFrom(Position from) {
-        Piece piece = this.board[from.file()][from.rank()];
+        Piece piece = this.board[from.rank()][from.file()];
         if (piece == null)
             return Collections.emptyList();
 
@@ -198,7 +198,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public boolean isMoveLegal(Position from, Position to) {
-        Piece piece = this.board[from.file()][from.rank()];
+        Piece piece = this.board[from.rank()][from.file()];
         if (piece == null)
             return false;
 
@@ -207,7 +207,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public boolean isPromotionRequired(Position from, Position to) {
-        Piece piece = this.board[from.file()][from.rank()];
+        Piece piece = this.board[from.rank()][from.file()];
         if (piece == null)
             return false;
 
@@ -219,7 +219,7 @@ public class InMemoryChessGame implements Game {
         if (isIllegalMove(from, to))
             return false;
 
-        Piece piece = this.board[from.file()][from.rank()];
+        Piece piece = this.board[from.rank()][from.file()];
         executeMove(piece.findMoveByTargetPosition(to));
         return true;
     }
@@ -229,7 +229,7 @@ public class InMemoryChessGame implements Game {
         if (isIllegalMove(from, to, promotion))
             return false;
 
-        Piece piece = this.board[from.file()][from.rank()];
+        Piece piece = this.board[from.rank()][from.file()];
         executeMove(piece.findPromotionByTargetPositionAndType(to, promotion));
         return true;
     }
@@ -323,7 +323,7 @@ public class InMemoryChessGame implements Game {
      * @param position where piece should be inserted
      */
     private void addNewPiece(Piece piece, Player player, Position position) {
-        this.board[position.file()][position.rank()] = piece;
+        board[position.rank()][position.file()] = piece;
         piece.setPosition(position);
         player.getPieces().add(piece);
     }
@@ -341,38 +341,38 @@ public class InMemoryChessGame implements Game {
         this.blackPlayer = new Player(Color.BLACK);
 
         // WHITES
-        for (int i = 0; i < 8; i++) {
-            addNewPiece(new Pawn(Color.WHITE), this.whitePlayer, new Position(i, 6));
+        for (int file = 0; file < 8; file++) {
+            addNewPiece(new Pawn(Color.WHITE), this.whitePlayer, new Position(6, file));
         }
-        addNewPiece(new Rook(Color.WHITE), this.whitePlayer, new Position(0, 7));
-        addNewPiece(new Knight(Color.WHITE), this.whitePlayer, new Position(1, 7));
-        addNewPiece(new Bishop(Color.WHITE), this.whitePlayer, new Position(2, 7));
-        addNewPiece(new Queen(Color.WHITE), this.whitePlayer, new Position(3, 7));
+        addNewPiece(new Rook(Color.WHITE), this.whitePlayer, new Position(7, 0));
+        addNewPiece(new Knight(Color.WHITE), this.whitePlayer, new Position(7, 1));
+        addNewPiece(new Bishop(Color.WHITE), this.whitePlayer, new Position(7, 2));
+        addNewPiece(new Queen(Color.WHITE), this.whitePlayer, new Position(7, 3));
 
         King whiteKing = new King(Color.WHITE);
-        addNewPiece(whiteKing, this.whitePlayer, new Position(4, 7));
+        addNewPiece(whiteKing, this.whitePlayer, new Position(7, 4));
         this.whitePlayer.setKing(whiteKing);
 
-        addNewPiece(new Bishop(Color.WHITE), this.whitePlayer, new Position(5, 7));
-        addNewPiece(new Knight(Color.WHITE), this.whitePlayer, new Position(6, 7));
+        addNewPiece(new Bishop(Color.WHITE), this.whitePlayer, new Position(7, 5));
+        addNewPiece(new Knight(Color.WHITE), this.whitePlayer, new Position(7, 6));
         addNewPiece(new Rook(Color.WHITE), this.whitePlayer, new Position(7, 7));
 
         // BLACKS
-        for (int i = 0; i < 8; i++) {
-            addNewPiece(new Pawn(Color.BLACK), this.blackPlayer, new Position(i, 1));
+        for (int file = 0; file < 8; file++) {
+            addNewPiece(new Pawn(Color.BLACK), this.blackPlayer, new Position(1, file));
         }
         addNewPiece(new Rook(Color.BLACK), this.blackPlayer, new Position(0, 0));
-        addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(1, 0));
-        addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(2, 0));
-        addNewPiece(new Queen(Color.BLACK), this.blackPlayer, new Position(3, 0));
+        addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(0, 1));
+        addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(0, 2));
+        addNewPiece(new Queen(Color.BLACK), this.blackPlayer, new Position(0, 3));
 
         King blackKing = new King(Color.BLACK);
-        addNewPiece(blackKing, this.blackPlayer, new Position(4, 0));
+        addNewPiece(blackKing, this.blackPlayer, new Position(0, 4));
         this.blackPlayer.setKing(blackKing);
 
-        addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(5, 0));
-        addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(6, 0));
-        addNewPiece(new Rook(Color.BLACK), this.blackPlayer, new Position(7, 0));
+        addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(0, 5));
+        addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(0, 6));
+        addNewPiece(new Rook(Color.BLACK), this.blackPlayer, new Position(0, 7));
 
         // Calculate initial moves
         this.currentPlayer = this.whitePlayer;

@@ -35,8 +35,8 @@ public class BasicMove extends Move {
         }
 
         // change piece's position
-        game.board[oldPosition.file()][oldPosition.rank()] = null;
-        game.board[newPosition.file()][newPosition.rank()] = movedPiece;
+        game.board[oldPosition.rank()][oldPosition.file()] = null;
+        game.board[newPosition.rank()][newPosition.file()] = movedPiece;
         movedPiece.setPosition(newPosition);
         movedPiece.markThatFigureMoved();
     }
@@ -50,8 +50,8 @@ public class BasicMove extends Move {
 
         // change piece's position
         movedPiece.setPosition(oldPosition);
-        game.board[oldPosition.file()][oldPosition.rank()] = this.movedPiece;
-        game.board[newPosition.file()][newPosition.rank()] = null;
+        game.board[oldPosition.rank()][oldPosition.file()] = this.movedPiece;
+        game.board[newPosition.rank()][newPosition.file()] = null;
 
         // restore piece, if one was taken
         if (this.takenPiece != null) {
@@ -78,7 +78,7 @@ public class BasicMove extends Move {
         differentiateConflictingMoves(builder, legalMoves);
 
         if (takenPiece != null) {
-            builder.append("file");
+            builder.append("x");
         }
 
         builder.append(newPosition.strFile());
@@ -113,12 +113,13 @@ public class BasicMove extends Move {
                 .filter(position -> !position.equals(from))
                 .toList();
 
+        // TODO: probably conflictOnRank and conflictOnFile do not require != conditions
         boolean conflictOnRank = conflictingMovesStartingPositions.stream()
-                .anyMatch(position -> position.file() != from.file() && position.rank() == from.rank());
+                .anyMatch(position -> position.rank() == from.rank() && position.file() != from.file());
         boolean conflictOnFile = conflictingMovesStartingPositions.stream()
-                .anyMatch(position -> position.file() == from.file() && position.rank() != from.rank());
+                .anyMatch(position -> position.rank() != from.rank() && position.file() == from.file());
         boolean conflictElsewhere = conflictingMovesStartingPositions.stream()
-                .anyMatch(position -> position.file() != from.file() && position.rank() != from.rank());
+                .anyMatch(position -> position.rank() != from.rank() && position.file() != from.file());
 
         if (conflictOnFile && conflictOnRank) {
             builder.append(from.strFile()).append(from.strRank());

@@ -4,14 +4,14 @@ package com.pmarshall.chessgame.model.properties;
  * @author Paweł Marszał
  * <p>
  * Class representing position on the board
- * file - column
  * rank - row
+ * file - column
  * <p>
  * They map from in-game coordinates into chess-like coordinates as follows:
- * file: {0, 1, .., 7} -> {'a', 'b', .., 'h'}
  * rank: {0, 1, .., 7} -> {'8', '7', .., '1'}
+ * file: {0, 1, .., 7} -> {'a', 'b', .., 'h'}
  */
-public record Position(int file, int rank) {
+public record Position(int rank, int file) {
 
     /**
      * Translates numerical in-game indices into literal "chess-like" indices
