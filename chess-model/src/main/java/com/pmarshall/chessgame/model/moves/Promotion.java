@@ -81,12 +81,13 @@ public class Promotion extends Move {
         StringBuilder builder = new StringBuilder();
 
         if (basicMove.getPieceToTake() != null) {
-            builder.append(basicMove.getPieceToMove().getPosition().strFile()).append("file");
+            builder.append(basicMove.getPieceToMove().getPosition().strFile()).append("x");
         }
 
         builder.append(newPosition.strFile());
         builder.append(newPosition.strRank());
         builder.append("=");
+        // TODO: define PieceType::getCode and use it
         if (newPiece.getType() == PieceType.KNIGHT) {
             builder.append("N");
         } else {
