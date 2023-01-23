@@ -9,7 +9,6 @@ import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Paweł Marszał
@@ -74,14 +73,16 @@ public class BasicMove extends Move {
     public String inNotation(List<Move> legalMoves) {
         StringBuilder builder = new StringBuilder();
 
+        builder.append(movedPiece.toString());
+
         differentiateConflictingMoves(builder, legalMoves);
 
         if (takenPiece != null) {
             builder.append("x");
         }
 
-        builder.append(newPosition.translateY());
         builder.append(newPosition.translateX());
+        builder.append(newPosition.translateY());
 
         if (withCheck) {
             builder.append("+");
@@ -95,27 +96,42 @@ public class BasicMove extends Move {
      * that is needed to differentiate between pieces of the same type that can move into the target position.
      */
     private void differentiateConflictingMoves(StringBuilder builder, List<Move> legalMoves) {
+        Position from = movedPiece.getPosition();
+
         if (movedPiece instanceof Pawn) {
             if (takenPiece != null) {
-                builder.append(movedPiece.getPosition().translateX());
+                builder.append(from.translateX());
             }
             return;
         }
 
-        List<Move> conflictingMoves = legalMoves.stream()
-                .filter(move -> move.getPieceToMove().getType() == movedPiece.getType())
+        List<Position> conflictingMovesStartingPositions = legalMoves.stream()
                 .filter(move -> move.getNewPosition().equals(newPosition))
+                .map(Move::getPieceToMove)
+                .filter(piece -> piece.getType() == movedPiece.getType())
+                .map(Piece::getPosition)
+                .filter(position -> !position.equals(from))
                 .toList();
-        boolean conflictOnRank = conflictingMoves.stream()
-                .anyMatch(move -> move.getPieceToMove().getPosition().x() == movedPiece.getPosition().x());
-        boolean conflictOnFile = conflictingMoves.stream()
-                .anyMatch(move -> move.getPieceToMove().getPosition().y() == movedPiece.getPosition().y());
+
+        boolean conflictOnRank = conflictingMovesStartingPositions.stream()
+                .anyMatch(position -> position.x() != from.x() && position.y() == from.y());
+        boolean conflictOnFile = conflictingMovesStartingPositions.stream()
+                .anyMatch(position -> position.x() == from.x() && position.y() != from.y());
+        boolean conflictElsewhere = conflictingMovesStartingPositions.stream()
+                .anyMatch(position -> position.x() != from.x() && position.y() != from.y());
+
+        if (conflictOnFile && conflictOnRank) {
+            builder.append(from.translateX()).append(from.translateY());
+            return;
+        }
 
         if (conflictOnFile) {
-            builder.append(movedPiece.getPosition().translateY());
+            builder.append(from.translateY());
+            return;
         }
-        if (conflictOnRank) {
-            builder.append(movedPiece.getPosition().translateX());
+
+        if (conflictOnRank || conflictElsewhere) {
+            builder.append(from.translateX());
         }
     }
 }

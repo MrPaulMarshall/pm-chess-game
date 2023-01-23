@@ -70,14 +70,14 @@ public class Castling extends Move {
 
     @Override
     public LegalMove toDto(List<Move> legalMoves) {
-        int distance = abs(this.oldPosition.y() - this.oldPositionOfRook.y());
+        int distance = abs(this.newPositionForRook.x() - this.oldPositionOfRook.x());
         return new com.pmarshall.chessgame.model.dto.Castling(
                 movedPiece.getPosition(), newPosition, distance == 3, withCheck, inNotation(legalMoves));
     }
 
     @Override
     public String inNotation(List<Move> legalMoves) {
-        int distance = abs(this.oldPosition.y() - this.oldPositionOfRook.y());
-        return distance == 2 ? "0-0" : "0-0-0";
+        int distance = abs(this.newPositionForRook.x() - this.oldPositionOfRook.x());
+        return (distance == 2 ? "0-0" : "0-0-0") + (withCheck ? "+" : "");
     }
 }

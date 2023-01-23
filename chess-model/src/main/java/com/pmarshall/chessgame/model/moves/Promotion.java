@@ -86,7 +86,12 @@ public class Promotion extends Move {
 
         builder.append(newPosition.translateX());
         builder.append(newPosition.translateY());
-        builder.append("=").append(newPiece.getType());
+        builder.append("=");
+        if (newPiece.getType() == PieceType.KNIGHT) {
+            builder.append("N");
+        } else {
+            builder.append(newPiece.getType().toString().charAt(0));
+        }
 
         if (withCheck) {
             builder.append("+");

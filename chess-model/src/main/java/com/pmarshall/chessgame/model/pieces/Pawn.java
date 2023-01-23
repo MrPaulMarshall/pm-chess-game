@@ -113,6 +113,6 @@ public final class Pawn extends Piece {
 
     @Override
     public String toString() {
-        return this.position.translateX();
+        return "";
     }
 }
