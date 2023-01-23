@@ -56,13 +56,13 @@ public final class King extends Piece {
             2. it has the same color as king, so it's not promoted piece of the opponent
              */
 
-            Piece leftRook = game.board[0][this.position.y()];
+            Piece leftRook = game.board[position.rank()][0];
             if (leftRook != null && leftRook.color == color && leftRook.didNotMoveYet) {
                 boolean castlingPossible = true;
 
                 // all cells between king and rook must be free
-                for (int x = 1; x < this.position.x(); x++) {
-                    if (game.board[x][this.position.y()] != null) {
+                for (int file = 1; file < position.file(); file++) {
+                    if (game.board[position.rank()][file] != null) {
                         castlingPossible = false;
                         break;
                     }
@@ -70,25 +70,25 @@ public final class King extends Piece {
 
                 // king cannot be threatened anywhere on his path
                 for (int i = 0; i <= 2 && castlingPossible; i++) {
-                    if (game.isPosThreatened(new Position(this.position.x() - i, this.position.y()), game.getOtherPlayer())) {
+                    if (game.isPosThreatened(new Position(position.rank(), position.file() - i), game.getOtherPlayer())) {
                         castlingPossible = false;
                     }
                 }
 
                 if (castlingPossible) {
                     movesWithoutProtectingKing.add(new Castling(
-                            this, new Position(this.position.x() - 2, this.position.y()),
-                            (Rook)leftRook, new Position(this.position.x() - 1, this.position.y())));
+                            this, new Position(position.rank(), position.file() - 2),
+                            (Rook)leftRook, new Position(position.rank(), position.file() - 1)));
                 }
             }
 
-            Piece rightRook = game.board[7][this.position.y()];
+            Piece rightRook = game.board[position.rank()][7];
             if (rightRook != null && rightRook.color == color && rightRook.didNotMoveYet) {
                 boolean castlingPossible = true;
 
                 // all cells between king and rook must be free
-                for (int x = this.position.x() + 1; x < 7; x++) {
-                    if (game.board[x][this.position.y()] != null) {
+                for (int file = position.file() + 1; file < 7; file++) {
+                    if (game.board[position.rank()][file] != null) {
                         castlingPossible = false;
                         break;
                     }
@@ -96,15 +96,15 @@ public final class King extends Piece {
 
                 // king cannot be threatened anywhere on his path
                 for (int i = 0; i <= 2 && castlingPossible; i++) {
-                    if (game.isPosThreatened(new Position(this.position.x() + i, this.position.y()), game.getOtherPlayer())) {
+                    if (game.isPosThreatened(new Position(position.rank(), position.file() + i), game.getOtherPlayer())) {
                         castlingPossible = false;
                     }
                 }
 
                 if (castlingPossible) {
                     movesWithoutProtectingKing.add(new Castling(
-                            this, new Position(this.position.x() + 2, this.position.y()),
-                            (Rook)rightRook, new Position(this.position.x() + 1, this.position.y())));
+                            this, new Position(position.rank(), position.file() + 2),
+                            (Rook)rightRook, new Position(position.rank(), position.file() + 1)));
                 }
             }
         }

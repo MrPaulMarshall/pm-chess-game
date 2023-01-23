@@ -54,11 +54,12 @@ public abstract class GameControllerBase {
 
     protected void createBoardGrid(boolean forward) {
         this.chessboard = new ChessboardCell[8][8];
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                final int it = forward ? i : 7-i, jt = j;
-                chessboard[i][j] = new ChessboardCell((i+j) % 2 == 0, e -> boardCellOnClick(it, jt));
-                chessBoardGrid.add(chessboard[i][j].getPane(), i, j);
+        for (int rank = 0; rank < 8; rank++) {
+            for (int file = 0; file < 8; file++) {
+                final int constRank = rank, constFile = file;
+                chessboard[rank][file] = new ChessboardCell(
+                        (rank+file) % 2 == 0, e -> boardCellOnClick(constRank, constFile));
+                chessBoardGrid.add(chessboard[constRank][constFile].getPane(), file, forward ? rank : 7-rank);
             }
         }
     }
@@ -84,12 +85,12 @@ public abstract class GameControllerBase {
     /**
      * Reacts to player's click on the cell of the board
      */
-    protected void boardCellOnClick(int i, int j) {
+    protected void boardCellOnClick(int rank, int file) {
         // if game has ended, board is disabled
         if (gameEnded)
             return;
 
-        Position clickedCell = new Position(i, j);
+        Position clickedCell = new Position(rank, file);
 
         // if player click on the chosen piece again, unmark it
         if (clickedCell.equals(pieceChosen)) {
@@ -159,11 +160,11 @@ public abstract class GameControllerBase {
     protected void refreshBoard(Color player, Piece[][] board) {
         repaintBackground();
         currentPlayerName.setText(player.toString());
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Piece piece = board[i][j];
+        for (int rank = 0; rank < 8; rank++) {
+            for (int file = 0; file < 8; file++) {
+                Piece piece = board[rank][file];
                 Image image = piece == null ? null : imageProvider.getImage(piece.piece(), piece.color());
-                chessboard[i][j].setImage(image);
+                chessboard[rank][file].setImage(image);
             }
         }
     }
@@ -172,9 +173,9 @@ public abstract class GameControllerBase {
      * Sets all cells into their idle state, but shows the active check
      */
     private void repaintBackground() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                this.chessboard[i][j].refreshBackground();
+        for (int rank = 0; rank < 8; rank++) {
+            for (int file = 0; file < 8; file++) {
+                this.chessboard[rank][file].refreshBackground();
             }
         }
 
@@ -188,9 +189,9 @@ public abstract class GameControllerBase {
      */
     private void choosePiece(Position picked, Collection<Position> legalTargets) {
         repaintBackground();
-        chessboard[picked.x()][picked.y()].setChosenBackground();
+        chessboard[picked.rank()][picked.file()].setChosenBackground();
         for (Position target : legalTargets) {
-            chessboard[target.x()][target.y()].setClickableBackground();
+            chessboard[target.rank()][target.file()].setClickableBackground();
         }
     }
 
@@ -209,11 +210,11 @@ public abstract class GameControllerBase {
     }
 
     private Position findCheckedKing(Color color, Piece[][] board) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Piece piece = board[i][j];
+        for (int rank = 0; rank < 8; rank++) {
+            for (int file = 0; file < 8; file++) {
+                Piece piece = board[rank][file];
                 if (piece != null && piece.piece() == PieceType.KING && piece.color() == color) {
-                    return new Position(i, j);
+                    return new Position(rank, file);
                 }
             }
         }
@@ -221,7 +222,7 @@ public abstract class GameControllerBase {
     }
 
     private void markCheckedKingsField() {
-        this.chessboard[checkedKing.x()][checkedKing.y()].setCheckedBackground();
+        this.chessboard[checkedKing.rank()][checkedKing.file()].setCheckedBackground();
     }
 
 }

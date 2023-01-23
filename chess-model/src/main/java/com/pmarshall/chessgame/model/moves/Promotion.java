@@ -52,7 +52,7 @@ public class Promotion extends Move {
 
         // exchange pawn for new piece
         game.getCurrentPlayer().getPieces().remove(basicMove.movedPiece);
-        game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = this.newPiece;
+        game.board[this.basicMove.newPosition.rank()][this.basicMove.newPosition.file()] = this.newPiece;
         game.getCurrentPlayer().getPieces().add(this.newPiece);
     }
 
@@ -60,7 +60,7 @@ public class Promotion extends Move {
     public void undo(InMemoryChessGame game) {
         // undo exchanging pawn
         game.getCurrentPlayer().getPieces().remove(this.newPiece);
-        game.board[this.basicMove.newPosition.x()][this.basicMove.newPosition.y()] = basicMove.movedPiece;
+        game.board[this.basicMove.newPosition.rank()][this.basicMove.newPosition.file()] = basicMove.movedPiece;
         game.getCurrentPlayer().getPieces().add(basicMove.movedPiece);
 
         // undo move that lead to pawn being on the last row
@@ -81,12 +81,13 @@ public class Promotion extends Move {
         StringBuilder builder = new StringBuilder();
 
         if (basicMove.getPieceToTake() != null) {
-            builder.append(basicMove.getPieceToMove().getPosition().translateX()).append("x");
+            builder.append(basicMove.getPieceToMove().getPosition().strFile()).append("x");
         }
 
-        builder.append(newPosition.translateX());
-        builder.append(newPosition.translateY());
+        builder.append(newPosition.strFile());
+        builder.append(newPosition.strRank());
         builder.append("=");
+        // TODO: define PieceType::getCode and use it
         if (newPiece.getType() == PieceType.KNIGHT) {
             builder.append("N");
         } else {

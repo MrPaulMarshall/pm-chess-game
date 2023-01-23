@@ -36,9 +36,9 @@ class MessageSpec extends Specification {
         '{"type":"Surrender"}'                                     | new Surrender()
         '{"type":"AssignId","id":"abc123"}'                        | new AssignId('abc123')
         '{"type":"GameOutcome","outcome":"DEFEAT","message":null}' | new GameOutcome(GameOutcome.Type.DEFEAT, null)
-        '{"type":"Move","from":{"x":1,"y":4},"to":{"x":5,"y":4},"promotion":null}'     | new Move(new Position(1,4), new Position(5,4), null)
-        '{"type":"Move","from":{"x":1,"y":4},"to":{"x":5,"y":4},"promotion":"KNIGHT"}' | new Move(new Position(1,4), new Position(5,4), PieceType.KNIGHT)
-//        '{"type":"MatchFound","color":"WHITE","opponentId":"a1","legalMoves":[{"from":{"x":1,"y":4},"to":{"x":5,"y":4},"promotion":false,"withCheck":true,"notation":"d4"}]}'  | new MatchFound(Color.WHITE, 'a1', List.of(new LegalMove(new Position (1,4), new Position(5,4), false, true, "d4")))
+        '{"type":"Move","from":{"file":1,"rank":4},"to":{"file":5,"rank":4},"promotion":null}'     | new Move(new Position(1,4), new Position(5,4), null)
+        '{"type":"Move","from":{"file":1,"rank":4},"to":{"file":5,"rank":4},"promotion":"KNIGHT"}' | new Move(new Position(1,4), new Position(5,4), PieceType.KNIGHT)
+//        '{"type":"MatchFound","color":"WHITE","opponentId":"a1","legalMoves":[{"from":{"file":1,"rank":4},"to":{"file":5,"rank":4},"promotion":false,"withCheck":true,"notation":"d4"}]}'  | new MatchFound(Color.WHITE, 'a1', List.of(new LegalMove(new Position (1,4), new Position(5,4), false, true, "d4")))
     }
 
     def 'should throw JsonProcessingException when given invalid json'() {

@@ -32,22 +32,22 @@ public final class Pawn extends Piece {
 
         // 2 fields forward - as it is pawn's first move, positions ahead are certainly valid
         if (didNotMoveYet) {
-            if (game.board[position.x()][position.y() + s] == null &&
-                    game.board[position.x()][position.y() + 2*s] == null) {
+            if (game.board[position.rank() + s][position.file()] == null &&
+                    game.board[position.rank() + 2*s][position.file()] == null) {
 
                 movesWithoutProtectingKing.add(new DoublePawnStart(
-                        this, new Position(position.x(), position.y() + 2*s)));
+                        this, new Position(position.rank() + 2*s, position.file())));
             }
         }
 
         // 1 field forward - normal straight pawn's move
-        if (validPosition(position.x(), position.y() + s) &&
-                game.board[position.x()][position.y() + s] == null) {
+        if (validPosition(position.rank() + s, position.file()) &&
+                game.board[position.rank() + s][position.file()] == null) {
 
             BasicMove basicMove = new BasicMove(
-                    this, new Position(position.x(), position.y() + s), null, null);
+                    this, new Position(position.rank() + s, position.file()), null, null);
 
-            if (position.y() + s == 0 || position.y() + s == 7) {
+            if (position.rank() + s == 0 || position.rank() + s == 7) {
                 // if piece lands on the last row, promotion must be executed afterwards
                 movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.QUEEN));
                 movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.ROOK));
@@ -60,23 +60,21 @@ public final class Pawn extends Piece {
             }
         }
 
-
-
         // left, right - diagonal direction for capturing enemy pieces
         int[] directions = {-1, 1};
 
         // normal capturing diagonally
         for (int i : directions) {
-            int x = position.x() + i;
-            int y = position.y() + s;
+            int rank = position.rank() + s;
+            int file = position.file() + i;
 
-            if (validPosition(x, y) &&
-                    game.board[x][y] != null &&
-                    game.board[x][y].color != this.color) {
+            if (validPosition(rank, file) &&
+                    game.board[rank][file] != null &&
+                    game.board[rank][file].color != this.color) {
 
-                BasicMove basicMove = new BasicMove(this, new Position(x, y), game.board[x][y], new Position(x, y));
+                BasicMove basicMove = new BasicMove(this, new Position(rank, file), game.board[rank][file], new Position(rank, file));
 
-                if (y == 0 || y == 7) {
+                if (rank == 0 || rank == 7) {
                     // if piece lands on the last row, promotion must be executed afterwards
                     movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.QUEEN));
                     movesWithoutProtectingKing.add(new Promotion(basicMove, PieceType.ROOK));
@@ -93,15 +91,15 @@ public final class Pawn extends Piece {
         //  if last move was double-pawn-start by enemy pawn, and they are currently at the same row (and neighbours)
         //  as double-pawn-start was executed, the target-field is certainly free
         if (game.getLastMove() instanceof DoublePawnStart
-                && game.getLastMove().getNewPosition().y() == this.position.y()
-                && Math.abs(game.getLastMove().getNewPosition().x() - this.position.x()) == 1) {
+                && game.getLastMove().getNewPosition().rank() == this.position.rank()
+                && Math.abs(game.getLastMove().getNewPosition().file() - this.position.file()) == 1) {
 
-            int x = game.getLastMove().getNewPosition().x();
-            int y = position.y() + s;
+            int rank = position.rank() + s;
+            int file = game.getLastMove().getNewPosition().file();
 
-            if (validPosition(x, y) && game.board[x][y] == null) {
+            if (validPosition(rank, file) && game.board[rank][file] == null) {
                 movesWithoutProtectingKing.add(new BasicMove(
-                        this, new Position(x, y), game.board[x][position.y()], new Position(x, position.y())));
+                        this, new Position(rank, file), game.board[position.rank()][file], new Position(position.rank(), file)));
             }
         }
     }
