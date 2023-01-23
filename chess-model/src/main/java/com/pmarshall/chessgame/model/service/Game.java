@@ -13,10 +13,6 @@ public interface Game {
 
     Color currentPlayer();
 
-    boolean activeCheck();
-
-    boolean gameEnded();
-
     LegalMove lastMove();
 
     /**

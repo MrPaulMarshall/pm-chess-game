@@ -101,7 +101,7 @@ public class Master extends Thread {
         writerThreads.values().forEach(Thread::start);
 
         /* run the main loop */
-        while (Thread.interrupted()) {
+        while (!Thread.interrupted()) {
             try {
                 // is any message available?
                 semaphore.acquire();

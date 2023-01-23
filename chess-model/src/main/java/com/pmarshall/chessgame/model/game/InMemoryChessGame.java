@@ -97,10 +97,6 @@ public class InMemoryChessGame implements Game {
         return moveHistory.getLast();
     }
 
-    public LinkedList<Move> getMoveHistory() {
-        return moveHistory;
-    }
-
     /**
      *
      */
@@ -133,16 +129,6 @@ public class InMemoryChessGame implements Game {
     @Override
     public Color currentPlayer() {
         return currentPlayer.getColor();
-    }
-
-    @Override
-    public boolean activeCheck() {
-        return currentPlayer.isKingChecked();
-    }
-
-    @Override
-    public boolean gameEnded() {
-        return draw || winner != null;
     }
 
     @Override

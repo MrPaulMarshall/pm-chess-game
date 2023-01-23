@@ -187,16 +187,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
     }
 
     @Override
-    public boolean activeCheck() {
-        return activeCheck;
-    }
-
-    @Override
-    public boolean gameEnded() {
-        return outcome != null;
-    }
-
-    @Override
     public Pair<Color, String> outcome() {
         return Pair.of(null, outcome.message());
     }
