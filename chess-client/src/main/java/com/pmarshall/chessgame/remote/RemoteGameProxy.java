@@ -79,8 +79,9 @@ public class RemoteGameProxy implements Game, ServerProxy {
         OutputStream out = socket.getOutputStream();
 
         String id = waitForIdAssignment(in);
-
-        return new RemoteGameProxy(controller, socket, in, out, id);
+        RemoteGameProxy proxy = new RemoteGameProxy(controller, socket, in, out, id);
+        proxy.waitForOpponentMatch(in);
+        return proxy;
     }
 
     private static String waitForIdAssignment(InputStream in) throws IOException {
@@ -188,7 +189,14 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
     @Override
     public Pair<Color, String> outcome() {
-        return Pair.of(null, outcome.message());
+        if (outcome == null)
+            return null;
+
+        return Pair.of(switch (outcome.outcome()) {
+            case VICTORY -> localPlayer;
+            case DEFEAT -> localPlayer.next();
+            case DRAW -> null;
+        }, outcome.message());
     }
 
     @Override
@@ -235,8 +243,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
         LegalMove move = legalMoves.get(Pair.of(from, to));
         executeMove(move);
 
-        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
-                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
+        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board, outcome()));
 
         try {
             messagesToServer.put(new Move(from, to, null));
@@ -314,7 +321,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
         return id;
     }
 
-    public void terminateGame() {
+    public void terminateGame(Color winner) {
         writerThread.interrupt();
         readerThread.interrupt();
         try {
@@ -323,7 +330,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
             log.warn("Could not close connection to server", ex);
         }
 
-        // TODO: controller.endGame();
+        Platform.runLater(() -> controller.endGame(winner));
     }
 
     @Override
@@ -357,7 +364,12 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
                     if (msg instanceof GameOutcome outcomeMsg) {
                         outcome = outcomeMsg;
-                        terminateGame();
+                        Color winner = switch (outcomeMsg.outcome()) {
+                            case VICTORY -> localPlayer;
+                            case DEFEAT -> localPlayer.next();
+                            case DRAW -> null;
+                        };
+                        terminateGame(winner);
                         break;
                     }
                     if (msg instanceof OpponentMoved opponentMoved) {
@@ -383,7 +395,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
                 } catch (IOException ex) {
                     log.error("Connection with server was broken in Reader", ex);
-                    terminateGame();
+                    terminateGame(null);
                 }
             }
 
@@ -417,7 +429,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
                     log.warn("Thread Writer was interrupted");
                 } catch (IOException ex) {
                     log.warn("Connection with server was broken in Writer", ex);
-                    terminateGame();
+                    terminateGame(null);
                 }
             }
 
