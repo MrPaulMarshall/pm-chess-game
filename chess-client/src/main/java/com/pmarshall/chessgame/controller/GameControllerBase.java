@@ -6,6 +6,7 @@ import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
+import com.pmarshall.chessgame.remote.RemoteGameProxy;
 import com.pmarshall.chessgame.services.ImageProvider;
 import com.pmarshall.chessgame.services.LocalResourceImageProvider;
 import javafx.fxml.FXML;
@@ -107,6 +108,12 @@ public abstract class GameControllerBase {
 
         // if player clicked on another of his pieces, mark it
         Piece piece = game.getPiece(clickedCell);
+
+        // TODO: refactor me
+        if (piece != null && game instanceof RemoteGameProxy proxy && piece.color() != proxy.localPlayer()) {
+            return;
+        }
+
         if (piece != null && piece.color() == game.currentPlayer()) {
             pieceChosen = clickedCell;
             choosePiece(pieceChosen, game.legalMovesFrom(pieceChosen));
@@ -145,7 +152,7 @@ public abstract class GameControllerBase {
         checkedKing = move.check() ? findCheckedKing(player.next(), board) : null;
 
         appendMoveToLedger(player, move.notation());
-        refreshBoard(player, board);
+        refreshBoard(player.next(), board);
 
         // check win conditions
         if (gameOutcome != null) {

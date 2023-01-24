@@ -109,6 +109,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
         // init local representation
         this.board = setUpBoard();
         this.currentPlayer = Color.WHITE;
+
+        // start worker threads
+        writerThread.start();
+        readerThread.start();
     }
 
     private void storeLegalMoves(List<LegalMove> moves) {
@@ -243,8 +247,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
         LegalMove move = legalMoves.get(Pair.of(from, to));
         executeMove(move);
 
-        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board, outcome()));
-
         try {
             messagesToServer.put(new Move(from, to, null));
         } catch (InterruptedException ex) {
@@ -252,9 +254,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
             return false;
         }
 
-        // TODO: update GUI
-
-        // wait for response
         return true;
     }
 
@@ -267,17 +266,12 @@ public class RemoteGameProxy implements Game, ServerProxy {
         Promotion move = legalPromotions.get(Triple.of(from, to, promotion));
         executeMove(move);
 
-        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
-                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
-
         try {
             messagesToServer.put(new Move(from, to, promotion));
         } catch (InterruptedException ex) {
             // TODO: escalate exception to main Game-loop?
             return false;
         }
-
-        // TODO: update GUI
 
         return true;
     }
@@ -375,8 +369,8 @@ public class RemoteGameProxy implements Game, ServerProxy {
                     if (msg instanceof OpponentMoved opponentMoved) {
                         executeMove(opponentMoved.move());
                         storeLegalMoves(opponentMoved.legalMoves());
-                        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
-                                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
+                        Platform.runLater(() ->
+                                controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board, outcome()));
                         continue;
                     }
                     if (msg instanceof ChatMessage chatMsg) {
@@ -384,9 +378,8 @@ public class RemoteGameProxy implements Game, ServerProxy {
                         log.info("CHAT: {} says {}", opponentId, chatMsg.text());
                         continue;
                     }
-                    if (msg instanceof DrawProposition drawProposition) {
-                        // TODO: if exists, close the window opened by this player
-                        // TODO: void controller::showDrawRequestWindow();
+                    if (msg instanceof DrawProposition) {
+                        Platform.runLater(controller::showDrawRequestedWindow);
                         continue;
                     }
 
