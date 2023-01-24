@@ -79,8 +79,9 @@ public class RemoteGameProxy implements Game, ServerProxy {
         OutputStream out = socket.getOutputStream();
 
         String id = waitForIdAssignment(in);
-
-        return new RemoteGameProxy(controller, socket, in, out, id);
+        RemoteGameProxy proxy = new RemoteGameProxy(controller, socket, in, out, id);
+        proxy.waitForOpponentMatch(in);
+        return proxy;
     }
 
     private static String waitForIdAssignment(InputStream in) throws IOException {
@@ -108,6 +109,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
         // init local representation
         this.board = setUpBoard();
         this.currentPlayer = Color.WHITE;
+
+        // start worker threads
+        writerThread.start();
+        readerThread.start();
     }
 
     private void storeLegalMoves(List<LegalMove> moves) {
@@ -187,18 +192,15 @@ public class RemoteGameProxy implements Game, ServerProxy {
     }
 
     @Override
-    public boolean activeCheck() {
-        return activeCheck;
-    }
-
-    @Override
-    public boolean gameEnded() {
-        return outcome != null;
-    }
-
-    @Override
     public Pair<Color, String> outcome() {
-        return Pair.of(null, outcome.message());
+        if (outcome == null)
+            return null;
+
+        return Pair.of(switch (outcome.outcome()) {
+            case VICTORY -> localPlayer;
+            case DEFEAT -> localPlayer.next();
+            case DRAW -> null;
+        }, outcome.message());
     }
 
     @Override
@@ -245,9 +247,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
         LegalMove move = legalMoves.get(Pair.of(from, to));
         executeMove(move);
 
-        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
-                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
-
         try {
             messagesToServer.put(new Move(from, to, null));
         } catch (InterruptedException ex) {
@@ -255,9 +254,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
             return false;
         }
 
-        // TODO: update GUI
-
-        // wait for response
         return true;
     }
 
@@ -270,17 +266,12 @@ public class RemoteGameProxy implements Game, ServerProxy {
         Promotion move = legalPromotions.get(Triple.of(from, to, promotion));
         executeMove(move);
 
-        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
-                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
-
         try {
             messagesToServer.put(new Move(from, to, promotion));
         } catch (InterruptedException ex) {
             // TODO: escalate exception to main Game-loop?
             return false;
         }
-
-        // TODO: update GUI
 
         return true;
     }
@@ -324,7 +315,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
         return id;
     }
 
-    public void terminateGame() {
+    public void terminateGame(Color winner) {
         writerThread.interrupt();
         readerThread.interrupt();
         try {
@@ -333,7 +324,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
             log.warn("Could not close connection to server", ex);
         }
 
-        // TODO: controller.endGame();
+        Platform.runLater(() -> controller.endGame(winner));
     }
 
     @Override
@@ -367,14 +358,19 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
                     if (msg instanceof GameOutcome outcomeMsg) {
                         outcome = outcomeMsg;
-                        terminateGame();
+                        Color winner = switch (outcomeMsg.outcome()) {
+                            case VICTORY -> localPlayer;
+                            case DEFEAT -> localPlayer.next();
+                            case DRAW -> null;
+                        };
+                        terminateGame(winner);
                         break;
                     }
                     if (msg instanceof OpponentMoved opponentMoved) {
                         executeMove(opponentMoved.move());
                         storeLegalMoves(opponentMoved.legalMoves());
-                        Platform.runLater(() -> controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board,
-                                outcome == null ? null : Pair.of(null, ""))); // TODO: handle outcome
+                        Platform.runLater(() ->
+                                controller.refreshStageAfterMove(currentPlayer.next(), lastMove, board, outcome()));
                         continue;
                     }
                     if (msg instanceof ChatMessage chatMsg) {
@@ -382,9 +378,8 @@ public class RemoteGameProxy implements Game, ServerProxy {
                         log.info("CHAT: {} says {}", opponentId, chatMsg.text());
                         continue;
                     }
-                    if (msg instanceof DrawProposition drawProposition) {
-                        // TODO: if exists, close the window opened by this player
-                        // TODO: void controller::showDrawRequestWindow();
+                    if (msg instanceof DrawProposition) {
+                        Platform.runLater(controller::showDrawRequestedWindow);
                         continue;
                     }
 
@@ -393,7 +388,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
                 } catch (IOException ex) {
                     log.error("Connection with server was broken in Reader", ex);
-                    terminateGame();
+                    terminateGame(null);
                 }
             }
 
@@ -427,7 +422,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
                     log.warn("Thread Writer was interrupted");
                 } catch (IOException ex) {
                     log.warn("Connection with server was broken in Writer", ex);
-                    terminateGame();
+                    terminateGame(null);
                 }
             }
 

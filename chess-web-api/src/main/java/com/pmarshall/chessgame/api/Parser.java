@@ -36,8 +36,8 @@ public final class Parser {
 
     public static int deserializeLength(byte[] buffer) {
         int length = 0;
-        length += buffer[0];
-        length += ((int) buffer[1]) << 8;
+        length += buffer[0] & 0xFF;
+        length += ((int) buffer[1] & 0xFF) << 8;
         return length;
     }
 }
