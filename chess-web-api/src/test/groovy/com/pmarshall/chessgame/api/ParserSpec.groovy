@@ -26,7 +26,7 @@ class ParserSpec extends Specification {
         where:
         json                                                                       | object
         '{"type":"DrawResponse","accepted":true}'                                  | new DrawResponse(true)
-        '{"type":"Move","from":{"file":1,"rank":4},"to":{"file":5,"rank":4},"promotion":null}' | new Move(new Position(1,4), new Position(5,4), null)
+        '{"type":"Move","from":{"rank":1,"file":4},"to":{"rank":5,"file":4},"promotion":null}' | new Move(new Position(1,4), new Position(5,4), null)
     }
 
     def 'should reject invalid messages'() {
