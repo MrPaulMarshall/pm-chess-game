@@ -65,6 +65,7 @@ public class Writer extends Thread {
                 masterThread.notifyConnectionLost(color);
                 break;
             } catch (InterruptedException ignored) {
+                interrupt();
                 log.info("Thread {} interrupted", Thread.currentThread().getName());
             }
         }

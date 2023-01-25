@@ -419,6 +419,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
                     out.write(lengthHeader);
                     out.write(messageBytes);
                 } catch (InterruptedException ex) {
+                    interrupt();
                     log.warn("Thread Writer was interrupted");
                 } catch (IOException ex) {
                     log.warn("Connection with server was broken in Writer", ex);
