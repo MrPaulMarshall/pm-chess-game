@@ -54,7 +54,7 @@ public abstract class GameControllerBase {
     }
 
     protected void createBoardGrid(boolean forward) {
-        this.chessboard = new ChessboardCell[8][8];
+        chessboard = new ChessboardCell[8][8];
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
                 final int constRank = rank, constFile = file;
@@ -101,7 +101,7 @@ public abstract class GameControllerBase {
         }
 
         // if player chosen valid move, execute it
-        if (this.pieceChosen != null && game.isMoveLegal(pieceChosen, clickedCell)) {
+        if (pieceChosen != null && game.isMoveLegal(pieceChosen, clickedCell)) {
             executeMove(pieceChosen, clickedCell);
             return;
         }
@@ -182,7 +182,7 @@ public abstract class GameControllerBase {
     private void repaintBackground() {
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
-                this.chessboard[rank][file].refreshBackground();
+                chessboard[rank][file].refreshBackground();
             }
         }
 
@@ -206,14 +206,14 @@ public abstract class GameControllerBase {
      * Prints last move into text area
      */
     private void appendMoveToLedger(Color player, String notation) {
-        this.movesTextArea.setEditable(true);
+        movesTextArea.setEditable(true);
         if (player == Color.WHITE) {
-            this.movesTextArea.appendText(moveCounter + ". " + notation);
+            movesTextArea.appendText(moveCounter + ". " + notation);
         } else {
-            this.movesTextArea.appendText(" " + notation + "\n");
+            movesTextArea.appendText(" " + notation + "\n");
             moveCounter++;
         }
-        this.movesTextArea.setEditable(false);
+        movesTextArea.setEditable(false);
     }
 
     private Position findCheckedKing(Color color, Piece[][] board) {
@@ -229,7 +229,7 @@ public abstract class GameControllerBase {
     }
 
     private void markCheckedKingsField() {
-        this.chessboard[checkedKing.rank()][checkedKing.file()].setCheckedBackground();
+        chessboard[checkedKing.rank()][checkedKing.file()].setCheckedBackground();
     }
 
 }

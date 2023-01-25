@@ -30,7 +30,7 @@ public class MenuController {
         imageView.setImage(
                 new Image("images/black-queen.png", 240, 240, false, true, false)
         );
-        this.imagePane.getChildren().add(imageView);
+        imagePane.getChildren().add(imageView);
     }
 
     @FXML

@@ -101,14 +101,14 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
         // if the message is different that MatchFound, then the contract is broken and client cannot continue
         MatchFound message = (MatchFound) Parser.deserialize(messageBuffer, length);
-        this.localPlayer = message.color();
-        this.opponentId = message.opponentId();
+        localPlayer = message.color();
+        opponentId = message.opponentId();
 
         storeLegalMoves(message.legalMoves());
 
         // init local representation
-        this.board = setUpBoard();
-        this.currentPlayer = Color.WHITE;
+        board = setUpBoard();
+        currentPlayer = Color.WHITE;
 
         // start worker threads
         writerThread.start();
@@ -116,10 +116,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
     }
 
     private void storeLegalMoves(List<LegalMove> moves) {
-        this.legalMoves = moves.stream()
+        legalMoves = moves.stream()
                 .filter(move -> !(move instanceof Promotion))
                 .collect(Collectors.toUnmodifiableMap(m -> Pair.of(m.from(), m.to()), move -> move));
-        this.legalPromotions = moves.stream()
+        legalPromotions = moves.stream()
                 .filter(move -> move instanceof Promotion)
                 .map(Promotion.class::cast)
                 .collect(Collectors.toUnmodifiableMap(m -> Triple.of(m.from(), m.to(), m.newType()), move -> move));

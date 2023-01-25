@@ -65,19 +65,19 @@ public abstract class Move {
     // Getters
 
     public Position getNewPosition() {
-        return this.newPosition;
+        return newPosition;
     }
 
     public Piece getPieceToMove() {
-        return this.movedPiece;
+        return movedPiece;
     }
 
     public Piece getPieceToTake() {
-        return this.takenPiece;
+        return takenPiece;
     }
 
     public boolean isWithCheck() {
-        return this.withCheck;
+        return withCheck;
     }
 
     public void setWithCheck(boolean check) {

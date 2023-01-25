@@ -57,11 +57,11 @@ class ChessboardCell {
         this.pane = new StackPane();
         this.imageView = new ImageView();
 
-        this.pane.setMaxWidth(50);
-        this.pane.setMinWidth(50);
-        this.pane.setMaxHeight(50);
-        this.pane.setMinHeight(50);
-        this.pane.getChildren().add(this.imageView);
+        pane.setMaxWidth(50);
+        pane.setMinWidth(50);
+        pane.setMaxHeight(50);
+        pane.setMinHeight(50);
+        pane.getChildren().add(imageView);
 
         // determine if this cell should be light or dark
         if (lightSquare) {
@@ -72,13 +72,13 @@ class ChessboardCell {
             this.clickableBackground = DARK_CLICKABLE_BACKGROUND;
         }
 
-        this.pane.setBackground(this.normalBackground);
+        pane.setBackground(normalBackground);
 
-        this.pane.setOnMouseClicked(clickEventHandler::accept);
+        pane.setOnMouseClicked(clickEventHandler::accept);
     }
 
     Pane getPane() {
-        return this.pane;
+        return pane;
     }
 
     /**

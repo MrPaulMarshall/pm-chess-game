@@ -35,36 +35,36 @@ public class Promotion extends Move {
         this.takenPiecePosition = basicMove.takenPiecePosition;
 
         Color color = basicMove.movedPiece.getColor();
-        this.newPiece = switch (newType) {
+        newPiece = switch (newType) {
             case QUEEN -> new Queen(color);
             case ROOK -> new Rook(color);
             case BISHOP -> new Bishop(color);
             case KNIGHT -> new Knight(color);
             default -> throw new IllegalArgumentException("Cannot promote pawn to " + newType);
         };
-        this.newPiece.setPosition(basicMove.newPosition);
+        newPiece.setPosition(basicMove.newPosition);
     }
 
     @Override
     public void execute(InMemoryChessGame game) {
         // execute basic move
-        this.basicMove.execute(game);
+        basicMove.execute(game);
 
         // exchange pawn for new piece
         game.getCurrentPlayer().getPieces().remove(basicMove.movedPiece);
-        game.board[this.basicMove.newPosition.rank()][this.basicMove.newPosition.file()] = this.newPiece;
-        game.getCurrentPlayer().getPieces().add(this.newPiece);
+        game.board[basicMove.newPosition.rank()][basicMove.newPosition.file()] = newPiece;
+        game.getCurrentPlayer().getPieces().add(newPiece);
     }
 
     @Override
     public void undo(InMemoryChessGame game) {
         // undo exchanging pawn
-        game.getCurrentPlayer().getPieces().remove(this.newPiece);
-        game.board[this.basicMove.newPosition.rank()][this.basicMove.newPosition.file()] = basicMove.movedPiece;
+        game.getCurrentPlayer().getPieces().remove(newPiece);
+        game.board[basicMove.newPosition.rank()][basicMove.newPosition.file()] = basicMove.movedPiece;
         game.getCurrentPlayer().getPieces().add(basicMove.movedPiece);
 
         // undo move that lead to pawn being on the last row
-        this.basicMove.undo(game);
+        basicMove.undo(game);
     }
 
     public PieceType getNewType() {

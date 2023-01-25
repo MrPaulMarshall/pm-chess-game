@@ -35,25 +35,25 @@ public class Player {
     // Getters
 
     public Color getColor() {
-        return this.color;
+        return color;
     }
 
     public List<Piece> getPieces() {
-        return this.pieces;
+        return pieces;
     }
 
     public King getKing() {
-        return this.king;
+        return king;
     }
 
 
     public boolean isKingChecked() {
-        return this.king.getIsChecked();
+        return king.getIsChecked();
     }
 
     @Override
     public String toString() {
-        return this.color == Color.WHITE ? "WHITES" : "BLACKS";
+        return color == Color.WHITE ? "WHITES" : "BLACKS";
     }
 
     /**

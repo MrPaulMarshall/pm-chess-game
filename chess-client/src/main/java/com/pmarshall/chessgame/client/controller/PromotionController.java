@@ -49,7 +49,7 @@ public class PromotionController {
      * @return piece that player has chosen
      */
     public PieceType askForPromotionPiece(Color color) {
-        this.chosenPieceIndex = -1;
+        chosenPieceIndex = -1;
 
         // create new window
         Stage stage = new Stage();
@@ -79,10 +79,10 @@ public class PromotionController {
 
             final int index = i;
             pane.setOnMouseClicked(e -> {
-                if (index == this.chosenPieceIndex) {
+                if (index == chosenPieceIndex) {
                     stage.close();
                 } else {
-                    this.chosenPieceIndex = index;
+                    chosenPieceIndex = index;
                 }
             });
             pane.setPrefWidth(70);
@@ -109,7 +109,7 @@ public class PromotionController {
         stage.showAndWait();
 
         // return string indicator of player's decision
-        return this.possiblePieces[this.chosenPieceIndex];
+        return possiblePieces[chosenPieceIndex];
     }
 
 }
