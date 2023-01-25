@@ -32,6 +32,7 @@ public class Server {
     }
 
     private static void acceptClientConnections(final ServerSocket serverSocket) throws IOException {
+        log.info("Server starts accepting client connections");
         try (serverSocket) {
             while (!Thread.interrupted()) {
                 try {
