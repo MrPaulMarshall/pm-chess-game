@@ -83,4 +83,8 @@ public class RemoteGameController extends GameControllerBase {
         }
     }
 
+    @Override
+    protected boolean arePlayersPiecesDisabled(Color player) {
+        return player != serverProxy.localPlayer();
+    }
 }

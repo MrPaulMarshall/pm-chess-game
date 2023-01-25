@@ -6,7 +6,6 @@ import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
-import com.pmarshall.chessgame.client.remote.RemoteGameProxy;
 import com.pmarshall.chessgame.client.services.ImageProvider;
 import com.pmarshall.chessgame.client.services.LocalResourceImageProvider;
 import javafx.fxml.FXML;
@@ -106,19 +105,21 @@ public abstract class GameControllerBase {
             return;
         }
 
-        // if player clicked on another of his pieces, mark it
         Piece piece = game.getPiece(clickedCell);
 
-        // TODO: refactor me
-        if (piece != null && game instanceof RemoteGameProxy proxy && piece.color() != proxy.localPlayer()) {
+        // check if user is not allowed to pick given color, e.g. in remote mode
+        if (piece != null && arePlayersPiecesDisabled(piece.color())) {
             return;
         }
 
+        // if player clicked on another of his pieces, mark it
         if (piece != null && piece.color() == game.currentPlayer()) {
             pieceChosen = clickedCell;
             choosePiece(pieceChosen, game.legalMovesFrom(pieceChosen));
         }
     }
+
+    protected abstract boolean arePlayersPiecesDisabled(Color player);
 
     /**
      * Executes move in the model, calls Promotion dialog window if needed,
