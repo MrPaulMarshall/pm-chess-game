@@ -234,7 +234,7 @@ public class Master extends Thread {
             ));
             return true;
         } else {
-            writerThreads.get(sender.next()).pushMessage(new DrawResponse(false));
+            drawProponent = null;
             return false;
         }
     }
