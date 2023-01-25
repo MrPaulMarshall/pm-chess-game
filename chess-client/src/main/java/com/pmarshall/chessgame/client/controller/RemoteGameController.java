@@ -1,8 +1,8 @@
-package com.pmarshall.chessgame.controller;
+package com.pmarshall.chessgame.client.controller;
 
 import com.pmarshall.chessgame.model.properties.Color;
-import com.pmarshall.chessgame.remote.RemoteGameProxy;
-import com.pmarshall.chessgame.remote.ServerProxy;
+import com.pmarshall.chessgame.client.remote.RemoteGameProxy;
+import com.pmarshall.chessgame.client.remote.ServerProxy;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

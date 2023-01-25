@@ -1,4 +1,4 @@
-package com.marshall.chessgame.server;
+package com.pmarshall.chessgame.server;
 
 import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.lobby.AssignId;

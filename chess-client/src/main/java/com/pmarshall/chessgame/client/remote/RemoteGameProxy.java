@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.remote;
+package com.pmarshall.chessgame.client.remote;
 
 import com.pmarshall.chessgame.api.ChatMessage;
 import com.pmarshall.chessgame.api.Message;
@@ -11,7 +11,7 @@ import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
-import com.pmarshall.chessgame.controller.RemoteGameController;
+import com.pmarshall.chessgame.client.controller.RemoteGameController;
 import com.pmarshall.chessgame.model.dto.*;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
@@ -74,7 +74,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
     }
 
     public static RemoteGameProxy connectToServer(RemoteGameController controller) throws IOException {
-        Socket socket = new Socket("127.0.0.1", 21370);
+        Socket socket = new Socket("127.0.0.1", 49153);
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
 

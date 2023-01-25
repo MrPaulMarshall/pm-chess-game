@@ -1,4 +1,4 @@
-package com.marshall.chessgame.server;
+package com.pmarshall.chessgame.server;
 
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -1,6 +1,6 @@
-package com.marshall.chessgame.server;
+package com.pmarshall.chessgame.server;
 
-import com.marshall.chessgame.server.threads.Master;
+import com.pmarshall.chessgame.server.threads.Master;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

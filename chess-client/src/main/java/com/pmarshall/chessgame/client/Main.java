@@ -1,6 +1,6 @@
-package com.pmarshall.chessgame;
+package com.pmarshall.chessgame.client;
 
-import com.pmarshall.chessgame.controller.MenuController;
+import com.pmarshall.chessgame.client.controller.MenuController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

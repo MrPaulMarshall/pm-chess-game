@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.remote;
+package com.pmarshall.chessgame.client.remote;
 
 import com.pmarshall.chessgame.model.properties.Color;
 

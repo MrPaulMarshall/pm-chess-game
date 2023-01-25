@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.controller;
+package com.pmarshall.chessgame.client.controller;
 
 import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.dto.Piece;
@@ -6,9 +6,9 @@ import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
-import com.pmarshall.chessgame.remote.RemoteGameProxy;
-import com.pmarshall.chessgame.services.ImageProvider;
-import com.pmarshall.chessgame.services.LocalResourceImageProvider;
+import com.pmarshall.chessgame.client.remote.RemoteGameProxy;
+import com.pmarshall.chessgame.client.services.ImageProvider;
+import com.pmarshall.chessgame.client.services.LocalResourceImageProvider;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;

@@ -1,4 +1,4 @@
-package com.marshall.chessgame.server.threads;
+package com.pmarshall.chessgame.server.threads;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pmarshall.chessgame.api.ChatMessage;

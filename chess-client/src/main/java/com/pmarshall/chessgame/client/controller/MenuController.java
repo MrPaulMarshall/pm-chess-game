@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.controller;
+package com.pmarshall.chessgame.client.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
