@@ -187,7 +187,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
     @Override
     public boolean isMoveLegal(Position from, Position to) {
-        return legalMoves.containsKey(Pair.of(from, to));
+        boolean legalPromotion = legalPromotions.keySet().stream()
+                .anyMatch(triple -> triple.getLeft().equals(from) && triple.getMiddle().equals(to));
+
+        return legalMoves.containsKey(Pair.of(from, to)) || legalPromotion;
     }
 
     @Override
@@ -195,7 +198,8 @@ public class RemoteGameProxy implements Game, ServerProxy {
         Stream<Position> destinations = legalMoves.values().stream()
                 .filter(move -> move.from().equals(from)).map(LegalMove::to).distinct();
 
-        Stream<Position> promotionsDestinations = legalPromotions.values().stream().map(Promotion::to).distinct();
+        Stream<Position> promotionsDestinations = legalPromotions.values().stream()
+                .filter(move -> move.from().equals(from)).map(Promotion::to).distinct();
 
         return Stream.concat(destinations, promotionsDestinations).collect(Collectors.toList());
     }
