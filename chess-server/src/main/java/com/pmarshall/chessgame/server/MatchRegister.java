@@ -42,8 +42,16 @@ public class MatchRegister extends Thread {
                 if (gameId != null) {
                     Master finishedGame = activeGames.remove(gameId);
                     PlayerConnection[] players = finishedGame.getPlayers();
-                    freePlayers.put(players[0].id());
-                    freePlayers.put(players[1].id());
+                    // freePlayers.put(players[0].id());
+                    // freePlayers.put(players[1].id());
+                    // TODO: reuse connections when the same policy is used on the client side
+                    //       alternatively, define keep-alive protocol to detect dead connections
+                    try {
+                        liveConnections.get(players[0].id()).close();
+                    } catch (IOException ignored) {}
+                    try {
+                        liveConnections.get(players[1].id()).close();
+                    } catch (IOException ignored) {}
                 }
 
                 // start as many games as possible
@@ -54,10 +62,11 @@ public class MatchRegister extends Thread {
                         String player = freePlayers.take();
                         Socket socket = liveConnections.get(player);
                         try {
+                            // TODO: detect broken connection
                             gameMatch[count] = new PlayerConnection(player, socket.getInputStream(), socket.getOutputStream());
                             count++;
                         } catch (IOException e) {
-                            log.error("Connection to player {} id dead", player, e);
+                            log.error("Connection to player {} is dead", player, e);
                             try {
                                 socket.close();
                             } catch (IOException ignored) {}
