@@ -40,7 +40,7 @@ public class MenuController {
 
     @FXML
     public void handleRemoteAction(ActionEvent ignored) throws IOException {
-        RemoteGameController.initRootLayout(primaryStage);
+        MatchQueueController.initRootLayout(primaryStage);
     }
 
     @FXML

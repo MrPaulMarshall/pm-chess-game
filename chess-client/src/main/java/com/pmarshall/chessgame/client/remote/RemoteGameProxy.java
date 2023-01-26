@@ -6,7 +6,6 @@ import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.endrequest.DrawProposition;
 import com.pmarshall.chessgame.api.endrequest.DrawResponse;
 import com.pmarshall.chessgame.api.endrequest.Surrender;
-import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
@@ -46,69 +45,38 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
     private final Socket socket;
 
-    // TODO: should be initialized in/before constructor constructor and thus final?
-    private Color localPlayer;
-    private String id;
-    private String opponentId;
+    private final Color localPlayer;
+    private final String id;
+    private final String opponentId;
 
-    private Piece[][] board;
+    private final Piece[][] board;
     private Color currentPlayer;
 
     private Map<Pair<Position, Position>, LegalMove> legalMoves;
     private Map<Triple<Position, Position, PieceType>, Promotion> legalPromotions;
 
-    private boolean activeCheck;
     private LegalMove lastMove;
     private GameOutcome outcome;
 
-    private RemoteGameProxy(RemoteGameController controller,
-                            Socket socket, InputStream in, OutputStream out, String id) {
+    public RemoteGameProxy(RemoteGameController controller, ServerConnection connection, String id, MatchFound message) {
         this.controller = controller;
 
         this.id = id;
-        this.socket = socket;
-
-        this.messagesToServer = new LinkedBlockingQueue<>();
-        this.writerThread = new Writer(out);
-        this.readerThread = new Reader(in);
-    }
-
-    public static RemoteGameProxy connectToServer(RemoteGameController controller) throws IOException {
-        Socket socket = new Socket("127.0.0.1", 49153);
-        InputStream in = socket.getInputStream();
-        OutputStream out = socket.getOutputStream();
-
-        String id = waitForIdAssignment(in);
-        RemoteGameProxy proxy = new RemoteGameProxy(controller, socket, in, out, id);
-        proxy.waitForOpponentMatch(in);
-        return proxy;
-    }
-
-    private static String waitForIdAssignment(InputStream in) throws IOException {
-        byte[] headerBuffer = in.readNBytes(2);
-        int length = Parser.deserializeLength(headerBuffer);
-        byte[] messageBuffer = in.readNBytes(length);
-
-        // if the message is different that AssignId, then the contract is broken and client cannot continue
-        AssignId message = (AssignId) Parser.deserialize(messageBuffer, length);
-        return message.id();
-    }
-
-    public void waitForOpponentMatch(InputStream in) throws IOException {
-        byte[] headerBuffer = in.readNBytes(2);
-        int length = Parser.deserializeLength(headerBuffer);
-        byte[] messageBuffer = in.readNBytes(length);
-
-        // if the message is different that MatchFound, then the contract is broken and client cannot continue
-        MatchFound message = (MatchFound) Parser.deserialize(messageBuffer, length);
-        localPlayer = message.color();
-        opponentId = message.opponentId();
-
-        storeLegalMoves(message.legalMoves());
+        this.socket = connection.socket();
 
         // init local representation
-        board = setUpBoard();
-        currentPlayer = Color.WHITE;
+        this.localPlayer = message.color();
+        this.opponentId = message.opponentId();
+
+        this.board = setUpBoard();
+        this.currentPlayer = Color.WHITE;
+        storeLegalMoves(message.legalMoves());
+
+        // threads and message queue
+        this.messagesToServer = new LinkedBlockingQueue<>();
+
+        this.writerThread = new Writer(connection.out());
+        this.readerThread = new Reader(connection.in());
 
         // start worker threads
         writerThread.start();
@@ -301,7 +269,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
             board[e.takenPawn().rank()][e.takenPawn().file()] = null;
         }
 
-        activeCheck = move.check();
         lastMove = move;
 
         legalMoves = Map.of();
