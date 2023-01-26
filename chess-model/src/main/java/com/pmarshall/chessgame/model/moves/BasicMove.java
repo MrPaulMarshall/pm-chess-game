@@ -113,11 +113,10 @@ public class BasicMove extends Move {
                 .filter(position -> !position.equals(from))
                 .toList();
 
-        // TODO: probably conflictOnRank and conflictOnFile do not require != conditions
         boolean conflictOnRank = conflictingMovesStartingPositions.stream()
-                .anyMatch(position -> position.rank() == from.rank() && position.file() != from.file());
+                .anyMatch(position -> position.rank() == from.rank());
         boolean conflictOnFile = conflictingMovesStartingPositions.stream()
-                .anyMatch(position -> position.rank() != from.rank() && position.file() == from.file());
+                .anyMatch(position -> position.file() == from.file());
         boolean conflictElsewhere = conflictingMovesStartingPositions.stream()
                 .anyMatch(position -> position.rank() != from.rank() && position.file() != from.file());
 
