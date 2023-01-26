@@ -41,43 +41,43 @@ public class Castling extends Move {
     @Override
     public void execute(InMemoryChessGame game) {
         // King's jump
-        game.board[newPosition.rank()][newPosition.file()] = this.movedPiece;
+        game.board[newPosition.rank()][newPosition.file()] = movedPiece;
         game.board[oldPosition.rank()][oldPosition.file()] = null;
-        this.movedPiece.setPosition(newPosition);
-        this.movedPiece.markThatFigureMoved();
+        movedPiece.setPosition(newPosition);
+        movedPiece.markThatFigureMoved();
 
         // Rook's jump
-        game.board[newPositionForRook.rank()][newPositionForRook.file()] = this.rookToMove;
+        game.board[newPositionForRook.rank()][newPositionForRook.file()] = rookToMove;
         game.board[oldPositionOfRook.rank()][oldPositionOfRook.file()] = null;
-        this.rookToMove.setPosition(newPositionForRook);
-        this.rookToMove.markThatFigureMoved();
+        rookToMove.setPosition(newPositionForRook);
+        rookToMove.markThatFigureMoved();
     }
 
     @Override
     public void undo(InMemoryChessGame game) {
         // undo King's jump
-        this.movedPiece.undoMarkThatFigureMoved();
-        this.movedPiece.setPosition(oldPosition);
+        movedPiece.undoMarkThatFigureMoved();
+        movedPiece.setPosition(oldPosition);
         game.board[newPosition.rank()][newPosition.file()] = null;
-        game.board[oldPosition.rank()][oldPosition.file()] = this.movedPiece;
+        game.board[oldPosition.rank()][oldPosition.file()] = movedPiece;
 
         // undo Rook's jump
-        this.rookToMove.undoMarkThatFigureMoved();
-        this.rookToMove.setPosition(oldPositionOfRook);
+        rookToMove.undoMarkThatFigureMoved();
+        rookToMove.setPosition(oldPositionOfRook);
         game.board[newPositionForRook.rank()][newPositionForRook.file()] = null;
-        game.board[oldPositionOfRook.rank()][oldPositionOfRook.file()] = this.rookToMove;
+        game.board[oldPositionOfRook.rank()][oldPositionOfRook.file()] = rookToMove;
     }
 
     @Override
     public LegalMove toDto(List<Move> legalMoves) {
-        int distance = abs(this.newPositionForRook.file() - this.oldPositionOfRook.file());
+        int distance = abs(newPositionForRook.file() - oldPositionOfRook.file());
         return new com.pmarshall.chessgame.model.dto.Castling(
                 movedPiece.getPosition(), newPosition, distance == 3, withCheck, inNotation(legalMoves));
     }
 
     @Override
     public String inNotation(List<Move> legalMoves) {
-        int distance = abs(this.newPositionForRook.file() - this.oldPositionOfRook.file());
+        int distance = abs(newPositionForRook.file() - oldPositionOfRook.file());
         return (distance == 2 ? "0-0" : "0-0-0") + (withCheck ? "+" : "");
     }
 }

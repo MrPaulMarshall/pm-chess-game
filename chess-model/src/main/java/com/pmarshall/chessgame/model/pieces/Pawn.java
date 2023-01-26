@@ -70,7 +70,7 @@ public final class Pawn extends Piece {
 
             if (validPosition(rank, file) &&
                     game.board[rank][file] != null &&
-                    game.board[rank][file].color != this.color) {
+                    game.board[rank][file].color != color) {
 
                 BasicMove basicMove = new BasicMove(this, new Position(rank, file), game.board[rank][file], new Position(rank, file));
 
@@ -91,8 +91,8 @@ public final class Pawn extends Piece {
         //  if last move was double-pawn-start by enemy pawn, and they are currently at the same row (and neighbours)
         //  as double-pawn-start was executed, the target-field is certainly free
         if (game.getLastMove() instanceof DoublePawnStart
-                && game.getLastMove().getNewPosition().rank() == this.position.rank()
-                && Math.abs(game.getLastMove().getNewPosition().file() - this.position.file()) == 1) {
+                && game.getLastMove().getNewPosition().rank() == position.rank()
+                && Math.abs(game.getLastMove().getNewPosition().file() - position.file()) == 1) {
 
             int rank = position.rank() + s;
             int file = game.getLastMove().getNewPosition().file();

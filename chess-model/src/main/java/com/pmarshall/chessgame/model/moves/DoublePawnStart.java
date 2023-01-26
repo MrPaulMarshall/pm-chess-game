@@ -30,18 +30,18 @@ public class DoublePawnStart extends Move {
     public void execute(InMemoryChessGame game) {
         game.board[oldPosition.rank()][oldPosition.file()] = null;
         game.board[newPosition.rank()][newPosition.file()] = movedPiece;
-        this.movedPiece.setPosition(newPosition);
+        movedPiece.setPosition(newPosition);
 
-        this.movedPiece.markThatFigureMoved();
+        movedPiece.markThatFigureMoved();
     }
 
     @Override
     public void undo(InMemoryChessGame game) {
-        if (this.pieceDidNotMoveBefore) {
-            this.movedPiece.undoMarkThatFigureMoved();
+        if (pieceDidNotMoveBefore) {
+            movedPiece.undoMarkThatFigureMoved();
         }
 
-        this.movedPiece.setPosition(oldPosition);
+        movedPiece.setPosition(oldPosition);
         game.board[oldPosition.rank()][oldPosition.file()] = movedPiece;
         game.board[newPosition.rank()][newPosition.file()] = null;
     }
@@ -53,7 +53,7 @@ public class DoublePawnStart extends Move {
 
     @Override
     public String inNotation(List<Move> legalMoves) {
-        return this.newPosition.strFile() + this.newPosition.strRank();
+        return newPosition.strFile() + newPosition.strRank();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.remote;
+package com.pmarshall.chessgame.client.remote;
 
 import com.pmarshall.chessgame.api.ChatMessage;
 import com.pmarshall.chessgame.api.Message;
@@ -6,12 +6,11 @@ import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.endrequest.DrawProposition;
 import com.pmarshall.chessgame.api.endrequest.DrawResponse;
 import com.pmarshall.chessgame.api.endrequest.Surrender;
-import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
-import com.pmarshall.chessgame.controller.RemoteGameController;
+import com.pmarshall.chessgame.client.controller.RemoteGameController;
 import com.pmarshall.chessgame.model.dto.*;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
@@ -46,69 +45,38 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
     private final Socket socket;
 
-    // TODO: should be initialized in/before constructor constructor and thus final?
-    private Color localPlayer;
-    private String id;
-    private String opponentId;
+    private final Color localPlayer;
+    private final String id;
+    private final String opponentId;
 
-    private Piece[][] board;
+    private final Piece[][] board;
     private Color currentPlayer;
 
     private Map<Pair<Position, Position>, LegalMove> legalMoves;
     private Map<Triple<Position, Position, PieceType>, Promotion> legalPromotions;
 
-    private boolean activeCheck;
     private LegalMove lastMove;
     private GameOutcome outcome;
 
-    private RemoteGameProxy(RemoteGameController controller,
-                            Socket socket, InputStream in, OutputStream out, String id) {
+    public RemoteGameProxy(RemoteGameController controller, ServerConnection connection, String id, MatchFound message) {
         this.controller = controller;
 
         this.id = id;
-        this.socket = socket;
+        this.socket = connection.socket();
 
-        this.messagesToServer = new LinkedBlockingQueue<>();
-        this.writerThread = new Writer(out);
-        this.readerThread = new Reader(in);
-    }
-
-    public static RemoteGameProxy connectToServer(RemoteGameController controller) throws IOException {
-        Socket socket = new Socket("127.0.0.1", 21370);
-        InputStream in = socket.getInputStream();
-        OutputStream out = socket.getOutputStream();
-
-        String id = waitForIdAssignment(in);
-        RemoteGameProxy proxy = new RemoteGameProxy(controller, socket, in, out, id);
-        proxy.waitForOpponentMatch(in);
-        return proxy;
-    }
-
-    private static String waitForIdAssignment(InputStream in) throws IOException {
-        byte[] headerBuffer = in.readNBytes(2);
-        int length = Parser.deserializeLength(headerBuffer);
-        byte[] messageBuffer = in.readNBytes(length);
-
-        // if the message is different that AssignId, then the contract is broken and client cannot continue
-        AssignId message = (AssignId) Parser.deserialize(messageBuffer, length);
-        return message.id();
-    }
-
-    public void waitForOpponentMatch(InputStream in) throws IOException {
-        byte[] headerBuffer = in.readNBytes(2);
-        int length = Parser.deserializeLength(headerBuffer);
-        byte[] messageBuffer = in.readNBytes(length);
-
-        // if the message is different that MatchFound, then the contract is broken and client cannot continue
-        MatchFound message = (MatchFound) Parser.deserialize(messageBuffer, length);
+        // init local representation
         this.localPlayer = message.color();
         this.opponentId = message.opponentId();
 
-        storeLegalMoves(message.legalMoves());
-
-        // init local representation
         this.board = setUpBoard();
         this.currentPlayer = Color.WHITE;
+        storeLegalMoves(message.legalMoves());
+
+        // threads and message queue
+        this.messagesToServer = new LinkedBlockingQueue<>();
+
+        this.writerThread = new Writer(connection.out());
+        this.readerThread = new Reader(connection.in());
 
         // start worker threads
         writerThread.start();
@@ -116,10 +84,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
     }
 
     private void storeLegalMoves(List<LegalMove> moves) {
-        this.legalMoves = moves.stream()
+        legalMoves = moves.stream()
                 .filter(move -> !(move instanceof Promotion))
                 .collect(Collectors.toUnmodifiableMap(m -> Pair.of(m.from(), m.to()), move -> move));
-        this.legalPromotions = moves.stream()
+        legalPromotions = moves.stream()
                 .filter(move -> move instanceof Promotion)
                 .map(Promotion.class::cast)
                 .collect(Collectors.toUnmodifiableMap(m -> Triple.of(m.from(), m.to(), m.newType()), move -> move));
@@ -219,7 +187,10 @@ public class RemoteGameProxy implements Game, ServerProxy {
 
     @Override
     public boolean isMoveLegal(Position from, Position to) {
-        return legalMoves.containsKey(Pair.of(from, to));
+        boolean legalPromotion = legalPromotions.keySet().stream()
+                .anyMatch(triple -> triple.getLeft().equals(from) && triple.getMiddle().equals(to));
+
+        return legalMoves.containsKey(Pair.of(from, to)) || legalPromotion;
     }
 
     @Override
@@ -227,7 +198,8 @@ public class RemoteGameProxy implements Game, ServerProxy {
         Stream<Position> destinations = legalMoves.values().stream()
                 .filter(move -> move.from().equals(from)).map(LegalMove::to).distinct();
 
-        Stream<Position> promotionsDestinations = legalPromotions.values().stream().map(Promotion::to).distinct();
+        Stream<Position> promotionsDestinations = legalPromotions.values().stream()
+                .filter(move -> move.from().equals(from)).map(Promotion::to).distinct();
 
         return Stream.concat(destinations, promotionsDestinations).collect(Collectors.toList());
     }
@@ -301,7 +273,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
             board[e.takenPawn().rank()][e.takenPawn().file()] = null;
         }
 
-        activeCheck = move.check();
         lastMove = move;
 
         legalMoves = Map.of();
@@ -419,6 +390,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
                     out.write(lengthHeader);
                     out.write(messageBytes);
                 } catch (InterruptedException ex) {
+                    interrupt();
                     log.warn("Thread Writer was interrupted");
                 } catch (IOException ex) {
                     log.warn("Connection with server was broken in Writer", ex);

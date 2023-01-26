@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.controller;
+package com.pmarshall.chessgame.client.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,7 +30,7 @@ public class MenuController {
         imageView.setImage(
                 new Image("images/black-queen.png", 240, 240, false, true, false)
         );
-        this.imagePane.getChildren().add(imageView);
+        imagePane.getChildren().add(imageView);
     }
 
     @FXML
@@ -40,7 +40,7 @@ public class MenuController {
 
     @FXML
     public void handleRemoteAction(ActionEvent ignored) throws IOException {
-        RemoteGameController.initRootLayout(primaryStage);
+        MatchQueueController.initRootLayout(primaryStage);
     }
 
     @FXML

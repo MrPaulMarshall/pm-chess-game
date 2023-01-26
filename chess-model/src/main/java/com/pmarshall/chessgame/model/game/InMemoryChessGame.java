@@ -61,18 +61,18 @@ public class InMemoryChessGame implements Game {
         this.board = new Piece[8][8];
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
-                this.board[rank][file] = null;
+                board[rank][file] = null;
             }
         }
 
-        this.initializeGame();
+        initializeGame();
     }
 
     /**
      * Switch current player
      */
     public void changePlayer() {
-        this.currentPlayer = this.currentPlayer == this.whitePlayer ? this.blackPlayer : this.whitePlayer;
+        currentPlayer = currentPlayer == whitePlayer ? blackPlayer : whitePlayer;
     }
 
     // Setters
@@ -80,15 +80,15 @@ public class InMemoryChessGame implements Game {
     // Getters
 
     public Player getCurrentPlayer() {
-        return this.currentPlayer;
+        return currentPlayer;
     }
 
     public Player getOtherPlayer() {
-        return this.currentPlayer == this.whitePlayer ? this.blackPlayer : this.whitePlayer;
+        return currentPlayer == whitePlayer ? blackPlayer : whitePlayer;
     }
 
     private Player getPlayerByColor(Color color) {
-        return this.currentPlayer.getColor() == color ? this.currentPlayer : this.getOtherPlayer();
+        return currentPlayer.getColor() == color ? currentPlayer : getOtherPlayer();
     }
 
     public Move getLastMove() {
@@ -101,17 +101,17 @@ public class InMemoryChessGame implements Game {
      *
      */
     public void removePiece(Piece piece) {
-        this.getPlayerByColor(piece.getColor()).getPieces().remove(piece);
-        this.board[piece.getPosition().rank()][piece.getPosition().file()] = null;
+        getPlayerByColor(piece.getColor()).getPieces().remove(piece);
+        board[piece.getPosition().rank()][piece.getPosition().file()] = null;
     }
 
     public void addPieceBack(Piece piece, Position pos) {
-        this.getPlayerByColor(piece.getColor()).getPieces().add(piece);
-        this.board[pos.rank()][pos.file()] = piece;
+        getPlayerByColor(piece.getColor()).getPieces().add(piece);
+        board[pos.rank()][pos.file()] = piece;
     }
 
     private boolean isIllegalMove(Position from, Position to) {
-        Piece piece = this.board[from.rank()][from.file()];
+        Piece piece = board[from.rank()][from.file()];
         if (piece == null)
             return true;
 
@@ -119,7 +119,7 @@ public class InMemoryChessGame implements Game {
     }
 
     private boolean isIllegalMove(Position from, Position to, PieceType promotion) {
-        Piece piece = this.board[from.rank()][from.file()];
+        Piece piece = board[from.rank()][from.file()];
         if (piece == null)
             return true;
 
@@ -175,7 +175,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public Collection<Position> legalMovesFrom(Position from) {
-        Piece piece = this.board[from.rank()][from.file()];
+        Piece piece = board[from.rank()][from.file()];
         if (piece == null)
             return Collections.emptyList();
 
@@ -184,7 +184,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public boolean isMoveLegal(Position from, Position to) {
-        Piece piece = this.board[from.rank()][from.file()];
+        Piece piece = board[from.rank()][from.file()];
         if (piece == null)
             return false;
 
@@ -193,7 +193,7 @@ public class InMemoryChessGame implements Game {
 
     @Override
     public boolean isPromotionRequired(Position from, Position to) {
-        Piece piece = this.board[from.rank()][from.file()];
+        Piece piece = board[from.rank()][from.file()];
         if (piece == null)
             return false;
 
@@ -205,7 +205,7 @@ public class InMemoryChessGame implements Game {
         if (isIllegalMove(from, to))
             return false;
 
-        Piece piece = this.board[from.rank()][from.file()];
+        Piece piece = board[from.rank()][from.file()];
         executeMove(piece.findMoveByTargetPosition(to));
         return true;
     }
@@ -215,7 +215,7 @@ public class InMemoryChessGame implements Game {
         if (isIllegalMove(from, to, promotion))
             return false;
 
-        Piece piece = this.board[from.rank()][from.file()];
+        Piece piece = board[from.rank()][from.file()];
         executeMove(piece.findPromotionByTargetPositionAndType(to, promotion));
         return true;
     }
@@ -245,11 +245,11 @@ public class InMemoryChessGame implements Game {
 
         // check conditions of victory
         if (currentPlayer.getAllPossibleMoves().isEmpty()) {
-            if (this.currentPlayer.isKingChecked()) {
-                this.winner = this.getOtherPlayer();
+            if (currentPlayer.isKingChecked()) {
+                winner = getOtherPlayer();
             }
             else {
-                this.draw = true;
+                draw = true;
             }
         }
     }
@@ -292,14 +292,14 @@ public class InMemoryChessGame implements Game {
      * @return null if no one is winner yet, or reference to winner if there is one already
      */
     public Player getWinner() {
-        return this.winner;
+        return winner;
     }
 
     /**
      * @return true if game has ended in a draw, false otherwise
      */
     public boolean isDraw() {
-        return this.draw;
+        return draw;
     }
 
     /**
@@ -328,42 +328,42 @@ public class InMemoryChessGame implements Game {
 
         // WHITES
         for (int file = 0; file < 8; file++) {
-            addNewPiece(new Pawn(Color.WHITE), this.whitePlayer, new Position(6, file));
+            addNewPiece(new Pawn(Color.WHITE), whitePlayer, new Position(6, file));
         }
-        addNewPiece(new Rook(Color.WHITE), this.whitePlayer, new Position(7, 0));
-        addNewPiece(new Knight(Color.WHITE), this.whitePlayer, new Position(7, 1));
-        addNewPiece(new Bishop(Color.WHITE), this.whitePlayer, new Position(7, 2));
-        addNewPiece(new Queen(Color.WHITE), this.whitePlayer, new Position(7, 3));
+        addNewPiece(new Rook(Color.WHITE), whitePlayer, new Position(7, 0));
+        addNewPiece(new Knight(Color.WHITE), whitePlayer, new Position(7, 1));
+        addNewPiece(new Bishop(Color.WHITE), whitePlayer, new Position(7, 2));
+        addNewPiece(new Queen(Color.WHITE), whitePlayer, new Position(7, 3));
 
         King whiteKing = new King(Color.WHITE);
-        addNewPiece(whiteKing, this.whitePlayer, new Position(7, 4));
-        this.whitePlayer.setKing(whiteKing);
+        addNewPiece(whiteKing, whitePlayer, new Position(7, 4));
+        whitePlayer.setKing(whiteKing);
 
-        addNewPiece(new Bishop(Color.WHITE), this.whitePlayer, new Position(7, 5));
-        addNewPiece(new Knight(Color.WHITE), this.whitePlayer, new Position(7, 6));
-        addNewPiece(new Rook(Color.WHITE), this.whitePlayer, new Position(7, 7));
+        addNewPiece(new Bishop(Color.WHITE), whitePlayer, new Position(7, 5));
+        addNewPiece(new Knight(Color.WHITE), whitePlayer, new Position(7, 6));
+        addNewPiece(new Rook(Color.WHITE), whitePlayer, new Position(7, 7));
 
         // BLACKS
         for (int file = 0; file < 8; file++) {
-            addNewPiece(new Pawn(Color.BLACK), this.blackPlayer, new Position(1, file));
+            addNewPiece(new Pawn(Color.BLACK), blackPlayer, new Position(1, file));
         }
-        addNewPiece(new Rook(Color.BLACK), this.blackPlayer, new Position(0, 0));
-        addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(0, 1));
-        addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(0, 2));
-        addNewPiece(new Queen(Color.BLACK), this.blackPlayer, new Position(0, 3));
+        addNewPiece(new Rook(Color.BLACK), blackPlayer, new Position(0, 0));
+        addNewPiece(new Knight(Color.BLACK), blackPlayer, new Position(0, 1));
+        addNewPiece(new Bishop(Color.BLACK), blackPlayer, new Position(0, 2));
+        addNewPiece(new Queen(Color.BLACK), blackPlayer, new Position(0, 3));
 
         King blackKing = new King(Color.BLACK);
-        addNewPiece(blackKing, this.blackPlayer, new Position(0, 4));
-        this.blackPlayer.setKing(blackKing);
+        addNewPiece(blackKing, blackPlayer, new Position(0, 4));
+        blackPlayer.setKing(blackKing);
 
-        addNewPiece(new Bishop(Color.BLACK), this.blackPlayer, new Position(0, 5));
-        addNewPiece(new Knight(Color.BLACK), this.blackPlayer, new Position(0, 6));
-        addNewPiece(new Rook(Color.BLACK), this.blackPlayer, new Position(0, 7));
+        addNewPiece(new Bishop(Color.BLACK), blackPlayer, new Position(0, 5));
+        addNewPiece(new Knight(Color.BLACK), blackPlayer, new Position(0, 6));
+        addNewPiece(new Rook(Color.BLACK), blackPlayer, new Position(0, 7));
 
         // Calculate initial moves
-        this.currentPlayer = this.whitePlayer;
-        this.getOtherPlayer().getPieces().forEach(f -> f.updateMovesWithoutProtectingKing(this));
-        this.currentPlayer.getPieces().forEach(f -> f.updatePossibleMoves(this));
+        currentPlayer = whitePlayer;
+        getOtherPlayer().getPieces().forEach(f -> f.updateMovesWithoutProtectingKing(this));
+        currentPlayer.getPieces().forEach(f -> f.updatePossibleMoves(this));
     }
 
 }

@@ -1,6 +1,7 @@
-package com.pmarshall.chessgame.controller;
+package com.pmarshall.chessgame.client.controller;
 
 import com.pmarshall.chessgame.model.game.InMemoryChessGame;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.service.Game;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -55,4 +56,8 @@ public class LocalGameController extends GameControllerBase {
         endGame(null);
     }
 
+    @Override
+    protected boolean arePlayersPiecesDisabled(Color player) {
+        return false;
+    }
 }

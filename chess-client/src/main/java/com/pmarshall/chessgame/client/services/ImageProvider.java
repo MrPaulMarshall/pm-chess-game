@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.services;
+package com.pmarshall.chessgame.client.services;
 
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;

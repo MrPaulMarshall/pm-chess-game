@@ -1,8 +1,10 @@
-package com.pmarshall.chessgame.controller;
+package com.pmarshall.chessgame.client.controller;
 
+import com.pmarshall.chessgame.api.lobby.MatchFound;
+import com.pmarshall.chessgame.client.remote.ServerConnection;
 import com.pmarshall.chessgame.model.properties.Color;
-import com.pmarshall.chessgame.remote.RemoteGameProxy;
-import com.pmarshall.chessgame.remote.ServerProxy;
+import com.pmarshall.chessgame.client.remote.RemoteGameProxy;
+import com.pmarshall.chessgame.client.remote.ServerProxy;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,7 +29,8 @@ public class RemoteGameController extends GameControllerBase {
      * Initializes game and displays view
      * @throws IOException if the view cannot be loaded
      */
-    public static void initRootLayout(Stage primaryStage) throws IOException {
+    public static void initRootLayout(Stage primaryStage, ServerConnection connection, String id, MatchFound matchFound)
+            throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(RemoteGameController.class.getResource("/view/remote_game_screen.fxml"));
 
@@ -35,7 +38,7 @@ public class RemoteGameController extends GameControllerBase {
         Scene scene = new Scene(rootLayout);
 
         RemoteGameController controller = loader.getController();
-        RemoteGameProxy game = RemoteGameProxy.connectToServer(controller);
+        RemoteGameProxy game = new RemoteGameProxy(controller, connection, id, matchFound);
         controller.injectDependencies(primaryStage, game);
         controller.createBoardGrid(game.localPlayer() == Color.WHITE);
         controller.refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
@@ -83,4 +86,8 @@ public class RemoteGameController extends GameControllerBase {
         }
     }
 
+    @Override
+    protected boolean arePlayersPiecesDisabled(Color player) {
+        return player != serverProxy.localPlayer();
+    }
 }

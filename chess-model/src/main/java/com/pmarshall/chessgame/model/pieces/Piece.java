@@ -108,11 +108,11 @@ public abstract class Piece {
     }
 
     public Color getColor() {
-        return this.color;
+        return color;
     }
 
     public boolean getDidNotMoveFlag() {
-        return this.didNotMoveYet;
+        return didNotMoveYet;
     }
 
     public List<Move> getPossibleMoves() {
@@ -158,7 +158,7 @@ public abstract class Piece {
                     // cell is free
                     moves.add(new BasicMove(
                             this, new Position(rank, file), null, null));
-                } else if (game.board[rank][file].color != this.color) {
+                } else if (game.board[rank][file].color != color) {
                     // enemy figure blocks path
                     moves.add(new BasicMove(
                             this, new Position(rank, file), game.board[rank][file], new Position(rank, file)));
@@ -193,7 +193,7 @@ public abstract class Piece {
 
             // if new position is valid and either cell is free or there is an enemy to kill
             if (validPosition(rank, file) &&
-                    (game.board[rank][file] == null || game.board[rank][file].color != this.color)) {
+                    (game.board[rank][file] == null || game.board[rank][file].color != color)) {
 
                 moves.add(new BasicMove(this, new Position(rank, file), game.board[rank][file],
                         game.board[rank][file] != null ? new Position(rank, file) : null));

@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.controller;
+package com.pmarshall.chessgame.client.controller;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

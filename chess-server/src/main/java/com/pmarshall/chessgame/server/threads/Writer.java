@@ -1,4 +1,4 @@
-package com.marshall.chessgame.server.threads;
+package com.pmarshall.chessgame.server.threads;
 
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
@@ -65,6 +65,7 @@ public class Writer extends Thread {
                 masterThread.notifyConnectionLost(color);
                 break;
             } catch (InterruptedException ignored) {
+                interrupt();
                 log.info("Thread {} interrupted", Thread.currentThread().getName());
             }
         }

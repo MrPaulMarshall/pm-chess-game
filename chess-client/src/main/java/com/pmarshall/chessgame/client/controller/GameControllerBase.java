@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.controller;
+package com.pmarshall.chessgame.client.controller;
 
 import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.dto.Piece;
@@ -6,9 +6,8 @@ import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
-import com.pmarshall.chessgame.remote.RemoteGameProxy;
-import com.pmarshall.chessgame.services.ImageProvider;
-import com.pmarshall.chessgame.services.LocalResourceImageProvider;
+import com.pmarshall.chessgame.client.services.ImageProvider;
+import com.pmarshall.chessgame.client.services.LocalResourceImageProvider;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -54,7 +53,7 @@ public abstract class GameControllerBase {
     }
 
     protected void createBoardGrid(boolean forward) {
-        this.chessboard = new ChessboardCell[8][8];
+        chessboard = new ChessboardCell[8][8];
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
                 final int constRank = rank, constFile = file;
@@ -101,24 +100,26 @@ public abstract class GameControllerBase {
         }
 
         // if player chosen valid move, execute it
-        if (this.pieceChosen != null && game.isMoveLegal(pieceChosen, clickedCell)) {
+        if (pieceChosen != null && game.isMoveLegal(pieceChosen, clickedCell)) {
             executeMove(pieceChosen, clickedCell);
             return;
         }
 
-        // if player clicked on another of his pieces, mark it
         Piece piece = game.getPiece(clickedCell);
 
-        // TODO: refactor me
-        if (piece != null && game instanceof RemoteGameProxy proxy && piece.color() != proxy.localPlayer()) {
+        // check if user is not allowed to pick given color, e.g. in remote mode
+        if (piece != null && arePlayersPiecesDisabled(piece.color())) {
             return;
         }
 
+        // if player clicked on another of his pieces, mark it
         if (piece != null && piece.color() == game.currentPlayer()) {
             pieceChosen = clickedCell;
             choosePiece(pieceChosen, game.legalMovesFrom(pieceChosen));
         }
     }
+
+    protected abstract boolean arePlayersPiecesDisabled(Color player);
 
     /**
      * Executes move in the model, calls Promotion dialog window if needed,
@@ -182,7 +183,7 @@ public abstract class GameControllerBase {
     private void repaintBackground() {
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
-                this.chessboard[rank][file].refreshBackground();
+                chessboard[rank][file].refreshBackground();
             }
         }
 
@@ -206,14 +207,14 @@ public abstract class GameControllerBase {
      * Prints last move into text area
      */
     private void appendMoveToLedger(Color player, String notation) {
-        this.movesTextArea.setEditable(true);
+        movesTextArea.setEditable(true);
         if (player == Color.WHITE) {
-            this.movesTextArea.appendText(moveCounter + ". " + notation);
+            movesTextArea.appendText(moveCounter + ". " + notation);
         } else {
-            this.movesTextArea.appendText(" " + notation + "\n");
+            movesTextArea.appendText(" " + notation + "\n");
             moveCounter++;
         }
-        this.movesTextArea.setEditable(false);
+        movesTextArea.setEditable(false);
     }
 
     private Position findCheckedKing(Color color, Piece[][] board) {
@@ -229,7 +230,7 @@ public abstract class GameControllerBase {
     }
 
     private void markCheckedKingsField() {
-        this.chessboard[checkedKing.rank()][checkedKing.file()].setCheckedBackground();
+        chessboard[checkedKing.rank()][checkedKing.file()].setCheckedBackground();
     }
 
 }

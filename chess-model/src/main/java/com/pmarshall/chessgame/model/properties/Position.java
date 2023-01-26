@@ -20,7 +20,7 @@ public record Position(int rank, int file) {
      */
     public String strFile() {
         char[] x_c = new char[1];
-        x_c[0] = (char) (97 + this.file);
+        x_c[0] = (char) (97 + file);
         return new String(x_c);
     }
 
@@ -30,6 +30,6 @@ public record Position(int rank, int file) {
      * @return '1', '2', .., '8' for successive rows (bottom-up)
      */
     public String strRank() {
-        return Integer.toString(8 - this.rank);
+        return Integer.toString(8 - rank);
     }
 }

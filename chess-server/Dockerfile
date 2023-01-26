@@ -8,4 +8,4 @@ ARG LIBS_DIR=target/libs
 COPY ${MAIN_JAR_FILE} /chess/app.jar
 COPY ${LIBS_DIR}/*.jar /chess/libs/
 
-ENTRYPOINT ["java","-cp","/chess/app.jar:/chess/libs/*","com.marshall.chessgame.server.Server"]
+ENTRYPOINT ["java","-cp","/chess/app.jar:/chess/libs/*","com.pmarshall.chessgame.server.Server"]

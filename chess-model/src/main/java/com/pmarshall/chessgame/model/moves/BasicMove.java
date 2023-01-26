@@ -30,8 +30,8 @@ public class BasicMove extends Move {
     @Override
     public void execute(InMemoryChessGame game) {
         // remove piece, if there is any
-        if (this.takenPiece != null) {
-            game.removePiece(this.takenPiece);
+        if (takenPiece != null) {
+            game.removePiece(takenPiece);
         }
 
         // change piece's position
@@ -44,18 +44,18 @@ public class BasicMove extends Move {
     @Override
     public void undo(InMemoryChessGame game) {
         // restore flag
-        if (this.pieceDidNotMoveBefore) {
+        if (pieceDidNotMoveBefore) {
             movedPiece.undoMarkThatFigureMoved();
         }
 
         // change piece's position
         movedPiece.setPosition(oldPosition);
-        game.board[oldPosition.rank()][oldPosition.file()] = this.movedPiece;
+        game.board[oldPosition.rank()][oldPosition.file()] = movedPiece;
         game.board[newPosition.rank()][newPosition.file()] = null;
 
         // restore piece, if one was taken
-        if (this.takenPiece != null) {
-            game.addPieceBack(this.takenPiece, this.takenPiecePosition);
+        if (takenPiece != null) {
+            game.addPieceBack(takenPiece, takenPiecePosition);
         }
     }
 
@@ -113,11 +113,10 @@ public class BasicMove extends Move {
                 .filter(position -> !position.equals(from))
                 .toList();
 
-        // TODO: probably conflictOnRank and conflictOnFile do not require != conditions
         boolean conflictOnRank = conflictingMovesStartingPositions.stream()
-                .anyMatch(position -> position.rank() == from.rank() && position.file() != from.file());
+                .anyMatch(position -> position.rank() == from.rank());
         boolean conflictOnFile = conflictingMovesStartingPositions.stream()
-                .anyMatch(position -> position.rank() != from.rank() && position.file() == from.file());
+                .anyMatch(position -> position.file() == from.file());
         boolean conflictElsewhere = conflictingMovesStartingPositions.stream()
                 .anyMatch(position -> position.rank() != from.rank() && position.file() != from.file());
 

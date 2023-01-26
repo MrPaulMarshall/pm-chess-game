@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="351.0" prefWidth="301.0"
+            xmlns="http://javafx.com/javafx/11.0.1"
+            fx:controller="com.pmarshall.chessgame.client.controller.MatchQueueController">
+<top>
+    <GridPane hgap="5.0" prefHeight="50.0" prefWidth="301.0" vgap="5.0" BorderPane.alignment="CENTER">
+        <rowConstraints>
+            <RowConstraints minHeight="10.0"/>
+            <RowConstraints minHeight="10.0"/>
+        </rowConstraints>
+
+        <columnConstraints>
+            <ColumnConstraints/>
+        </columnConstraints>
+    </GridPane>
+</top>
+<center>
+    <GridPane hgap="5.0" prefHeight="301.0" prefWidth="301.0" vgap="5.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" minWidth="241.0" prefWidth="301.0"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="240.0"/>
+            <RowConstraints minHeight="23.0"/>
+        </rowConstraints>
+
+        <StackPane prefHeight="240.0" prefWidth="240.0" GridPane.rowIndex="0" GridPane.columnIndex="0">
+            <Label style="-fx-font: NORMAL 32 TimesNewRoman; -fx-padding: 5" text="Waiting for the opponent..."
+                   GridPane.columnIndex="0" GridPane.rowIndex="0" textAlignment="CENTER" wrapText="true" maxWidth="240">
+            </Label>
+        </StackPane>
+
+        <HBox alignment="BOTTOM_RIGHT" prefHeight="23.0" prefWidth="301.0" spacing="5.0"
+              GridPane.rowIndex="1" GridPane.columnIndex="0">
+            <Button mnemonicParsing="false" onAction="#handleCancelAction" prefWidth="80.0" text="Cancel">
+                <HBox.margin>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </HBox.margin>
+            </Button>
+        </HBox>
+    </GridPane>
+</center>
+<opaqueInsets>
+    <Insets/>
+</opaqueInsets>
+</BorderPane>
