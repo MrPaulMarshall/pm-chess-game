@@ -56,4 +56,44 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.github.fvarrui</groupId>
+                <artifactId>javapackager</artifactId>
+                <version>1.6.7</version>
+                <configuration>
+                    <mainClass>com.pmarshall.chessgame.client.Main</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>linux-build</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <name>linux-chess-client</name>
+                            <bundleJre>true</bundleJre>
+                            <platform>linux</platform>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>windows-build</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <name>windows-chess-client</name>
+                            <bundleJre>true</bundleJre>
+                            <platform>windows</platform>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
