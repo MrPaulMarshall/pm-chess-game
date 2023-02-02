@@ -72,8 +72,8 @@ public class Master extends Thread {
                 BLACK, new Writer(BLACK, players.get(BLACK).id(), players.get(BLACK).out(), this)
         );
         readerThreads = Map.of(
-                WHITE, new Reader(WHITE, players.get(WHITE).id(), players.get(WHITE).in(), this, writerThreads.get(WHITE)),
-                BLACK, new Reader(BLACK, players.get(BLACK).id(), players.get(BLACK).in(), this, writerThreads.get(BLACK))
+                WHITE, new Reader(WHITE, players.get(WHITE).id(), players.get(WHITE).in(), this, writerThreads.get(BLACK)),
+                BLACK, new Reader(BLACK, players.get(BLACK).id(), players.get(BLACK).in(), this, writerThreads.get(WHITE))
         );
 
         /* Initialize logical representation of the game */
