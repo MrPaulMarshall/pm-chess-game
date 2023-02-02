@@ -9,4 +9,5 @@ public interface ServerProxy {
     void proposeDraw() throws InterruptedException;
     void acceptDraw() throws InterruptedException;
     void rejectDraw() throws InterruptedException;
+    void pushChatMessage(String message) throws InterruptedException;
 }
