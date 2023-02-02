@@ -9,6 +9,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -21,7 +25,11 @@ import java.io.IOException;
  */
 public class RemoteGameController extends GameControllerBase {
 
-    // TODO: add Chat + input textfield
+    @FXML
+    private TextArea chatText;
+
+    @FXML
+    private TextField chatInputField;
 
     private ServerProxy serverProxy;
 
@@ -64,6 +72,16 @@ public class RemoteGameController extends GameControllerBase {
         serverProxy.proposeDraw();
     }
 
+    @FXML
+    public void handleLocalPlayerChatInput(KeyEvent event) throws InterruptedException {
+        if (event.getCode() == KeyCode.ENTER) {
+            String userInput = chatInputField.getText();
+            chatInputField.setText("");
+            appendToChat(serverProxy.localPlayer(), userInput);
+            serverProxy.pushChatMessage(userInput);
+        }
+    }
+
     public void showDrawRequestedWindow() {
         // TODO: disable interacting with the board
         DrawRequestController controller = new DrawRequestController(primaryStage, this);
@@ -84,6 +102,12 @@ public class RemoteGameController extends GameControllerBase {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void appendToChat(Color player, String message) {
+        chatText.setEditable(true);
+        chatText.appendText(player + ": " + message + "\n");
+        chatText.setEditable(false);
     }
 
     @Override
