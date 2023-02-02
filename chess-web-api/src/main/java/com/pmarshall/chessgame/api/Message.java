@@ -24,7 +24,8 @@ import com.pmarshall.chessgame.api.outcome.GameOutcome;
         @Type(value = DrawResponse.class, name = "DrawResponse"),
         @Type(value = Surrender.class, name = "Surrender"),
         @Type(value = Move.class, name = "Move"),
-        @Type(value = OpponentMoved.class, name = "OpponentMoved")
+        @Type(value = OpponentMoved.class, name = "OpponentMoved"),
+        @Type(value = ChatMessage.class, name = "ChatMessage")
 })
 public interface Message {
 }

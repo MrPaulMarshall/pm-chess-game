@@ -1,83 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.*?>
-
-<!--
-TODO:
-    change the controller
-    add chat windows
-    include opponents id?
--->
-
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="500.0" prefWidth="650.0" maxWidth="650.0"
-            xmlns="http://javafx.com/javafx/8.0.40"
-            fx:controller="com.pmarshall.chessgame.client.controller.RemoteGameController">
 
-    <center>
-        <VBox id="APP" prefWidth="500" maxWidth="500" minWidth="405"  >
-            <GridPane id="chessBoard" fx:id="chessBoardGrid">
-
+<BorderPane maxWidth="693.0" prefHeight="545.0" prefWidth="593.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pmarshall.chessgame.client.controller.RemoteGameController">
+   <center>
+      <GridPane prefHeight="522.0" prefWidth="674.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="319.0" minWidth="10.0" prefWidth="239.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="55.0" minHeight="55.0" prefHeight="55.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="355.0" minHeight="355.0" prefHeight="355.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="296.0" minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+               <GridPane id="chessBoard" fx:id="chessBoardGrid" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" GridPane.rowSpan="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
             </GridPane>
-        </VBox>
-    </center>
-
-    <right>
-        <BorderPane prefHeight="450.0" prefWidth="200.0" maxWidth="200.0" BorderPane.alignment="TOP_CENTER">
-            <opaqueInsets>
-                <Insets bottom="5.0" left="10.0" right="5.0" top="5.0"/>
-            </opaqueInsets>
-
-            <top>
-                <HBox maxHeight="-Infinity" prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="TOP_CENTER">
-                    <children>
-                        <Label fx:id="currentPlayerName" text="WHITES" BorderPane.alignment="CENTER_RIGHT">
-                            <font>
-                                <Font size="50"/>
-                            </font>
-                        </Label>
-                    </children>
-                </HBox>
-            </top>
-
-            <center>
-                <TextArea fx:id="movesTextArea" editable="false" prefHeight="450.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
-            </center>
-        </BorderPane>
-    </right>
-
-    <bottom>
-        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="150.0" spacing="100" BorderPane.alignment="CENTER">
-            <opaqueInsets>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-            </opaqueInsets>
-            <children>
-                <Button fx:id="surrenderButton" alignment="TOP_CENTER" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" onAction="#handleSurrenderAction" text="Surrender"
-                        prefHeight="40" prefWidth="170">
-                    <font>
-                        <Font size="20"/>
-                    </font>
-
-                    <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                    </VBox.margin>
-                </Button>
-                <Button fx:id="drawButton" alignment="TOP_CENTER" onAction="#handleDrawAction" contentDisplay="TOP"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Propose draw" textAlignment="CENTER"
-                        prefHeight="40" prefWidth="170">
-                    <font>
-                        <Font size="20"/>
-                    </font>
-
-                    <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                    </VBox.margin>
-                </Button>
-            </children>
-        </HBox>
-    </bottom>
+                <TextArea fx:id="movesTextArea" editable="false" prefHeight="450.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextArea>
+                  <Label fx:id="currentPlayerName" alignment="CENTER" contentDisplay="CENTER" text="WHITE" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                      <font>
+                          <Font size="36.0" />
+                      </font>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+                  </Label>
+            <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <children>
+                      <Button alignment="TOP_CENTER" contentDisplay="TOP" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleDrawAction" prefHeight="40" prefWidth="170" text="Propose draw" textAlignment="CENTER">
+                          <font>
+                              <Font size="20" />
+                          </font>
+      
+                          <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                          </VBox.margin>
+                      </Button>
+                      <Button alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSurrenderAction" prefHeight="40" prefWidth="170" text="Surrender">
+                          <font>
+                              <Font size="20" />
+                          </font>
+      
+                          <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                          </VBox.margin>
+                      </Button>
+               </children>
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+               <children>
+                  <TextArea fx:id="chatText" editable="false" prefHeight="200.0" prefWidth="200.0" scrollTop="1.0" wrapText="true" />
+                  <TextField fx:id="chatInputField" onKeyPressed="#handleLocalPlayerChatInput" />
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+   </center>
 
 </BorderPane>

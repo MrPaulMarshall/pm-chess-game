@@ -308,6 +308,11 @@ public class RemoteGameProxy implements Game, ServerProxy {
         messagesToServer.put(new DrawResponse(false));
     }
 
+    @Override
+    public void pushChatMessage(String message) throws InterruptedException {
+        messagesToServer.put(new ChatMessage(message));
+    }
+
     public class Reader extends Thread {
 
         private static final Logger log = LoggerFactory.getLogger(Reader.class);
@@ -345,8 +350,9 @@ public class RemoteGameProxy implements Game, ServerProxy {
                         continue;
                     }
                     if (msg instanceof ChatMessage chatMsg) {
-                        // TODO: add chat window
                         log.info("CHAT: {} says {}", opponentId, chatMsg.text());
+                        Platform.runLater(() ->
+                                controller.appendToChat(localPlayer.next(), chatMsg.text()));
                         continue;
                     }
                     if (msg instanceof DrawProposition) {
