@@ -19,15 +19,28 @@ public class Server {
     private static MatchRegister register;
 
     public static void main(String[] args) throws IOException {
+        int port = parsePort(args.length >= 1 ? args[0] : null);
         Runtime.getRuntime().addShutdownHook(new CleanUpHook());
 
-        initializeServer();
+        initializeServer(port);
         acceptClientConnections(serverSocket);
     }
 
-    private static void initializeServer() throws IOException {
+    private static int parsePort(String arg) {
+        try {
+            int port = Integer.parseInt(arg);
+            if (1024 <= port && port <= 65535)
+                return port;
+        } catch (NumberFormatException e) {
+            log.warn("Invalid port argument: {}", arg);
+        }
+
+        return 21370;
+    }
+
+    private static void initializeServer(int port) throws IOException {
         register = new MatchRegister();
-        serverSocket = new ServerSocket(21370);
+        serverSocket = new ServerSocket(port);
         register.start();
     }
 
