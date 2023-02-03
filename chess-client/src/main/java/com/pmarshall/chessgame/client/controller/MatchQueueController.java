@@ -4,6 +4,7 @@ import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.lobby.AssignId;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
+import com.pmarshall.chessgame.client.App;
 import com.pmarshall.chessgame.client.remote.ServerConnection;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class MatchQueueController {
@@ -36,9 +38,7 @@ public class MatchQueueController {
         Scene scene = new Scene(rootLayout);
 
         MatchQueueController controller = loader.getController();
-
-        ServerConnection connection = connectToServer("127.0.0.1", 49153);
-
+        ServerConnection connection = connectToServer();
         controller.injectDependencies(primaryStage, connection);
 
         primaryStage.setTitle("Chess board");
@@ -58,8 +58,13 @@ public class MatchQueueController {
         controller.waitingThread.start();
     }
 
-    private static ServerConnection connectToServer(String host, int port) throws IOException {
-        Socket socket = new Socket(host, port);
+    private static ServerConnection connectToServer() throws IOException {
+        InetSocketAddress address = App.getServerAddress();
+        if (address == null || address.isUnresolved())
+            throw new IOException("Cannot determine server address");
+
+        Socket socket = new Socket();
+        socket.connect(address);
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
 
