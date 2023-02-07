@@ -12,17 +12,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxWidth="693.0" prefHeight="545.0" prefWidth="593.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pmarshall.chessgame.client.controller.RemoteGameController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="670.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pmarshall.chessgame.client.controller.RemoteGameController">
    <center>
-      <GridPane prefHeight="522.0" prefWidth="674.0" BorderPane.alignment="CENTER">
+      <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="670.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="319.0" minWidth="10.0" prefWidth="239.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="260.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints maxHeight="55.0" minHeight="55.0" prefHeight="55.0" vgrow="SOMETIMES" />
           <RowConstraints maxHeight="355.0" minHeight="355.0" prefHeight="355.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="296.0" minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="130.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
                <GridPane id="chessBoard" fx:id="chessBoardGrid" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" GridPane.rowSpan="2">
@@ -30,7 +30,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </GridPane>
-                <TextArea fx:id="movesTextArea" editable="false" prefHeight="450.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <TextArea fx:id="movesTextArea" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="345.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
@@ -38,7 +38,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </TextArea>
-                  <Label fx:id="currentPlayerName" alignment="CENTER" contentDisplay="CENTER" text="WHITE" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                  <Label fx:id="currentPlayerName" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="WHITE" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                       <font>
                           <Font size="36.0" />
                       </font>
@@ -48,7 +48,7 @@
                   </Label>
             <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                <children>
-                      <Button alignment="TOP_CENTER" contentDisplay="TOP" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleDrawAction" prefHeight="40" prefWidth="170" text="Propose draw" textAlignment="CENTER">
+                      <Button alignment="TOP_CENTER" contentDisplay="TOP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleDrawAction" prefHeight="40" prefWidth="170" text="Propose draw" textAlignment="CENTER">
                           <font>
                               <Font size="20" />
                           </font>
@@ -57,7 +57,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                           </VBox.margin>
                       </Button>
-                      <Button alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSurrenderAction" prefHeight="40" prefWidth="170" text="Surrender">
+                      <Button alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleSurrenderAction" prefHeight="40" prefWidth="170" text="Surrender">
                           <font>
                               <Font size="20" />
                           </font>
@@ -71,13 +71,13 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="120.0" prefWidth="400.0" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
                <children>
-                  <TextArea fx:id="chatText" editable="false" prefHeight="200.0" prefWidth="200.0" scrollTop="1.0" wrapText="true" />
-                  <TextField fx:id="chatInputField" onKeyPressed="#handleLocalPlayerChatInput" />
+                  <TextArea fx:id="chatText" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="400.0" scrollTop="1.0" wrapText="true" />
+                  <TextField fx:id="chatInputField" maxHeight="-Infinity" maxWidth="400.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleLocalPlayerChatInput" prefHeight="20.0" />
                </children>
             </VBox>
          </children>
