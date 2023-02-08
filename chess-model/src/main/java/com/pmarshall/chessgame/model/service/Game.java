@@ -8,6 +8,7 @@ import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.util.Pair;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface Game {
 
@@ -43,4 +44,6 @@ public interface Game {
      * @return true if move is legal and this executed. In case promotion is not happening this call will fail.
      */
     boolean executeMove(Position from, Position to, PieceType promotion);
+
+    List<LegalMove> legalMoves();
 }

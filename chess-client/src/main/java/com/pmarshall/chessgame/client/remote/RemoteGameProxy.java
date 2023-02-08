@@ -248,6 +248,14 @@ public class RemoteGameProxy implements Game, ServerProxy {
         return true;
     }
 
+    @Override
+    public List<LegalMove> legalMoves() {
+        return Stream.concat(
+                legalMoves.values().stream(),
+                legalPromotions.values().stream()
+        ).collect(Collectors.toList());
+    }
+
     /**
      * Updates the board and other data about the state of the game.
      * <p>
