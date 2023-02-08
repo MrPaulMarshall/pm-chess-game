@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.api
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.pmarshall.chessgame.api.endrequest.DrawResponse
 import com.pmarshall.chessgame.api.move.Move
-import com.pmarshall.chessgame.model.properties.Position
+import com.pmarshall.chessgame.engine.properties.Position
 import spock.lang.Specification
 
 import java.nio.charset.StandardCharsets

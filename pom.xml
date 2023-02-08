@@ -23,7 +23,7 @@
     <modules>
         <module>chess-server</module>
         <module>chess-client</module>
-        <module>chess-model</module>
+        <module>chess-engine</module>
         <module>chess-web-api</module>
     </modules>
 

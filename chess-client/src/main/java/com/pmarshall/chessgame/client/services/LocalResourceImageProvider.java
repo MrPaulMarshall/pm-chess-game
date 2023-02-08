@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.client.services;
 
-import com.pmarshall.chessgame.model.properties.Color;
-import com.pmarshall.chessgame.model.properties.PieceType;
+import com.pmarshall.chessgame.engine.properties.Color;
+import com.pmarshall.chessgame.engine.properties.PieceType;
 import javafx.scene.image.Image;
 
 import java.util.Arrays;

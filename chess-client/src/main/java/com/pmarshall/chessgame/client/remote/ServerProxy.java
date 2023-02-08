@@ -1,6 +1,6 @@
 package com.pmarshall.chessgame.client.remote;
 
-import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.engine.properties.Color;
 
 public interface ServerProxy {
 

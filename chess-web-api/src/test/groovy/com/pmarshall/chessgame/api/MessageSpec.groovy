@@ -9,9 +9,9 @@ import com.pmarshall.chessgame.api.lobby.AssignId
 import com.pmarshall.chessgame.api.lobby.MatchFound
 import com.pmarshall.chessgame.api.move.Move
 import com.pmarshall.chessgame.api.outcome.GameOutcome
-import com.pmarshall.chessgame.model.properties.PieceType
-import com.pmarshall.chessgame.model.properties.Color
-import com.pmarshall.chessgame.model.properties.Position
+import com.pmarshall.chessgame.engine.properties.PieceType
+import com.pmarshall.chessgame.engine.properties.Color
+import com.pmarshall.chessgame.engine.properties.Position
 import spock.lang.Specification
 
 class MessageSpec extends Specification {

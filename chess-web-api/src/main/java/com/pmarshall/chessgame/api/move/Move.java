@@ -1,8 +1,8 @@
 package com.pmarshall.chessgame.api.move;
 
 import com.pmarshall.chessgame.api.Message;
-import com.pmarshall.chessgame.model.properties.PieceType;
-import com.pmarshall.chessgame.model.properties.Position;
+import com.pmarshall.chessgame.engine.properties.PieceType;
+import com.pmarshall.chessgame.engine.properties.Position;
 
 import java.util.Objects;
 
