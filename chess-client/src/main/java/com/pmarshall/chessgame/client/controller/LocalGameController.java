@@ -1,6 +1,5 @@
 package com.pmarshall.chessgame.client.controller;
 
-import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.service.Game;
 import javafx.event.ActionEvent;
@@ -11,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ServiceLoader;
 
 /**
  * @author Paweł Marszał
@@ -31,7 +31,7 @@ public class LocalGameController extends GameControllerBase {
         Scene scene = new Scene(rootLayout);
 
         LocalGameController controller = loader.getController();
-        Game game = new InMemoryChessGame();
+        Game game = ServiceLoader.load(Game.class).findFirst().orElseThrow();
         controller.injectDependencies(primaryStage, game);
         controller.createBoardGrid(true);
         controller.refreshBoard(game.currentPlayer(), game.getBoardWithPieces());

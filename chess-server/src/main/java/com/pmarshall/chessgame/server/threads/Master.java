@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.server.threads;
 
+import com.pmarshall.chessgame.model.service.Game;
 import com.pmarshall.chessgame.server.MatchRegister;
 import com.pmarshall.chessgame.server.PlayerConnection;
 import com.pmarshall.chessgame.api.Message;
@@ -9,7 +10,6 @@ import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
-import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.util.Pair;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class Master extends Thread {
     private final int matchId;
 
     /* State of the game */
-    private final InMemoryChessGame game;
+    private final Game game;
     private Color drawProponent;
 
     /* Players metadata */
@@ -77,7 +77,7 @@ public class Master extends Thread {
         );
 
         /* Initialize logical representation of the game */
-        game = new InMemoryChessGame();
+        game = ServiceLoader.load(Game.class).findFirst().orElseThrow();
     }
 
     @Override
