@@ -5,7 +5,7 @@ import com.pmarshall.chessgame.model.dto.Piece;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.Position;
-import org.apache.commons.lang3.tuple.Pair;
+import com.pmarshall.chessgame.model.util.Pair;
 
 import java.util.Collection;
 

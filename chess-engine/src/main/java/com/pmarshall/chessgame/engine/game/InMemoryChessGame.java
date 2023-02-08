@@ -9,7 +9,7 @@ import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.engine.moves.Move;
 import com.pmarshall.chessgame.model.service.Game;
-import org.apache.commons.lang3.tuple.Pair;
+import com.pmarshall.chessgame.model.util.Pair;
 
 import java.util.Collection;
 import java.util.Collections;

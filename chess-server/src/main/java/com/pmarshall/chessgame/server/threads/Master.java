@@ -11,7 +11,7 @@ import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.properties.Color;
-import org.apache.commons.lang3.tuple.Pair;
+import com.pmarshall.chessgame.model.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,8 +125,8 @@ public class Master extends Thread {
                 }
 
                 Pair<Color, Message> messageFromPlayer = masterQueue.take();
-                Color sender = messageFromPlayer.getLeft();
-                Message message = messageFromPlayer.getRight();
+                Color sender = messageFromPlayer.left();
+                Message message = messageFromPlayer.right();
 
                 if (message instanceof DrawProposition) {
                     if (drawProponent == null) {
@@ -264,11 +264,11 @@ public class Master extends Thread {
         Pair<Color, String> gameResult = game.outcome();
         if (gameResult != null) {
             // TODO: remove GameOutcome.Type and use nullable "Color winner" instead, then the if-else will not be needed
-            if (gameResult.getLeft() == null) {
+            if (gameResult.left() == null) {
                 GameOutcome drawOutcome = new GameOutcome(GameOutcome.Type.DRAW, "Stalemate");
                 terminateGame(Map.of(WHITE, drawOutcome, BLACK, drawOutcome));
             } else {
-                Color winner = gameResult.getLeft();
+                Color winner = gameResult.left();
                 terminateGame(Map.of(
                         winner, new GameOutcome(GameOutcome.Type.VICTORY, "Checkmate"),
                         winner.next(), new GameOutcome(GameOutcome.Type.DEFEAT, "Checkmate")
