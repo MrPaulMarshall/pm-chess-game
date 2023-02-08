@@ -8,7 +8,7 @@ import com.pmarshall.chessgame.api.endrequest.DrawProposition;
 import com.pmarshall.chessgame.api.endrequest.DrawResponse;
 import com.pmarshall.chessgame.api.endrequest.Surrender;
 import com.pmarshall.chessgame.api.move.Move;
-import com.pmarshall.chessgame.engine.properties.Color;
+import com.pmarshall.chessgame.model.properties.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

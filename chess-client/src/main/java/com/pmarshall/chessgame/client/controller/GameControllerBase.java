@@ -1,11 +1,11 @@
 package com.pmarshall.chessgame.client.controller;
 
-import com.pmarshall.chessgame.engine.dto.LegalMove;
-import com.pmarshall.chessgame.engine.dto.Piece;
-import com.pmarshall.chessgame.engine.properties.Color;
-import com.pmarshall.chessgame.engine.properties.PieceType;
-import com.pmarshall.chessgame.engine.properties.Position;
-import com.pmarshall.chessgame.engine.service.Game;
+import com.pmarshall.chessgame.model.dto.LegalMove;
+import com.pmarshall.chessgame.model.dto.Piece;
+import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.PieceType;
+import com.pmarshall.chessgame.model.properties.Position;
+import com.pmarshall.chessgame.model.service.Game;
 import com.pmarshall.chessgame.client.services.ImageProvider;
 import com.pmarshall.chessgame.client.services.LocalResourceImageProvider;
 import javafx.fxml.FXML;

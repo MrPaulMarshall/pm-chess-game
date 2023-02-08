@@ -1,10 +1,10 @@
 package com.pmarshall.chessgame.engine.moves;
 
-import com.pmarshall.chessgame.engine.dto.LegalMove;
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.engine.pieces.*;
 import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
-import com.pmarshall.chessgame.engine.properties.Color;
-import com.pmarshall.chessgame.engine.properties.PieceType;
+import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.PieceType;
 
 import java.util.List;
 
@@ -73,7 +73,7 @@ public class Promotion extends Move {
 
     @Override
     public LegalMove toDto(List<Move> legalMoves) {
-        return new com.pmarshall.chessgame.engine.dto.Promotion(movedPiece.getPosition(), newPosition, newPiece.getType(), withCheck, inNotation(legalMoves));
+        return new com.pmarshall.chessgame.model.dto.Promotion(movedPiece.getPosition(), newPosition, newPiece.getType(), withCheck, inNotation(legalMoves));
     }
 
     @Override

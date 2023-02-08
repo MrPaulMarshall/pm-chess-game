@@ -1,7 +1,7 @@
-package com.pmarshall.chessgame.engine.dto;
+package com.pmarshall.chessgame.model.dto;
 
-import com.pmarshall.chessgame.engine.properties.PieceType;
-import com.pmarshall.chessgame.engine.properties.Position;
+import com.pmarshall.chessgame.model.properties.PieceType;
+import com.pmarshall.chessgame.model.properties.Position;
 
 import java.util.Objects;
 

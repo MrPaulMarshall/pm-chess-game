@@ -1,20 +1,21 @@
-package com.pmarshall.chessgame.engine.dto;
+package com.pmarshall.chessgame.model.dto;
 
-import com.pmarshall.chessgame.engine.properties.Position;
+import com.pmarshall.chessgame.model.properties.Position;
 
 import java.util.Objects;
 
-public record Castling(
+public record EnPassant(
         Position from,
         Position to,
-        boolean queenSide,
+        Position takenPawn,
         boolean check,
         String notation
 ) implements LegalMove {
 
-    public Castling {
+    public EnPassant {
         Objects.requireNonNull(from);
         Objects.requireNonNull(to);
+        Objects.requireNonNull(takenPawn);
         Objects.requireNonNull(notation);
     }
 }

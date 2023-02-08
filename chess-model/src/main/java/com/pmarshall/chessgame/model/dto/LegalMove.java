@@ -1,9 +1,9 @@
-package com.pmarshall.chessgame.engine.dto;
+package com.pmarshall.chessgame.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.pmarshall.chessgame.engine.properties.Position;
+import com.pmarshall.chessgame.model.properties.Position;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

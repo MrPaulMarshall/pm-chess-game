@@ -2,7 +2,7 @@ package com.pmarshall.chessgame.client.controller;
 
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.client.remote.ServerConnection;
-import com.pmarshall.chessgame.engine.properties.Color;
+import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.client.remote.RemoteGameProxy;
 import com.pmarshall.chessgame.client.remote.ServerProxy;
 import javafx.event.ActionEvent;

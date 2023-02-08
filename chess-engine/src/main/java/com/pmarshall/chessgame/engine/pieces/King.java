@@ -1,8 +1,8 @@
 package com.pmarshall.chessgame.engine.pieces;
 
-import com.pmarshall.chessgame.engine.properties.Color;
-import com.pmarshall.chessgame.engine.properties.PieceType;
-import com.pmarshall.chessgame.engine.properties.Position;
+import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.PieceType;
+import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
 import com.pmarshall.chessgame.engine.moves.Castling;
 

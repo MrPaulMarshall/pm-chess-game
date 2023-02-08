@@ -1,9 +1,9 @@
 package com.pmarshall.chessgame.engine.moves;
 
-import com.pmarshall.chessgame.engine.dto.LegalMove;
+import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.engine.pieces.King;
 import com.pmarshall.chessgame.engine.pieces.Rook;
-import com.pmarshall.chessgame.engine.properties.Position;
+import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
 
 import java.util.List;
@@ -71,7 +71,7 @@ public class Castling extends Move {
     @Override
     public LegalMove toDto(List<Move> legalMoves) {
         int distance = abs(newPositionForRook.file() - oldPositionOfRook.file());
-        return new com.pmarshall.chessgame.engine.dto.Castling(
+        return new com.pmarshall.chessgame.model.dto.Castling(
                 movedPiece.getPosition(), newPosition, distance == 3, withCheck, inNotation(legalMoves));
     }
 

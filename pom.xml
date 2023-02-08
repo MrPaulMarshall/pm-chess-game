@@ -25,6 +25,7 @@
         <module>chess-client</module>
         <module>chess-engine</module>
         <module>chess-web-api</module>
+        <module>chess-model</module>
     </modules>
 
     <properties>

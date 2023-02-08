@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.engine.game;
 import com.pmarshall.chessgame.engine.moves.Move;
 import com.pmarshall.chessgame.engine.pieces.King;
 import com.pmarshall.chessgame.engine.pieces.Piece;
-import com.pmarshall.chessgame.engine.properties.Color;
+import com.pmarshall.chessgame.model.properties.Color;
 
 import java.util.LinkedList;
 import java.util.List;

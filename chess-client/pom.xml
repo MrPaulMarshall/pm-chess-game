@@ -16,6 +16,11 @@
     <dependencies>
         <dependency>
             <groupId>com.pmarshall</groupId>
+            <artifactId>chess-model</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pmarshall</groupId>
             <artifactId>chess-engine</artifactId>
             <version>${project.version}</version>
         </dependency>

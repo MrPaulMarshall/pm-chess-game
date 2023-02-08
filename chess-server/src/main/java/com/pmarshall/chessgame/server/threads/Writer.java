@@ -3,7 +3,7 @@ package com.pmarshall.chessgame.server.threads;
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
-import com.pmarshall.chessgame.engine.properties.Color;
+import com.pmarshall.chessgame.model.properties.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

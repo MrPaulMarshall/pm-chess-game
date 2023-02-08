@@ -1,8 +1,8 @@
 package com.pmarshall.chessgame.client.controller;
 
 import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
-import com.pmarshall.chessgame.engine.properties.Color;
-import com.pmarshall.chessgame.engine.service.Game;
+import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.service.Game;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

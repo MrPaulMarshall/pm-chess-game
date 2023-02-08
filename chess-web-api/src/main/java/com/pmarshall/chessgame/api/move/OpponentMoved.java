@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.api.move;
 
 import com.pmarshall.chessgame.api.Message;
-import com.pmarshall.chessgame.engine.dto.LegalMove;
+import com.pmarshall.chessgame.model.dto.LegalMove;
 
 import java.util.List;
 import java.util.Objects;

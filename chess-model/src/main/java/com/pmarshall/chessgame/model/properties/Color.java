@@ -1,4 +1,4 @@
-package com.pmarshall.chessgame.engine.properties;
+package com.pmarshall.chessgame.model.properties;
 
 /**
  * @author Paweł Marszał

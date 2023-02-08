@@ -1,14 +1,14 @@
 package com.pmarshall.chessgame.engine.game;
 
-import com.pmarshall.chessgame.engine.dto.*;
+import com.pmarshall.chessgame.model.dto.*;
 import com.pmarshall.chessgame.engine.moves.Promotion;
 import com.pmarshall.chessgame.engine.pieces.*;
 import com.pmarshall.chessgame.engine.pieces.Piece;
-import com.pmarshall.chessgame.engine.properties.Color;
-import com.pmarshall.chessgame.engine.properties.PieceType;
-import com.pmarshall.chessgame.engine.properties.Position;
+import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.PieceType;
+import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.engine.moves.Move;
-import com.pmarshall.chessgame.engine.service.Game;
+import com.pmarshall.chessgame.model.service.Game;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collection;
@@ -146,13 +146,13 @@ public class InMemoryChessGame implements Game {
     }
 
     @Override
-    public com.pmarshall.chessgame.engine.dto.Piece[][] getBoardWithPieces() {
-        com.pmarshall.chessgame.engine.dto.Piece[][] result = new com.pmarshall.chessgame.engine.dto.Piece[8][8];
+    public com.pmarshall.chessgame.model.dto.Piece[][] getBoardWithPieces() {
+        com.pmarshall.chessgame.model.dto.Piece[][] result = new com.pmarshall.chessgame.model.dto.Piece[8][8];
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
                 Piece piece = board[rank][file];
                 if (piece != null) {
-                    result[rank][file] = new com.pmarshall.chessgame.engine.dto.Piece(piece.getType(), piece.getColor());
+                    result[rank][file] = new com.pmarshall.chessgame.model.dto.Piece(piece.getType(), piece.getColor());
                 }
             }
         }
@@ -160,12 +160,12 @@ public class InMemoryChessGame implements Game {
     }
 
     @Override
-    public com.pmarshall.chessgame.engine.dto.Piece getPiece(Position on) {
+    public com.pmarshall.chessgame.model.dto.Piece getPiece(Position on) {
         Piece piece = board[on.rank()][on.file()];
         if (piece == null)
             return null;
 
-        return new com.pmarshall.chessgame.engine.dto.Piece(piece.getType(), piece.getColor());
+        return new com.pmarshall.chessgame.model.dto.Piece(piece.getType(), piece.getColor());
     }
 
     public List<LegalMove> legalMoves() {

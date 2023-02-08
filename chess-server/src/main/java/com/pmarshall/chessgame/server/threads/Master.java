@@ -10,7 +10,7 @@ import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
 import com.pmarshall.chessgame.api.outcome.GameOutcome;
 import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
-import com.pmarshall.chessgame.engine.properties.Color;
+import com.pmarshall.chessgame.model.properties.Color;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static com.pmarshall.chessgame.engine.properties.Color.BLACK;
-import static com.pmarshall.chessgame.engine.properties.Color.WHITE;
+import static com.pmarshall.chessgame.model.properties.Color.BLACK;
+import static com.pmarshall.chessgame.model.properties.Color.WHITE;
 
 /**
  * Represents the game session between two players, and handles all relevant data,
