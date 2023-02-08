@@ -36,6 +36,7 @@ class MessageSpec extends Specification {
         '{"type":"Surrender"}'                                     | new Surrender()
         '{"type":"AssignId","id":"abc123"}'                        | new AssignId('abc123')
         '{"type":"GameOutcome","outcome":"DEFEAT","message":null}' | new GameOutcome(GameOutcome.Type.DEFEAT, null)
+        '{"type":"ChatMessage","text":"Some text 123!"}' | new ChatMessage('Some text 123!')
         '{"type":"Move","from":{"rank":1,"file":4},"to":{"rank":5,"file":4},"promotion":null}'     | new Move(new Position(1,4), new Position(5,4), null)
         '{"type":"Move","from":{"rank":1,"file":4},"to":{"rank":5,"file":4},"promotion":"KNIGHT"}' | new Move(new Position(1,4), new Position(5,4), PieceType.KNIGHT)
         '{"type":"MatchFound","color":"BLACK","opponentId":"a1","legalMoves":[]}'  | new MatchFound(Color.BLACK, 'a1', List.of())
