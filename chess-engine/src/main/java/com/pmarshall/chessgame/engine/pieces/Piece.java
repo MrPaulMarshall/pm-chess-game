@@ -1,12 +1,12 @@
-package com.pmarshall.chessgame.model.pieces;
+package com.pmarshall.chessgame.engine.pieces;
 
-import com.pmarshall.chessgame.model.moves.Promotion;
+import com.pmarshall.chessgame.engine.moves.Promotion;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.game.InMemoryChessGame;
-import com.pmarshall.chessgame.model.moves.BasicMove;
-import com.pmarshall.chessgame.model.moves.Move;
+import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
+import com.pmarshall.chessgame.engine.moves.BasicMove;
+import com.pmarshall.chessgame.engine.moves.Move;
 
 import java.util.LinkedList;
 import java.util.List;

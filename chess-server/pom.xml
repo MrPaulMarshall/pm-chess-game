@@ -17,21 +17,20 @@
         <dependency>
             <groupId>com.pmarshall</groupId>
             <artifactId>chess-model</artifactId>
-            <version>1.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.pmarshall</groupId>
+            <artifactId>chess-engine</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.pmarshall</groupId>
             <artifactId>chess-web-api</artifactId>
-            <version>1.0</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons.lang3.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -53,15 +52,25 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-dependencies</id>
+                        <id>copy-modules-dependencies</id>
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>
-                                ${project.build.directory}/libs
-                            </outputDirectory>
+                            <excludeGroupIds>org.apache.logging.log4j</excludeGroupIds>
+                            <outputDirectory>${project.build.directory}/lib/modules</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-classpath-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>org.apache.logging.log4j</includeGroupIds>
+                            <outputDirectory>${project.build.directory}/lib/plain-jars</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

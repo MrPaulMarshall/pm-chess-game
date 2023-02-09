@@ -18,6 +18,8 @@ public class App extends Application {
     private static InetSocketAddress serverAddress;
 
     public static void main(String[] args) {
+        log.debug("Launched from {}", App.class.getModule().isNamed() ? "modulepath" : "classpath");
+
         try {
             String serverIp = args.length >= 1 ? args[0] : "127.0.0.1";
             int port = args.length >= 2 ? Integer.parseInt(args[1]) : 21370;

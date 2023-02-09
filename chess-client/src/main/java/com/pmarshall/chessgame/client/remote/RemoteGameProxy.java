@@ -17,8 +17,8 @@ import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
 import javafx.application.Platform;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
+import com.pmarshall.chessgame.model.util.Pair;
+import com.pmarshall.chessgame.model.util.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,7 +188,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
     @Override
     public boolean isMoveLegal(Position from, Position to) {
         boolean legalPromotion = legalPromotions.keySet().stream()
-                .anyMatch(triple -> triple.getLeft().equals(from) && triple.getMiddle().equals(to));
+                .anyMatch(triple -> triple.left().equals(from) && triple.mid().equals(to));
 
         return legalMoves.containsKey(Pair.of(from, to)) || legalPromotion;
     }
@@ -207,7 +207,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
     @Override
     public boolean isPromotionRequired(Position from, Position to) {
         return legalPromotions.keySet().stream().anyMatch(
-                triple -> triple.getLeft().equals(from) && triple.getMiddle().equals(to));
+                triple -> triple.left().equals(from) && triple.mid().equals(to));
     }
 
     @Override
@@ -246,6 +246,14 @@ public class RemoteGameProxy implements Game, ServerProxy {
         }
 
         return true;
+    }
+
+    @Override
+    public List<LegalMove> legalMoves() {
+        return Stream.concat(
+                legalMoves.values().stream(),
+                legalPromotions.values().stream()
+        ).collect(Collectors.toList());
     }
 
     /**

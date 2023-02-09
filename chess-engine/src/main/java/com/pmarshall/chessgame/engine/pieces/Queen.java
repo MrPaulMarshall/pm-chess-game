@@ -1,7 +1,7 @@
-package com.pmarshall.chessgame.model.pieces;
+package com.pmarshall.chessgame.engine.pieces;
 
+import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.properties.Color;
-import com.pmarshall.chessgame.model.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.properties.PieceType;
 
 /**
@@ -9,16 +9,20 @@ import com.pmarshall.chessgame.model.properties.PieceType;
  *
  * Extends abstract class Piece
  */
-public final class Bishop extends Piece {
-    // directions: left-up, right-up, right-down, left-down
+public final class Queen extends Piece {
+    // directions: all directions
     static private final int[][] moveDirections = {
             {-1, 1},
+            {0, 1},
             {1, 1},
+            {1, 0},
             {1, -1},
-            {-1, -1}
+            {0, -1},
+            {-1, -1},
+            {-1, 0}
     };
 
-    public Bishop(Color color) {
+    public Queen(Color color) {
         super(color);
     }
 
@@ -30,11 +34,11 @@ public final class Bishop extends Piece {
 
     @Override
     public PieceType getType() {
-        return PieceType.BISHOP;
+        return PieceType.QUEEN;
     }
 
     @Override
     public String toString() {
-        return "B";
+        return "Q";
     }
 }

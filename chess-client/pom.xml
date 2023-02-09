@@ -17,12 +17,14 @@
         <dependency>
             <groupId>com.pmarshall</groupId>
             <artifactId>chess-model</artifactId>
-            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pmarshall</groupId>
+            <artifactId>chess-engine</artifactId>
         </dependency>
         <dependency>
             <groupId>com.pmarshall</groupId>
             <artifactId>chess-web-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -42,6 +44,10 @@
             <version>${javafx.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>

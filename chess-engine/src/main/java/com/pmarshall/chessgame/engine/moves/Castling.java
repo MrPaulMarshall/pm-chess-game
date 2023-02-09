@@ -1,10 +1,10 @@
-package com.pmarshall.chessgame.model.moves;
+package com.pmarshall.chessgame.engine.moves;
 
 import com.pmarshall.chessgame.model.dto.LegalMove;
-import com.pmarshall.chessgame.model.pieces.King;
-import com.pmarshall.chessgame.model.pieces.Rook;
+import com.pmarshall.chessgame.engine.pieces.King;
+import com.pmarshall.chessgame.engine.pieces.Rook;
 import com.pmarshall.chessgame.model.properties.Position;
-import com.pmarshall.chessgame.model.game.InMemoryChessGame;
+import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
 
 import java.util.List;
 

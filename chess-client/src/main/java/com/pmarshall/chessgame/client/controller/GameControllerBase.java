@@ -14,7 +14,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.tuple.Pair;
+import com.pmarshall.chessgame.model.util.Pair;
 
 import java.util.Collection;
 
@@ -158,7 +158,7 @@ public abstract class GameControllerBase {
         // check win conditions
         if (gameOutcome != null) {
             // TODO: use the message as well
-            endGame(gameOutcome.getLeft());
+            endGame(gameOutcome.left());
         }
     }
 

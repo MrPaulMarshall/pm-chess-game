@@ -1,8 +1,8 @@
-package com.pmarshall.chessgame.model.game;
+package com.pmarshall.chessgame.engine.game;
 
-import com.pmarshall.chessgame.model.moves.Move;
-import com.pmarshall.chessgame.model.pieces.King;
-import com.pmarshall.chessgame.model.pieces.Piece;
+import com.pmarshall.chessgame.engine.moves.Move;
+import com.pmarshall.chessgame.engine.pieces.King;
+import com.pmarshall.chessgame.engine.pieces.Piece;
 import com.pmarshall.chessgame.model.properties.Color;
 
 import java.util.LinkedList;

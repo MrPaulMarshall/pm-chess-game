@@ -1,7 +1,7 @@
-package com.pmarshall.chessgame.model.pieces;
+package com.pmarshall.chessgame.engine.pieces;
 
 import com.pmarshall.chessgame.model.properties.Color;
-import com.pmarshall.chessgame.model.game.InMemoryChessGame;
+import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
 import com.pmarshall.chessgame.model.properties.PieceType;
 
 /**
