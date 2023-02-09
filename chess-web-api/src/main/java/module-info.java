@@ -2,7 +2,6 @@ module com.pmarshall.chessgame.api {
     requires com.fasterxml.jackson.annotation;
     requires transitive com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
-
     requires com.pmarshall.chessgame.model;
 
     exports com.pmarshall.chessgame.api;
