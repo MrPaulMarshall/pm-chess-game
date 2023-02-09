@@ -13,13 +13,14 @@ import java.net.Socket;
 public class Server {
 
     private static final Logger log = LoggerFactory.getLogger(Server.class);
+    private static final int DEFAULT_PORT = 21370;
 
     private static final Thread mainThread = Thread.currentThread();
     private static ServerSocket serverSocket;
     private static MatchRegister register;
 
     public static void main(String[] args) throws IOException {
-        int port = parsePort(args.length >= 1 ? args[0] : null);
+        int port = args.length >= 1 ? parsePort(args[0]) : DEFAULT_PORT;
         Runtime.getRuntime().addShutdownHook(new CleanUpHook());
 
         initializeServer(port);
@@ -27,15 +28,20 @@ public class Server {
     }
 
     private static int parsePort(String arg) {
+        int port;
         try {
-            int port = Integer.parseInt(arg);
-            if (1024 <= port && port <= 65535)
-                return port;
+            port = Integer.parseInt(arg);
         } catch (NumberFormatException e) {
-            log.warn("Invalid port argument: {}", arg);
+            log.warn("Cannot parse port number: {}", arg, e);
+            return DEFAULT_PORT;
         }
 
-        return 21370;
+        if (1024 <= port && port <= 65535) {
+            return port;
+        } else {
+            log.warn("Port {} is outside allowed range, defaults to {}", port, DEFAULT_PORT);
+            return DEFAULT_PORT;
+        }
     }
 
     private static void initializeServer(int port) throws IOException {
