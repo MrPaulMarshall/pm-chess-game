@@ -2,6 +2,7 @@ package com.pmarshall.chessgame.server;
 
 import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.lobby.AssignId;
+import com.pmarshall.chessgame.model.service.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ServiceLoader;
 
 public class Server {
 
@@ -20,6 +22,11 @@ public class Server {
     private static MatchRegister register;
 
     public static void main(String[] args) throws IOException {
+        if (ServiceLoader.load(Game.class).stream().findFirst().isEmpty()) {
+            log.error("Game service was not provided");
+            System.exit(1);
+        }
+
         int port = args.length >= 1 ? parsePort(args[0]) : DEFAULT_PORT;
         Runtime.getRuntime().addShutdownHook(new CleanUpHook());
 

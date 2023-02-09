@@ -8,8 +8,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 /**
@@ -19,11 +22,19 @@ import java.util.ServiceLoader;
  */
 public class LocalGameController extends GameControllerBase {
 
+    private static final Logger log = LoggerFactory.getLogger(LocalGameController.class);
+
     /**
      * Initializes game and displays view
      * @throws IOException if anything goes wrong
      */
     public static void initRootLayout(Stage primaryStage) throws IOException {
+        Optional<Game> loadedGameService = ServiceLoader.load(Game.class).findFirst();
+        if (loadedGameService.isEmpty()) {
+            log.error("Game service was not provided, cannot use local mode");
+            return;
+        }
+
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(LocalGameController.class.getResource("/view/local_game_screen.fxml"));
 
@@ -31,7 +42,7 @@ public class LocalGameController extends GameControllerBase {
         Scene scene = new Scene(rootLayout);
 
         LocalGameController controller = loader.getController();
-        Game game = ServiceLoader.load(Game.class).findFirst().orElseThrow();
+        Game game = loadedGameService.get();
         controller.injectDependencies(primaryStage, game);
         controller.createBoardGrid(true);
         controller.refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
