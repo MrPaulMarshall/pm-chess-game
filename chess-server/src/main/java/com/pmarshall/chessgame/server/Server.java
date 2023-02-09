@@ -22,6 +22,8 @@ public class Server {
     private static MatchRegister register;
 
     public static void main(String[] args) throws IOException {
+        log.debug("Launched from {}", Server.class.getModule().isNamed() ? "modulepath" : "classpath");
+
         if (ServiceLoader.load(Game.class).stream().findFirst().isEmpty()) {
             log.error("Game service was not provided");
             System.exit(1);
