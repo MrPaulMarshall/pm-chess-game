@@ -54,40 +54,116 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.github.akman</groupId>
+                            <artifactId>jpackage-maven-plugin</artifactId>
+
+                            <configuration>
+                                <name>windows-chess-client</name>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <name>Linux</name>
+                </os>
+            </activation>
+
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.github.akman</groupId>
+                            <artifactId>jpackage-maven-plugin</artifactId>
+
+                            <configuration>
+                                <name>linux-chess-client</name>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.akman</groupId>
+                    <artifactId>jpackage-maven-plugin</artifactId>
+                    <version>0.1.5</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
-                <groupId>io.github.fvarrui</groupId>
-                <artifactId>javapackager</artifactId>
-                <version>1.6.7</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.pmarshall.chessgame.client.Main</mainClass>
+                    <outputDirectory>${project.build.directory}/lib/mods</outputDirectory>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>linux-build</id>
-                        <phase>package</phase>
+                        <id>copy-modules-dependencies</id>
+                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>package</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <name>linux-chess-client</name>
-                            <bundleJre>true</bundleJre>
-                            <platform>linux</platform>
+                            <outputDirectory>${project.build.directory}/lib/mods</outputDirectory>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
 
+            <plugin>
+                <groupId>com.github.akman</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+
+                <configuration>
+                    <module>com.pmarshall.chessgame.client/com.pmarshall.chessgame.client.Main</module>
+                    <modulepath>
+                        <pathelements>
+                            <pathelement>${project.build.directory}/lib/mods</pathelement>
+                        </pathelements>
+                    </modulepath>
+                    <addmodules>
+                        <addmodule>org.slf4j.simple</addmodule>
+                        <addmodule>com.pmarshall.chessgame.engine</addmodule>
+                    </addmodules>
+                </configuration>
+
+                <executions>
                     <execution>
-                        <id>windows-build</id>
-                        <phase>package</phase>
+                        <id>package-executable</id>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>package</goal>
+                            <goal>jpackage</goal>
                         </goals>
-                        <configuration>
-                            <name>windows-chess-client</name>
-                            <bundleJre>true</bundleJre>
-                            <platform>windows</platform>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
