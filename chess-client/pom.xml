@@ -72,6 +72,9 @@
 
                             <configuration>
                                 <name>windows-chess-client</name>
+                                <winconsole>true</winconsole>
+                                <windirchooser>true</windirchooser>
+                                <winshortcut>true</winshortcut>
                             </configuration>
                         </plugin>
                     </plugins>
@@ -95,6 +98,8 @@
 
                             <configuration>
                                 <name>linux-chess-client</name>
+                                <linuxshortcut>true</linuxshortcut>
+                                <linuxpackagename>linux-chess-client</linuxpackagename>
                             </configuration>
                         </plugin>
                     </plugins>
