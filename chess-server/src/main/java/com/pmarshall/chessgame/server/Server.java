@@ -1,13 +1,13 @@
 package com.pmarshall.chessgame.server;
 
 import com.pmarshall.chessgame.api.Parser;
-import com.pmarshall.chessgame.api.lobby.AssignId;
+import com.pmarshall.chessgame.api.lobby.LogIn;
 import com.pmarshall.chessgame.model.service.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ServiceLoader;
@@ -78,15 +78,14 @@ public class Server {
     private static void registerNewConnection(Socket socket) throws InterruptedException {
         try {
             String id = register.generateNewId();
-            AssignId assignId = new AssignId(id);
 
-            OutputStream out = socket.getOutputStream();
-            byte[] msgBytes = Parser.serialize(assignId);
-            byte[] lengthHeader = Parser.serializeLength(msgBytes.length);
-            out.write(lengthHeader);
-            out.write(msgBytes);
+            InputStream in = socket.getInputStream();
+            byte[] lengthHeader = in.readNBytes(2);
+            int length = Parser.deserializeLength(lengthHeader);
+            byte[] messageBuffer = in.readNBytes(length);
+            LogIn message = (LogIn) Parser.deserialize(messageBuffer, length);
 
-            register.registerNewPlayer(id, socket);
+            register.registerNewPlayer(id, message.name(), socket);
         } catch (IOException e) {
             log.error("Could not notify new player about accepting him", e);
         }

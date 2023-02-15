@@ -46,8 +46,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
     private final Socket socket;
 
     private final Color localPlayer;
-    private final String id;
-    private final String opponentId;
 
     private final Piece[][] board;
     private Color currentPlayer;
@@ -58,18 +56,15 @@ public class RemoteGameProxy implements Game, ServerProxy {
     private LegalMove lastMove;
     private GameOutcome outcome;
 
-    public RemoteGameProxy(RemoteGameController controller, ServerConnection connection, String id, MatchFound message) {
+    public RemoteGameProxy(RemoteGameController controller, ServerConnection connection, MatchFound message) {
         this.controller = controller;
-
-        this.id = id;
         this.socket = connection.socket();
 
         // init local representation
         this.localPlayer = message.color();
-        this.opponentId = message.opponentId();
-
         this.board = setUpBoard();
         this.currentPlayer = Color.WHITE;
+
         storeLegalMoves(message.legalMoves());
 
         // threads and message queue
@@ -289,11 +284,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
         currentPlayer = currentPlayer.next();
     }
 
-
-    public String getId() {
-        return id;
-    }
-
     public void terminateGame(Color winner) {
         writerThread.interrupt();
         readerThread.interrupt();
@@ -358,7 +348,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
                         continue;
                     }
                     if (msg instanceof ChatMessage chatMsg) {
-                        log.info("CHAT: {} says {}", opponentId, chatMsg.text());
                         Platform.runLater(() ->
                                 controller.appendToChat(localPlayer.next(), chatMsg.text()));
                         continue;
@@ -369,8 +358,6 @@ public class RemoteGameProxy implements Game, ServerProxy {
                     }
 
                     log.warn("Unrecognized message: {}", msg);
-    //            } catch (InterruptedException ex) { // TODO: uncomment when the blocking operation will be added
-
                 } catch (IOException ex) {
                     log.error("Connection with server was broken in Reader", ex);
                     terminateGame(null);

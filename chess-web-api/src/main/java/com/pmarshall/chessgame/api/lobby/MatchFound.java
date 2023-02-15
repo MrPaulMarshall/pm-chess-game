@@ -9,12 +9,12 @@ import java.util.Objects;
 
 public record MatchFound(
         Color color,
-        String opponentId,
+        String opponentName,
         List<LegalMove> legalMoves
 ) implements Message {
 
     public MatchFound {
-        Objects.requireNonNull(opponentId);
+        Objects.requireNonNull(opponentName);
         Objects.requireNonNull(color);
         Objects.requireNonNull(legalMoves);
     }

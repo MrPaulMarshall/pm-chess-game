@@ -17,6 +17,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Paweł Marszał
@@ -33,11 +35,13 @@ public class RemoteGameController extends GameControllerBase {
 
     private ServerProxy serverProxy;
 
+    protected final Map<Color, String> namesOfPlayers = new HashMap<>();
+
     /**
      * Initializes game and displays view
      * @throws IOException if the view cannot be loaded
      */
-    public static void initRootLayout(Stage primaryStage, ServerConnection connection, String id, MatchFound matchFound)
+    public static void initRootLayout(Stage primaryStage, ServerConnection connection, String name, MatchFound matchFound)
             throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(RemoteGameController.class.getResource("/view/remote_game_screen.fxml"));
@@ -46,8 +50,8 @@ public class RemoteGameController extends GameControllerBase {
         Scene scene = new Scene(rootLayout);
 
         RemoteGameController controller = loader.getController();
-        RemoteGameProxy game = new RemoteGameProxy(controller, connection, id, matchFound);
-        controller.injectDependencies(primaryStage, game);
+        RemoteGameProxy game = new RemoteGameProxy(controller, connection, matchFound);
+        controller.injectDependencies(primaryStage, game, name, matchFound);
         controller.createBoardGrid(game.localPlayer() == Color.WHITE);
         controller.refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
 
@@ -56,10 +60,13 @@ public class RemoteGameController extends GameControllerBase {
         primaryStage.show();
     }
 
-    private void injectDependencies(Stage primaryStage, RemoteGameProxy game) {
+    private void injectDependencies(Stage primaryStage, RemoteGameProxy game, String name, MatchFound matchFound) {
         this.primaryStage = primaryStage;
         this.game = game;
         this.serverProxy = game;
+
+        namesOfPlayers.put(matchFound.color(), name);
+        namesOfPlayers.put(matchFound.color().next(), matchFound.opponentName());
     }
 
     @FXML
@@ -106,7 +113,7 @@ public class RemoteGameController extends GameControllerBase {
 
     public void appendToChat(Color player, String message) {
         chatText.setEditable(true);
-        chatText.appendText(player + ": " + message + "\n");
+        chatText.appendText(namesOfPlayers.get(player) + ": " + message + "\n");
         chatText.setEditable(false);
     }
 
