@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.pmarshall.chessgame.api.endrequest.DrawProposition;
 import com.pmarshall.chessgame.api.endrequest.DrawResponse;
 import com.pmarshall.chessgame.api.endrequest.Surrender;
-import com.pmarshall.chessgame.api.lobby.AssignId;
+import com.pmarshall.chessgame.api.lobby.LogIn;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
@@ -17,7 +17,6 @@ import com.pmarshall.chessgame.api.outcome.GameOutcome;
         property = "type"
 )
 @JsonSubTypes({
-        @Type(value = AssignId.class, name = "AssignId"),
         @Type(value = MatchFound.class, name = "MatchFound"),
         @Type(value = GameOutcome.class, name = "GameOutcome"),
         @Type(value = DrawProposition.class, name = "DrawProposition"),
@@ -25,7 +24,8 @@ import com.pmarshall.chessgame.api.outcome.GameOutcome;
         @Type(value = Surrender.class, name = "Surrender"),
         @Type(value = Move.class, name = "Move"),
         @Type(value = OpponentMoved.class, name = "OpponentMoved"),
-        @Type(value = ChatMessage.class, name = "ChatMessage")
+        @Type(value = ChatMessage.class, name = "ChatMessage"),
+        @Type(value = LogIn.class, name = "LogIn")
 })
 public interface Message {
 }

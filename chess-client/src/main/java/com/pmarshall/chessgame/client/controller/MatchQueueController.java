@@ -2,13 +2,14 @@ package com.pmarshall.chessgame.client.controller;
 
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
-import com.pmarshall.chessgame.api.lobby.AssignId;
+import com.pmarshall.chessgame.api.lobby.LogIn;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.client.App;
 import com.pmarshall.chessgame.client.remote.ServerConnection;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -25,6 +26,8 @@ public class MatchQueueController {
 
     private static final Logger log = LoggerFactory.getLogger(MatchQueueController.class);
 
+    private static String playerName = null;
+
     private Stage primaryStage;
     private ServerConnection connection;
     private Thread waitingThread;
@@ -33,29 +36,54 @@ public class MatchQueueController {
     public static void initRootLayout(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(MatchQueueController.class.getResource("/view/match_queue_screen.fxml"));
-
         BorderPane rootLayout = loader.load();
-        Scene scene = new Scene(rootLayout);
-
         MatchQueueController controller = loader.getController();
-        ServerConnection connection = connectToServer();
+
+        if (playerName != null) {
+            resumeInitRootLayout(primaryStage, rootLayout, controller);
+        } else {
+            UserNameDialogController.askUserForName(primaryStage, userInput -> {
+                log.info("User provided name: {}", userInput);
+                setPlayerName(userInput);
+                resumeInitRootLayout(primaryStage, rootLayout, controller);
+            });
+        }
+    }
+
+    private static void resumeInitRootLayout(Stage primaryStage,
+                                             Parent rootLayout,
+                                             MatchQueueController controller) {
+        ServerConnection connection;
+        try {
+            connection = connectToServer();
+            logInToServer(connection.out(), playerName);
+        } catch (IOException e) {
+            log.error("Could not connect to the server", e);
+            controller.handleCancelAction();
+            return;
+        }
+
         controller.injectDependencies(primaryStage, connection);
 
+        Scene scene = new Scene(rootLayout);
         primaryStage.setTitle("Chess board");
         primaryStage.setScene(scene);
         primaryStage.show();
 
         controller.waitingThread = new Thread(() -> {
             try {
-                String id = waitForIdAssignment(connection.in());
                 MatchFound matchFound = waitForOpponentMatch(connection.in());
-                Platform.runLater(() -> controller.initGame(id, matchFound));
+                Platform.runLater(() -> controller.initGame(playerName, matchFound));
             } catch (IOException e) {
                 Platform.runLater(controller::handleCancelAction);
                 log.warn("Could not connect to the server and initialize game", e);
             }
         });
         controller.waitingThread.start();
+    }
+
+    private static void setPlayerName(String name) {
+        playerName = name;
     }
 
     private static ServerConnection connectToServer() throws IOException {
@@ -71,14 +99,13 @@ public class MatchQueueController {
         return new ServerConnection(socket, in, out);
     }
 
-    private static String waitForIdAssignment(InputStream in) throws IOException {
-        byte[] headerBuffer = in.readNBytes(2);
-        int length = Parser.deserializeLength(headerBuffer);
-        byte[] messageBuffer = in.readNBytes(length);
+    private static void logInToServer(OutputStream out, String name) throws IOException {
+        LogIn message = new LogIn(name);
+        byte[] messageBuffer = Parser.serialize(message);
+        byte[] headerBuffer = Parser.serializeLength(messageBuffer.length);
 
-        // if the message is different that AssignId, then the contract is broken and client cannot continue
-        AssignId message = (AssignId) Parser.deserialize(messageBuffer, length);
-        return message.id();
+        out.write(headerBuffer);
+        out.write(messageBuffer);
     }
 
     private static MatchFound waitForOpponentMatch(InputStream in) throws IOException {

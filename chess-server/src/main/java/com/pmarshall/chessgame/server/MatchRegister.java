@@ -17,6 +17,8 @@ public class MatchRegister extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(MatchRegister.class);
 
+    private final Map<String, String> playersNamesById = new ConcurrentHashMap<>();
+
     private final Map<String, Socket> liveConnections = new ConcurrentHashMap<>();
 
     private final Map<Integer, Master> activeGames = new HashMap<>();
@@ -63,7 +65,7 @@ public class MatchRegister extends Thread {
                         Socket socket = liveConnections.get(player);
                         try {
                             // TODO: detect broken connection
-                            gameMatch[count] = new PlayerConnection(player, socket.getInputStream(), socket.getOutputStream());
+                            gameMatch[count] = new PlayerConnection(player, playersNamesById.get(player), socket.getInputStream(), socket.getOutputStream());
                             count++;
                         } catch (IOException e) {
                             log.error("Connection to player {} is dead", player, e);
@@ -121,8 +123,9 @@ public class MatchRegister extends Thread {
         return id;
     }
 
-    public void registerNewPlayer(String id, Socket socket) throws InterruptedException {
+    public void registerNewPlayer(String id, String name, Socket socket) throws InterruptedException {
         liveConnections.put(id, socket);
+        playersNamesById.put(id, name);
         freePlayers.put(id);
         semaphore.release();
     }
