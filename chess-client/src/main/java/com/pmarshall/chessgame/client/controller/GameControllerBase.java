@@ -16,6 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import com.pmarshall.chessgame.model.util.Pair;
 
+import java.io.IOException;
 import java.util.Collection;
 
 public abstract class GameControllerBase {
@@ -144,8 +145,11 @@ public abstract class GameControllerBase {
      * @return piece chosen by player
      */
     private PieceType getPromotedPiece() {
-        PromotionController controller = new PromotionController(primaryStage);
-        return controller.askForPromotionPiece(game.currentPlayer());
+        try {
+            return PromotionController.askForPromotionPiece(primaryStage, game.currentPlayer());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void refreshStageAfterMove(Color player, LegalMove move, Piece[][] board, Pair<Color, String> gameOutcome) {
