@@ -1,60 +1,53 @@
 package com.pmarshall.chessgame.client.controller;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-class GameEndedController {
+public class GameEndedController {
 
-    private final Stage primaryStage;
+    private Stage primaryStage;
+    private Stage stage;
 
-    GameEndedController(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    @FXML
+    private Label gameResultLabel;
+
+    public static void initRootLayout(Stage primaryStage, String message) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(GameEndedController.class.getResource("/view/game_ended_screen.fxml"));
+        Parent rootLayout = loader.load();
+        GameEndedController controller = loader.getController();
+
+        Scene scene = new Scene(rootLayout);
+        Stage stage = new Stage();
+
+        controller.injectDependencies(primaryStage, stage);
+        controller.gameResultLabel.setText(message);
+
+        stage.setTitle("End game dialog");
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
-    void initRootLayout(String message) {
-        Stage endGameStage = new Stage();
-        endGameStage.setTitle("End game dialog");
+    private void injectDependencies(Stage primaryStage, Stage stage) {
+        this.primaryStage = primaryStage;
+        this.stage = stage;
+    }
 
-        HBox buttonHBox = new HBox();
-        ToggleButton button = new ToggleButton("Back to menu");
-        button.setOnAction((event) -> {
-            endGameStage.close();
+    @FXML
+    public void buttonClickedHandler(MouseEvent event) {
+        stage.close();
 
-            try {
-                MenuController.initRootLayout(primaryStage);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        buttonHBox.getChildren().add(button);
-        buttonHBox.setAlignment(Pos.CENTER_RIGHT);
-
-        Label resultLabel = new Label(message);
-        resultLabel.setWrapText(true);
-        resultLabel.setTextAlignment(TextAlignment.CENTER);
-        resultLabel.setTranslateX(10);
-        resultLabel.setFont(Font.font(30));
-        resultLabel.setMaxWidth(380);
-
-        BorderPane root = new BorderPane();
-        root.setPadding(new Insets(20));
-        root.setCenter(resultLabel);
-        root.setBottom(buttonHBox);
-
-        Scene scene = new Scene(root);
-        endGameStage.setScene(scene);
-        endGameStage.setWidth(400);
-        endGameStage.setHeight(250);
-        endGameStage.showAndWait();
+        try {
+            MenuController.initRootLayout(primaryStage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
