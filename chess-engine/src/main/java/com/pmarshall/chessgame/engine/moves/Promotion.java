@@ -86,13 +86,7 @@ public class Promotion extends Move {
 
         builder.append(newPosition.strFile());
         builder.append(newPosition.strRank());
-        builder.append("=");
-        // TODO: define PieceType::getCode and use it
-        if (newPiece.getType() == PieceType.KNIGHT) {
-            builder.append("N");
-        } else {
-            builder.append(newPiece.getType().toString().charAt(0));
-        }
+        builder.append("=").append(newPiece.getType().getCode());
 
         if (withCheck) {
             builder.append("+");
