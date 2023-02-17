@@ -83,7 +83,9 @@ public class Server {
             byte[] messageBuffer = in.readNBytes(length);
             LogIn message = (LogIn) Parser.deserialize(messageBuffer, length);
 
-            register.registerNewPlayer(socket, message.name());
+            boolean successful = register.registerNewPlayer(socket, message.name());
+            if (!successful)
+                log.warn("Could not register player {}", message.name());
         } catch (IOException e) {
             log.error("Could not read LogIn message from player", e);
         }
