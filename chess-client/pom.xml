@@ -13,6 +13,10 @@
 
     <artifactId>chess-client</artifactId>
 
+    <properties>
+        <server.address>127.0.0.1 21370</server.address>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.pmarshall</groupId>
@@ -55,6 +59,19 @@
     </dependencies>
 
     <profiles>
+        <profile>
+            <id>custom-route-to-server</id>
+            <activation>
+                <property>
+                    <name>env.SERVER_ADDRESS</name>
+                </property>
+            </activation>
+
+            <properties>
+                <server.address>${env.SERVER_ADDRESS}</server.address>
+            </properties>
+        </profile>
+
         <profile>
             <id>windows</id>
             <activation>
@@ -160,6 +177,7 @@
                         <addmodule>org.slf4j.simple</addmodule>
                         <addmodule>com.pmarshall.chessgame.engine</addmodule>
                     </addmodules>
+                    <arguments>${server.address}</arguments>
                 </configuration>
 
                 <executions>

@@ -132,6 +132,7 @@ public class MatchQueueController {
 
         cancelled = true;
         try {
+            // TODO: game is not jumped to Menu after first failed log-in
             connection.socket().close();
         } catch (IOException e) {
             log.warn("Exception while closing the socket", e);
