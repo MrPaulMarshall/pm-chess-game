@@ -91,8 +91,11 @@ public class RemoteGameController extends GameControllerBase {
 
     public void showDrawRequestedWindow() {
         // TODO: disable interacting with the board
-        DrawRequestController controller = new DrawRequestController(primaryStage, this);
-        controller.displayWindow();
+        try {
+            DrawRequestController.initRootLayout(primaryStage, this);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void acceptDraw() {
