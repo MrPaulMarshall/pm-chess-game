@@ -94,7 +94,7 @@ public class MatchQueueController {
             throw new IOException("Cannot determine server address");
 
         Socket socket = new Socket();
-        socket.connect(address);
+        socket.connect(address, 2_000);
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
 
