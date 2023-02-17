@@ -1,11 +1,14 @@
 package com.pmarshall.chessgame.server;
 
+import com.pmarshall.chessgame.api.Parser;
+import com.pmarshall.chessgame.api.lobby.Ping;
 import com.pmarshall.chessgame.model.util.Pair;
 import com.pmarshall.chessgame.server.threads.Master;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,11 +66,16 @@ public class MatchRegister extends Thread {
                         String playerId = freePlayers.take();
                         Pair<Socket, String> connection = liveConnections.get(playerId);
                         Socket socket = connection.left();
+                        String name = connection.right();
 
                         try {
-                            // TODO: detect broken connection
-                            gameMatch[count] = new PlayerConnection(playerId,
-                                    connection.right(), socket.getInputStream(), socket.getOutputStream());
+                            OutputStream out = socket.getOutputStream();
+                            byte[] messageBuffer = Parser.serialize(new Ping());
+                            byte[] lengthBuffer = Parser.serializeLength(messageBuffer.length);
+                            out.write(lengthBuffer);
+                            out.write(messageBuffer);
+
+                            gameMatch[count] = new PlayerConnection(playerId, name, socket.getInputStream(), out);
                             count++;
                         } catch (IOException e) {
                             log.error("Connection to player {} is dead", playerId, e);

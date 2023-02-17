@@ -4,6 +4,7 @@ import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
 import com.pmarshall.chessgame.api.lobby.LogIn;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
+import com.pmarshall.chessgame.api.lobby.Ping;
 import com.pmarshall.chessgame.client.App;
 import com.pmarshall.chessgame.client.remote.ServerConnection;
 import javafx.application.Platform;
@@ -109,14 +110,18 @@ public class MatchQueueController {
     }
 
     private static MatchFound waitForOpponentMatch(InputStream in) throws IOException {
-        byte[] headerBuffer = in.readNBytes(2);
-        int length = Parser.deserializeLength(headerBuffer);
-        byte[] messageBuffer = in.readNBytes(length);
+        Message message;
+        do {
+            byte[] headerBuffer = in.readNBytes(2);
+            int length = Parser.deserializeLength(headerBuffer);
+            byte[] messageBuffer = in.readNBytes(length);
 
-        // if the message is different that MatchFound, then the contract is broken and client cannot continue
-        Message message = Parser.deserialize(messageBuffer, length);
+            message = Parser.deserialize(messageBuffer, length);
+        } while (message instanceof Ping);
+
         if (!(message instanceof MatchFound))
             throw new IOException("Cannot initialize game due to unexpected message from server: " + message);
+
         return (MatchFound) message;
     }
 
