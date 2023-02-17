@@ -1,10 +1,14 @@
 package com.pmarshall.chessgame.server;
 
+import com.pmarshall.chessgame.api.Parser;
+import com.pmarshall.chessgame.api.lobby.Ping;
+import com.pmarshall.chessgame.model.util.Pair;
 import com.pmarshall.chessgame.server.threads.Master;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,9 +21,7 @@ public class MatchRegister extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(MatchRegister.class);
 
-    private final Map<String, String> playersNamesById = new ConcurrentHashMap<>();
-
-    private final Map<String, Socket> liveConnections = new ConcurrentHashMap<>();
+    private final Map<String, Pair<Socket, String>> liveConnections = new ConcurrentHashMap<>();
 
     private final Map<Integer, Master> activeGames = new HashMap<>();
 
@@ -49,10 +51,10 @@ public class MatchRegister extends Thread {
                     // TODO: reuse connections when the same policy is used on the client side
                     //       alternatively, define keep-alive protocol to detect dead connections
                     try {
-                        liveConnections.get(players[0].id()).close();
+                        liveConnections.get(players[0].id()).left().close();
                     } catch (IOException ignored) {}
                     try {
-                        liveConnections.get(players[1].id()).close();
+                        liveConnections.get(players[1].id()).left().close();
                     } catch (IOException ignored) {}
                 }
 
@@ -61,18 +63,26 @@ public class MatchRegister extends Thread {
                     PlayerConnection[] gameMatch = new PlayerConnection[2];
                     int count = 0;
                     while (count < 2 && count + freePlayers.size() >= 2) {
-                        String player = freePlayers.take();
-                        Socket socket = liveConnections.get(player);
+                        String playerId = freePlayers.take();
+                        Pair<Socket, String> connection = liveConnections.get(playerId);
+                        Socket socket = connection.left();
+                        String name = connection.right();
+
                         try {
-                            // TODO: detect broken connection
-                            gameMatch[count] = new PlayerConnection(player, playersNamesById.get(player), socket.getInputStream(), socket.getOutputStream());
+                            OutputStream out = socket.getOutputStream();
+                            byte[] messageBuffer = Parser.serialize(new Ping());
+                            byte[] lengthBuffer = Parser.serializeLength(messageBuffer.length);
+                            out.write(lengthBuffer);
+                            out.write(messageBuffer);
+
+                            gameMatch[count] = new PlayerConnection(playerId, name, socket.getInputStream(), out);
                             count++;
                         } catch (IOException e) {
-                            log.error("Connection to player {} is dead", player, e);
+                            log.error("Connection to player {} is dead", playerId, e);
                             try {
                                 socket.close();
                             } catch (IOException ignored) {}
-                            liveConnections.remove(player);
+                            liveConnections.remove(playerId);
                         }
                     }
 
@@ -98,9 +108,9 @@ public class MatchRegister extends Thread {
     private void terminate() {
         activeGames.values().forEach(Thread::interrupt);
 
-        liveConnections.forEach((id, socket) -> {
+        liveConnections.forEach((id, connection) -> {
             try {
-                socket.close();
+                connection.left().close();
             } catch (IOException e) {
                 log.error("Could not close socket of player {}", id, e);
             }
@@ -115,19 +125,24 @@ public class MatchRegister extends Thread {
         });
     }
 
-    public String generateNewId() {
+    public boolean registerNewPlayer(Socket socket, String name) {
+        Pair<Socket, String> previousValue;
         String id;
+        // generate ids until unique one is found (and insert is successful)
         do {
             id = Long.toHexString(Double.doubleToLongBits(Math.random()));
-        } while (liveConnections.containsKey(id));
-        return id;
-    }
+            previousValue = liveConnections.putIfAbsent(id, Pair.of(socket, name));
+        } while (previousValue != null);
 
-    public void registerNewPlayer(String id, String name, Socket socket) throws InterruptedException {
-        liveConnections.put(id, socket);
-        playersNamesById.put(id, name);
-        freePlayers.put(id);
+        try {
+            freePlayers.put(id);
+        } catch (InterruptedException e) {
+            liveConnections.remove(id);
+            return false;
+        }
+
         semaphore.release();
+        return true;
     }
 
     public void notifyGameEnded(int gameId) throws InterruptedException {

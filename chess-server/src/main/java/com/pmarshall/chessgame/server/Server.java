@@ -65,8 +65,8 @@ public class Server {
             while (!Thread.interrupted()) {
                 try {
                     Socket socket = serverSocket.accept();
-                    registerNewConnection(socket);
-                } catch (IOException | InterruptedException e) {
+                    new Thread(() -> registerNewConnection(socket)).start();
+                } catch (IOException e) {
                     log.error("Server encountered error", e);
                     register.interrupt();
                     break;
@@ -75,19 +75,19 @@ public class Server {
         }
     }
 
-    private static void registerNewConnection(Socket socket) throws InterruptedException {
+    private static void registerNewConnection(Socket socket) {
         try {
-            String id = register.generateNewId();
-
             InputStream in = socket.getInputStream();
             byte[] lengthHeader = in.readNBytes(2);
             int length = Parser.deserializeLength(lengthHeader);
             byte[] messageBuffer = in.readNBytes(length);
             LogIn message = (LogIn) Parser.deserialize(messageBuffer, length);
 
-            register.registerNewPlayer(id, message.name(), socket);
+            boolean successful = register.registerNewPlayer(socket, message.name());
+            if (!successful)
+                log.warn("Could not register player {}", message.name());
         } catch (IOException e) {
-            log.error("Could not notify new player about accepting him", e);
+            log.error("Could not read LogIn message from player", e);
         }
     }
 

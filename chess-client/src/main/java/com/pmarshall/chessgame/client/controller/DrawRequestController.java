@@ -1,80 +1,41 @@
 package com.pmarshall.chessgame.client.controller;
 
-import javafx.geometry.Pos;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class DrawRequestController {
 
-    private final Stage primaryStage;
-    private final RemoteGameController gameController;
+    private Stage stage;
+    private RemoteGameController gameController;
 
-    public DrawRequestController(Stage primaryStage, RemoteGameController gameController) {
-        this.primaryStage = primaryStage;
+    private void injectDependencies(Stage stage, RemoteGameController gameController) {
+        this.stage = stage;
         this.gameController = gameController;
     }
 
     /**
      * Creates dialog window and doesn't wait for player's decision
      */
-    public void displayWindow() {
-        // create new window
+    public static void initRootLayout(Stage primaryStage, RemoteGameController gameController) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(DrawRequestController.class.getResource("/view/draw_dialog_screen.fxml"));
+        Parent rootLayout = loader.load();
+        DrawRequestController controller = loader.getController();
+
         Stage stage = new Stage();
-        stage.setTitle("Draw requested dialog");
-        stage.setResizable(false);
-
-        // horizontal box with text (at the bottom of the window)
-        HBox labelHBox = new HBox();
-        Label label = new Label("The opponent has proposed a draw");
-        label.setFont(Font.font(16));
-        labelHBox.getChildren().add(label);
-        labelHBox.setAlignment(Pos.CENTER);
-
-        // horizontal box with possible pieces (clickable)
-        HBox buttonsHBox = new HBox();
-        buttonsHBox.setMaxHeight(70);
-        buttonsHBox.spacingProperty().setValue(10);
-
-        {
-            Button button = new Button("Accept");
-            button.setOnMouseClicked(e -> {
-                gameController.acceptDraw();
-                stage.close();
-            });
-            button.setPrefWidth(70);
-            button.setPrefHeight(70);
-
-            buttonsHBox.getChildren().add(button);
-        }
-
-        {
-            Button button = new Button("Reject");
-            button.setOnMouseClicked(e -> {
-                gameController.rejectDraw();
-                stage.close();
-            });
-            button.setPrefWidth(70);
-            button.setPrefHeight(70);
-
-            buttonsHBox.getChildren().add(button);
-        }
-
-        // window-sized container
-        BorderPane root = new BorderPane();
-        root.setCenter(buttonsHBox);
-        root.setBottom(labelHBox);
+        controller.injectDependencies(stage, gameController);
 
         // creates scene
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(rootLayout);
+        stage.setTitle("Draw requested dialog");
         stage.setScene(scene);
-        stage.setWidth(325);
-        stage.setHeight(180);
-
+        stage.setResizable(false);
         stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
 
@@ -82,4 +43,15 @@ public class DrawRequestController {
         stage.showAndWait();
     }
 
+    @FXML
+    private void acceptDraw() {
+        gameController.acceptDraw();
+        stage.close();
+    }
+
+    @FXML
+    private void rejectDraw() {
+        gameController.rejectDraw();
+        stage.close();
+    }
 }
