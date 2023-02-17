@@ -115,19 +115,27 @@ public class MatchRegister extends Thread {
         });
     }
 
-    public String generateNewId() {
+    public boolean registerNewPlayer(Socket socket, String name) {
+        Socket previousValue;
         String id;
+        // generate ids until unique one is found (and insert is successful)
         do {
             id = Long.toHexString(Double.doubleToLongBits(Math.random()));
-        } while (liveConnections.containsKey(id));
-        return id;
-    }
+            previousValue = liveConnections.putIfAbsent(id, socket);
+        } while (previousValue != null);
 
-    public void registerNewPlayer(String id, String name, Socket socket) throws InterruptedException {
-        liveConnections.put(id, socket);
         playersNamesById.put(id, name);
-        freePlayers.put(id);
+
+        try {
+            freePlayers.put(id);
+        } catch (InterruptedException e) {
+            liveConnections.remove(id);
+            playersNamesById.remove(id);
+            return false;
+        }
+
         semaphore.release();
+        return true;
     }
 
     public void notifyGameEnded(int gameId) throws InterruptedException {
