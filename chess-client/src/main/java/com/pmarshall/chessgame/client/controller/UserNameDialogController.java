@@ -8,15 +8,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.function.Consumer;
 
 public class UserNameDialogController {
-
-    private static final Logger log = LoggerFactory.getLogger(UserNameDialogController.class);
 
     private Consumer<String> resumeCallback;
 
@@ -45,7 +41,6 @@ public class UserNameDialogController {
     public void initialize() {
         final int maxLength = 16;
         inputField.textProperty().addListener((ov, oldValue, newValue) -> {
-            log.info("Input change: {} -> {}", oldValue, newValue);
             if (inputField.getText().length() > maxLength) {
                 String s = inputField.getText().substring(0, maxLength);
                 inputField.setText(s);

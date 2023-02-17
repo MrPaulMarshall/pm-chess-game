@@ -34,7 +34,7 @@ class MessageSpec extends Specification {
         '{"type":"DrawProposition"}'                               | new DrawProposition()
         '{"type":"DrawResponse","accepted":false}'                 | new DrawResponse(false)
         '{"type":"Surrender"}'                                     | new Surrender()
-        '{"type":"LogIn","id":"abc123"}'                           | new LogIn('abc123')
+        '{"type":"LogIn","name":"abc123"}'                         | new LogIn('abc123')
         '{"type":"GameOutcome","outcome":"DEFEAT","message":null}' | new GameOutcome(GameOutcome.Type.DEFEAT, null)
         '{"type":"ChatMessage","text":"Some text 123!"}'           | new ChatMessage('Some text 123!')
         '{"type":"MatchFound","color":"BLACK","opponentName":"a1","legalMoves":[]}'                | new MatchFound(Color.BLACK, 'a1', List.of())
