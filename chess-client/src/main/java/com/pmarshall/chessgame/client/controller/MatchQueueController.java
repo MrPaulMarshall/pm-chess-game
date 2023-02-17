@@ -60,6 +60,7 @@ public class MatchQueueController {
             logInToServer(connection.out(), playerName);
         } catch (IOException e) {
             log.error("Could not connect to the server", e);
+            controller.injectDependencies(primaryStage, null);
             controller.handleCancelAction();
             return;
         }
@@ -136,11 +137,13 @@ public class MatchQueueController {
             return;
 
         cancelled = true;
-        try {
-            // TODO: game is not jumped to Menu after first failed log-in
-            connection.socket().close();
-        } catch (IOException e) {
-            log.warn("Exception while closing the socket", e);
+
+        if (connection != null) {
+            try {
+                connection.socket().close();
+            } catch (IOException e) {
+                log.warn("Exception while closing the socket", e);
+            }
         }
 
         try {
