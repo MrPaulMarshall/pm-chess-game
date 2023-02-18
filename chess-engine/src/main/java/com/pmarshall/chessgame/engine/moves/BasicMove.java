@@ -63,10 +63,10 @@ public class BasicMove extends Move {
     public LegalMove toDto(List<Move> legalMoves) {
         if (movedPiece instanceof Pawn && takenPiece != null && !takenPiecePosition.equals(newPosition)) {
             return new EnPassant(
-                    movedPiece.getPosition(), newPosition, takenPiecePosition, withCheck, inNotation(legalMoves));
+                    movedPiece.getPosition(), newPosition, takenPiecePosition, moveEffect, inNotation(legalMoves));
         }
 
-        return new DefaultMove(movedPiece.getPosition(), newPosition, withCheck, inNotation(legalMoves));
+        return new DefaultMove(movedPiece.getPosition(), newPosition, moveEffect, inNotation(legalMoves));
     }
 
     @Override
@@ -84,9 +84,7 @@ public class BasicMove extends Move {
         builder.append(newPosition.strFile());
         builder.append(newPosition.strRank());
 
-        if (withCheck) {
-            builder.append("+");
-        }
+        builder.append(getMoveEffectCode());
 
         return builder.toString();
     }

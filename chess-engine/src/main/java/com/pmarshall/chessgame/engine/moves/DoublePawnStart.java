@@ -48,7 +48,7 @@ public class DoublePawnStart extends Move {
 
     @Override
     public LegalMove toDto(List<Move> legalMoves) {
-        return new DefaultMove(movedPiece.getPosition(), newPosition, withCheck, inNotation(legalMoves));
+        return new DefaultMove(movedPiece.getPosition(), newPosition, moveEffect, inNotation(legalMoves));
     }
 
     @Override

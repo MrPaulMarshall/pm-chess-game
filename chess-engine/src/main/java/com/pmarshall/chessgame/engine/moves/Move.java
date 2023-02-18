@@ -3,6 +3,7 @@ package com.pmarshall.chessgame.engine.moves;
 import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.engine.game.InMemoryChessGame;
 import com.pmarshall.chessgame.engine.pieces.Piece;
+import com.pmarshall.chessgame.model.properties.MoveEffect;
 import com.pmarshall.chessgame.model.properties.Position;
 
 import java.util.List;
@@ -46,9 +47,9 @@ public abstract class Move {
     protected boolean pieceDidNotMoveBefore;
 
     /**
-     * Flag that tell whether enemy king would be put in check by this move
+     * Flag that tells whether move causes check, checkmate, stalemate, or none
      */
-    protected boolean withCheck;
+    protected MoveEffect moveEffect;
 
     /**
      * Executes move
@@ -76,12 +77,12 @@ public abstract class Move {
         return takenPiece;
     }
 
-    public boolean isWithCheck() {
-        return withCheck;
+    public MoveEffect getMoveEffect() {
+        return moveEffect;
     }
 
-    public void setWithCheck(boolean check) {
-        this.withCheck = check;
+    public void setMoveEffect(MoveEffect moveEffect) {
+        this.moveEffect = moveEffect;
     }
 
     public abstract LegalMove toDto(List<Move> legalMove);
@@ -92,4 +93,15 @@ public abstract class Move {
      * @return representation of the move in algebraic notation
      */
     public abstract String inNotation(List<Move> legalMoves);
+
+    /**
+     * @return "+" for check, "#" for checkmate, empty string for others
+     */
+    protected String getMoveEffectCode() {
+        return switch (moveEffect) {
+            case CHECK -> "+";
+            case CHECKMATE -> "#";
+            default -> "";
+        };
+    }
 }

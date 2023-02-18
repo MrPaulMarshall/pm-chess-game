@@ -47,10 +47,6 @@ public class Player {
     }
 
 
-    public boolean isKingChecked() {
-        return king.getIsChecked();
-    }
-
     @Override
     public String toString() {
         return color == Color.WHITE ? "WHITES" : "BLACKS";

@@ -72,12 +72,12 @@ public class Castling extends Move {
     public LegalMove toDto(List<Move> legalMoves) {
         int distance = abs(newPositionForRook.file() - oldPositionOfRook.file());
         return new com.pmarshall.chessgame.model.dto.Castling(
-                movedPiece.getPosition(), newPosition, distance == 3, withCheck, inNotation(legalMoves));
+                movedPiece.getPosition(), newPosition, distance == 3, moveEffect, inNotation(legalMoves));
     }
 
     @Override
     public String inNotation(List<Move> legalMoves) {
         int distance = abs(newPositionForRook.file() - oldPositionOfRook.file());
-        return (distance == 2 ? "0-0" : "0-0-0") + (withCheck ? "+" : "");
+        return (distance == 2 ? "0-0" : "0-0-0") + getMoveEffectCode();
     }
 }

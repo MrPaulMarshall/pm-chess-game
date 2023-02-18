@@ -12,10 +12,6 @@ import com.pmarshall.chessgame.engine.moves.Castling;
  * Extends abstract class Piece
  */
 public final class King extends Piece {
-    /**
-     * Stores information if king is under check
-     */
-    private boolean isChecked = false;
 
     // 1-cell steps in all directions, starting from up-left and going clockwise
     static private final int[][] jumps = {
@@ -31,14 +27,6 @@ public final class King extends Piece {
 
     public King(Color color) {
         super(color);
-    }
-
-    public void setIsChecked(boolean isChecked) {
-        this.isChecked = isChecked;
-    }
-
-    public boolean getIsChecked() {
-        return isChecked;
     }
 
     @Override

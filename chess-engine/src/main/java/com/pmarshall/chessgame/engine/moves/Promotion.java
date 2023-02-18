@@ -73,7 +73,7 @@ public class Promotion extends Move {
 
     @Override
     public LegalMove toDto(List<Move> legalMoves) {
-        return new com.pmarshall.chessgame.model.dto.Promotion(movedPiece.getPosition(), newPosition, newPiece.getType(), withCheck, inNotation(legalMoves));
+        return new com.pmarshall.chessgame.model.dto.Promotion(movedPiece.getPosition(), newPosition, newPiece.getType(), moveEffect, inNotation(legalMoves));
     }
 
     @Override
@@ -88,9 +88,7 @@ public class Promotion extends Move {
         builder.append(newPosition.strRank());
         builder.append("=").append(newPiece.getType().getCode());
 
-        if (withCheck) {
-            builder.append("+");
-        }
+        builder.append(getMoveEffectCode());
 
         return builder.toString();
     }

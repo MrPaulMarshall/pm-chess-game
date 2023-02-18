@@ -5,6 +5,7 @@ import com.pmarshall.chessgame.engine.moves.Promotion;
 import com.pmarshall.chessgame.engine.pieces.*;
 import com.pmarshall.chessgame.engine.pieces.Piece;
 import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.MoveEffect;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.engine.moves.Move;
@@ -236,7 +237,6 @@ public class InMemoryChessGame implements Game {
         move.execute(this);
         moveHistory.addLast(move);
 
-        getOtherPlayer().getKing().setIsChecked(move.isWithCheck());
         changePlayer();
 
         // List of pieces is copied because simulations temporarily modify it,
@@ -244,13 +244,10 @@ public class InMemoryChessGame implements Game {
         List.copyOf(currentPlayer.getPieces()).forEach(f -> f.updatePossibleMoves(this));
 
         // check conditions of victory
-        if (currentPlayer.getAllPossibleMoves().isEmpty()) {
-            if (currentPlayer.isKingChecked()) {
-                winner = getOtherPlayer();
-            }
-            else {
-                draw = true;
-            }
+        if (lastMoveDto.moveEffect() == MoveEffect.CHECKMATE) {
+            winner = getOtherPlayer();
+        } else if (lastMoveDto.moveEffect() == MoveEffect.STALEMATE) {
+            draw = true;
         }
     }
 
@@ -268,7 +265,16 @@ public class InMemoryChessGame implements Game {
 
         if (isLegal) {
             getCurrentPlayer().getPieces().forEach(p -> p.updateMovesWithoutProtectingKing(this));
-            move.setWithCheck(isPosThreatened(getOtherPlayer().getKing().getPosition(), currentPlayer));
+            getOtherPlayer().getPieces().forEach(p -> p.updatePossibleMoves(this));
+
+            boolean opponentInCheck = isPosThreatened(getOtherPlayer().getKing().getPosition(), currentPlayer);
+            boolean opponentCanMove = !getOtherPlayer().getAllPossibleMoves().isEmpty();
+
+            MoveEffect moveEffect = opponentCanMove
+                    ? (opponentInCheck ? MoveEffect.CHECK : MoveEffect.NONE)
+                    : (opponentInCheck ? MoveEffect.STALEMATE : MoveEffect.CHECKMATE);
+
+            move.setMoveEffect(moveEffect);
         }
 
         moveHistory.removeLast();

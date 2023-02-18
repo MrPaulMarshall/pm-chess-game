@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.model.dto;
 
+import com.pmarshall.chessgame.model.properties.MoveEffect;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 
@@ -9,7 +10,7 @@ public record Promotion(
         Position from,
         Position to,
         PieceType newType,
-        boolean check,
+        MoveEffect moveEffect,
         String notation
 ) implements LegalMove {
 
@@ -17,6 +18,7 @@ public record Promotion(
         Objects.requireNonNull(from);
         Objects.requireNonNull(to);
         Objects.requireNonNull(newType);
+        Objects.requireNonNull(moveEffect);
         Objects.requireNonNull(notation);
     }
 }

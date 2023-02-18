@@ -3,6 +3,7 @@ package com.pmarshall.chessgame.model.dto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.pmarshall.chessgame.model.properties.MoveEffect;
 import com.pmarshall.chessgame.model.properties.Position;
 
 @JsonTypeInfo(
@@ -18,6 +19,6 @@ import com.pmarshall.chessgame.model.properties.Position;
 public interface LegalMove {
     Position from();
     Position to();
-    boolean check();
+    MoveEffect moveEffect();
     String notation();
 }

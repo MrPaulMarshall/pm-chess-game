@@ -3,6 +3,7 @@ package com.pmarshall.chessgame.client.controller;
 import com.pmarshall.chessgame.model.dto.LegalMove;
 import com.pmarshall.chessgame.model.dto.Piece;
 import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.MoveEffect;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.properties.Position;
 import com.pmarshall.chessgame.model.service.Game;
@@ -141,7 +142,12 @@ public abstract class GameControllerBase {
 
     public void refreshStageAfterMove(Color player, LegalMove move, Piece[][] board, Pair<Color, String> gameOutcome) {
         pieceChosen = null;
-        checkedKing = move.check() ? findCheckedKing(player.next(), board) : null;
+
+        if (move.moveEffect() == MoveEffect.CHECK || move.moveEffect() == MoveEffect.CHECKMATE) {
+            checkedKing = findCheckedKing(player.next(), board);
+        } else {
+            checkedKing = null;
+        }
 
         appendMoveToLedger(player, move.notation());
         refreshBoard(player.next(), board);
