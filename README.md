@@ -1,103 +1,126 @@
 # Chess Game by Paweł Marszał 
 
-My application, that allows two players to play chess
+The project implements server and client applications for local and remote multiplayer chess.
+* Local mode uses one board shared by two people using one machine and does not require internet connection.
+* Remote mode allows clients to play over network via server that ensures chess rules
+and state integrity. 
 
-## How to run it
+### Motivation
 
-### Prerequisites
+The goal I have for this project is to learn and practice various concepts
+that may be useful for Java programmer.
+That includes:
+* System design - I've had to decide which communication model to choose, how to organize
+computation on server and client side, define interfaces between packages and modules etc.
+* Multi-module Maven project
+* Java modules
+* JavaFX app structure and GUI design
+* Building and running Docker images
+* Packaging installable self-contained Java applications using `jpackage`
+* Websockets - I've defined simple communication protocol over TCP sockets to allow bidirectional communication
+* Network routing to self-host server using my personal public IP
+
+---
+
+### Technologies used
 
 * Java 17
 * JavaFX 17
 * Maven
+* Websockets
+* Docker
+* JPackage
 
-### Installation
+### Build process
 
-Make sure you have set environmental variables JAVA_HOME and PATH_TO_FX.
+Only prerequisite is Java 17 installed.
 
-Compile the app using `./mvnw package`, and after that you can run the game by:
+Then to build the project use `./mvwn verify` on Linux or `.\mvwn.cmd verify` on Windows.
+Maven wrapper will take care of downloading Maven and the rest of dependencies.
 
-```
-java --module-path $PATH_TO_FX --add-modules javafx.controls,javafx.fxml -cp "chess-client/target/chess-client-1.0.jar:chess-model/target/chess-model-1.0.jar" com.pmarshall.chessgame.client.Main
-```
+Afterwards, to create server's Docker image use script `./pmdocker` (on Linux environment).
 
----
+Client app installer is created automatically and located in `chess-client/target/jpackage` directory.
+Because `jpackage` tool doesn't support cross-platform builds Windows and/or Linux clients
+need to be build on target platforms.
 
-## Logical Data Model
+If environment variable `SERVER_ADDRESS` is specified during build process, it will be default
+route that clients will try to connect to. Example of this variable looks like:
+`SERVER_ADDRESS='127.0.0.1 11111'`.
 
-Main elements of logical data model are:
+Alternatively user can provide server's IP and port as command line arguments to client, like:
+`.\windows-chess-client.exe 127.0.0.1 11111`.
 
-<ul>
-    Pieces
-</ul>
-<ul>
-    Moves
-</ul>
-<ul>
-    Players
-</ul>
-<ul>
-    Game object
-</ul>
+### How to run it
 
-Game object binds other elements together and contains an array representing board.
+Server can be run either directly (requires installation of Java) or as a docker container.
 
-### Some rules
-
-My application implements all rules of chess, including:
-
-* promotion of pawn on the last row
-
-* double-length start of pawn
-
-* capturing en-passant
-
-* castling
-
-Application validates all possible moves that can be taken at each moment in time,
-so after picking a piece player sees only those that are possible without breaking the rules.
+Client is standalone application. After you build the installer or download it from other source,
+you can install it on your system and use like any other program.
 
 ---
 
-## Design patterns
+## Architecture overview
 
-I have used 2 design patterns in my project:
+### Communication protocol
 
-* MVC (Model-View-Controller) - to create GUI
-  
-* Command - to implement moves; it is necessary, because validating moves requires
-simulating them and then rewinding them back
-  
+Server and clients communicate using TCP Websockets.
+Both server and clients use blocking synchronous I/O in dedicated threads.
+
+Messages (Java objects) are parsed to JSON and then to byte arrays that can be sent
+over the network.
+To know how many bytes receiving side has to read, each messages is preceded by 2-bytes long
+header containing length of the actual message.
+
+### Computation model
+
+* Client application threads
+
+![Client app threads](docs/arch/client-app-threads.png)
+
+* Server application threads
+
+![Server app threads](docs/arch/server-app-threads.png)
+
 ---
 
 ## GUI examples
 
 ### Welcome screen
 
-![Login Screen](docs/welcome-screen.png)
+![Login Screen](docs/view/welcome-screen.png)
 
 ### Initial layout of the game
 
-![Login Screen](docs/initial-game-screen.png)
+![Login Screen](docs/view/initial-game-screen.png)
 
 
 ### Making move
 
-![Login Screen](docs/making-move-screen.png)
+![Login Screen](docs/view/making-move-screen.png)
 
 ### Promotion
 
-#### Promotion dialog
-
-![Login Screen](docs/promotion-dialog.png)
-
-#### Game after promotion
-
-![Login Screen](docs/after-promotion.png)
+![Login Screen](docs/view/promotion-dialog.png)
 
 ### Victory notification screen
 
-![Login Screen](docs/blacks-victory-screen.png)
+![Login Screen](docs/view/blacks-victory-screen.png)
 
 ### Draw notification screen
 
-![Login Screen](docs/draw-end-screen.png)
+![Login Screen](docs/view/draw-end-screen.png)
+
+### Remote mode screen
+
+#### White player
+
+![White player remote screen](docs/view/white-player-remote-screen.png)
+
+#### Black player
+
+![Black player remote screen](docs/view/black-player-remote-screen.png)
+
+### Draw proposition window
+
+![Draw proposition window](docs/view/draw-proposition-dialog.png)
