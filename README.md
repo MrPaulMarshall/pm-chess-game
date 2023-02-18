@@ -5,7 +5,7 @@ The project implements server and client applications for local and remote multi
 * Remote mode allows clients to play over network via server that ensures chess rules
 and state integrity. 
 
-## Motivation
+### Motivation
 
 The goal I have for this project is to learn and practice various concepts
 that may be useful for Java programmer.
@@ -20,7 +20,9 @@ computation on server and client side, define interfaces between packages and mo
 * Websockets - I've defined simple communication protocol over TCP sockets to allow bidirectional communication
 * Network routing to self-host server using my personal public IP
 
-## Technologies used
+---
+
+### Technologies used
 
 * Java 17
 * JavaFX 17
@@ -29,7 +31,7 @@ computation on server and client side, define interfaces between packages and mo
 * Docker
 * JPackage
 
-## Build process
+### Build process
 
 Only prerequisite is Java 17 installed.
 
@@ -49,7 +51,7 @@ route that clients will try to connect to. Example of this variable looks like:
 Alternatively user can provide server's IP and port as command line arguments to client, like:
 `.\windows-chess-client.exe 127.0.0.1 11111`.
 
-## How to run it
+### How to run it
 
 Server can be run either directly (requires installation of Java) or as a docker container.
 
@@ -58,51 +60,28 @@ you can install it on your system and use like any other program.
 
 ---
 
-## Logical Data Model
+## Architecture overview
 
-Main elements of logical data model are:
+### Communication protocol
 
-<ul>
-    Pieces
-</ul>
-<ul>
-    Moves
-</ul>
-<ul>
-    Players
-</ul>
-<ul>
-    Game object
-</ul>
+Server and clients communicate using TCP Websockets.
+Both server and clients use blocking synchronous I/O in dedicated threads.
 
-Game object binds other elements together and contains an array representing board.
+Messages (Java objects) are parsed to JSON and then to byte arrays that can be sent
+over the network.
+To know how many bytes receiving side has to read, each messages is preceded by 2-bytes long
+header containing length of the actual message.
 
-### Some rules
+### Computation model
 
-My application implements all rules of chess, including:
+* Client application threads
 
-* promotion of pawn on the last row
+![Client app threads](docs/arch/client-app-threads.png)
 
-* double-length start of pawn
+* Server application threads
 
-* capturing en-passant
+![Server app threads](docs/arch/server-app-threads.png)
 
-* castling
-
-Application validates all possible moves that can be taken at each moment in time,
-so after picking a piece player sees only those that are possible without breaking the rules.
-
----
-
-## Design patterns
-
-I have used 2 design patterns in my project:
-
-* MVC (Model-View-Controller) - to create GUI
-  
-* Command - to implement moves; it is necessary, because validating moves requires
-simulating them and then rewinding them back
-  
 ---
 
 ## GUI examples
