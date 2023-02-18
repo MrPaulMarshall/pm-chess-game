@@ -88,31 +88,39 @@ header containing length of the actual message.
 
 ### Welcome screen
 
-![Login Screen](docs/welcome-screen.png)
+![Login Screen](docs/view/welcome-screen.png)
 
 ### Initial layout of the game
 
-![Login Screen](docs/initial-game-screen.png)
+![Login Screen](docs/view/initial-game-screen.png)
 
 
 ### Making move
 
-![Login Screen](docs/making-move-screen.png)
+![Login Screen](docs/view/making-move-screen.png)
 
 ### Promotion
 
-#### Promotion dialog
-
-![Login Screen](docs/promotion-dialog.png)
-
-#### Game after promotion
-
-![Login Screen](docs/after-promotion.png)
+![Login Screen](docs/view/promotion-dialog.png)
 
 ### Victory notification screen
 
-![Login Screen](docs/blacks-victory-screen.png)
+![Login Screen](docs/view/blacks-victory-screen.png)
 
 ### Draw notification screen
 
-![Login Screen](docs/draw-end-screen.png)
+![Login Screen](docs/view/draw-end-screen.png)
+
+### Remote mode screen
+
+#### White player
+
+![White player remote screen](docs/view/white-player-remote-screen.png)
+
+#### Black player
+
+![Black player remote screen](docs/view/black-player-remote-screen.png)
+
+### Draw proposition window
+
+![Draw proposition window](docs/view/draw-proposition-dialog.png)
