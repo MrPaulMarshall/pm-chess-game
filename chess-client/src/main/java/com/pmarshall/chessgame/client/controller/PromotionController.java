@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.client.controller;
 
+import com.pmarshall.chessgame.client.App;
 import com.pmarshall.chessgame.client.FXMLUtils;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
@@ -34,7 +35,7 @@ public class PromotionController {
     @FXML
     private GridPane imagesGrid;
 
-    public static PieceType askForPromotionPiece(Stage primaryStage, Color color) {
+    public static PieceType askForPromotionPiece(Color color) {
         PromotionController controller = new PromotionController();
         Parent root = FXMLUtils.load(controller, "/view/promotion_dialog_screen.fxml");
 
@@ -62,7 +63,7 @@ public class PromotionController {
         stage.setTitle("Promoting piece dialog");
         stage.setScene(scene);
         stage.setResizable(false);
-        stage.initOwner(primaryStage);
+        stage.initOwner(App.primaryStage());
         stage.initModality(Modality.WINDOW_MODAL);
 
         stage.showAndWait();

@@ -1,6 +1,7 @@
 package com.pmarshall.chessgame.client.controller;
 
 import com.pmarshall.chessgame.api.lobby.MatchFound;
+import com.pmarshall.chessgame.client.App;
 import com.pmarshall.chessgame.client.FXMLUtils;
 import com.pmarshall.chessgame.client.remote.ServerConnection;
 import com.pmarshall.chessgame.model.properties.Color;
@@ -35,8 +36,7 @@ public class RemoteGameController extends GameControllerBase {
 
     private final Map<Color, String> namesOfPlayers;
 
-    private RemoteGameController(Stage primaryStage, RemoteGameProxy game, String name, MatchFound matchFound) {
-        this.primaryStage = primaryStage;
+    private RemoteGameController(RemoteGameProxy game, String name, MatchFound matchFound) {
         this.game = game;
         this.serverProxy = game;
         this.namesOfPlayers = Map.of(matchFound.color(), name, matchFound.color().next(), matchFound.opponentName());
@@ -45,18 +45,17 @@ public class RemoteGameController extends GameControllerBase {
     /**
      * Initializes game and displays view
      */
-    public static void initRootLayout(Stage primaryStage, ServerConnection connection, String name, MatchFound matchFound) {
-        RemoteGameController controller = new RemoteGameController(primaryStage, null, name, matchFound);
+    public static void initRootLayout(ServerConnection connection, String name, MatchFound matchFound) {
+        RemoteGameController controller = new RemoteGameController(null, name, matchFound);
         RemoteGameProxy proxy = new RemoteGameProxy(controller, connection, matchFound);
         controller.game = proxy;
         controller.serverProxy = proxy;
 
         Parent root = FXMLUtils.load(controller, "/view/remote_game_screen.fxml");
 
-        Scene scene = new Scene(root);
-        primaryStage.setTitle("Chess board");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        Stage stage = App.primaryStage();
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
     @FXML
@@ -87,7 +86,7 @@ public class RemoteGameController extends GameControllerBase {
 
     public void showDrawRequestedWindow() {
         // TODO: disable interacting with the board
-        DrawRequestController.initRootLayout(primaryStage, this);
+        DrawRequestController.initRootLayout(this);
     }
 
     public void acceptDraw() {

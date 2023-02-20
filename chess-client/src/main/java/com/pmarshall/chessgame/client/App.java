@@ -17,6 +17,8 @@ public class App extends Application {
 
     private static InetSocketAddress serverAddress;
 
+    private static Stage primaryStage;
+
     public static void main(String[] args) {
         log.debug("Launched from {}", App.class.getModule().isNamed() ? "modulepath" : "classpath");
 
@@ -33,12 +35,16 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Chess game by Paweł Marszał");
-        MenuController.initRootLayout(primaryStage);
+        App.primaryStage = primaryStage;
+        primaryStage.setTitle("Marszal Chess FX");
+        MenuController.initRootLayout();
     }
 
-    public static InetSocketAddress getServerAddress() {
+    public static InetSocketAddress serverAddress() {
         return serverAddress;
     }
 
+    public static Stage primaryStage() {
+        return primaryStage;
+    }
 }
