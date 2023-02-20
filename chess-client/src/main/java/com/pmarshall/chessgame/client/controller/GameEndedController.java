@@ -1,47 +1,41 @@
 package com.pmarshall.chessgame.client.controller;
 
+import com.pmarshall.chessgame.client.FXMLUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class GameEndedController {
 
-    private Stage primaryStage;
-    private Stage stage;
+    private final Stage primaryStage;
+
+    private final Stage stage;
 
     @FXML
     private Label gameResultLabel;
 
-    public static void initRootLayout(Stage primaryStage, String message) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(GameEndedController.class.getResource("/view/game_ended_screen.fxml"));
-        Parent rootLayout = loader.load();
-        GameEndedController controller = loader.getController();
+    private GameEndedController(Stage primaryStage, Stage stage) {
+        this.primaryStage = primaryStage;
+        this.stage = stage;
+    }
 
-        Scene scene = new Scene(rootLayout);
+    public static void initRootLayout(Stage primaryStage, String message) {
         Stage stage = new Stage();
+        GameEndedController controller = new GameEndedController(primaryStage, stage);
+        Parent root = FXMLUtils.load(controller, "/view/game_ended_screen.fxml");
 
-        controller.injectDependencies(primaryStage, stage);
         controller.gameResultLabel.setText(message);
 
+        Scene scene = new Scene(root);
         stage.setTitle("End game dialog");
         stage.setScene(scene);
         stage.showAndWait();
     }
 
-    private void injectDependencies(Stage primaryStage, Stage stage) {
-        this.primaryStage = primaryStage;
-        this.stage = stage;
-    }
-
     @FXML
-    public void buttonClickedHandler(MouseEvent event) {
+    private void buttonClickedHandler() {
         stage.close();
         MenuController.initRootLayout(primaryStage);
     }

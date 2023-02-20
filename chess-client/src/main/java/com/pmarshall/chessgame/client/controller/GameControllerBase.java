@@ -75,11 +75,7 @@ public abstract class GameControllerBase {
         String result = winner == null ? "THE GAME HAS ENDED IN A DRAW"
                 : (winner.toString().toUpperCase() + " HAS WON, CONGRATULATIONS");
 
-        try {
-            GameEndedController.initRootLayout(primaryStage, result);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        GameEndedController.initRootLayout(primaryStage, result);
     }
 
     /**
