@@ -43,11 +43,6 @@ public class GameEndedController {
     @FXML
     public void buttonClickedHandler(MouseEvent event) {
         stage.close();
-
-        try {
-            MenuController.initRootLayout(primaryStage);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        MenuController.initRootLayout(primaryStage);
     }
 }

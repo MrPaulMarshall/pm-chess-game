@@ -146,11 +146,7 @@ public class MatchQueueController {
             }
         }
 
-        try {
-            MenuController.initRootLayout(primaryStage);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        MenuController.initRootLayout(primaryStage);
     }
 
     private void initGame(String playerId, MatchFound matchFound) {
