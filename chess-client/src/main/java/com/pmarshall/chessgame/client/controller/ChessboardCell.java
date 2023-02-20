@@ -57,11 +57,17 @@ class ChessboardCell {
         this.pane = new StackPane();
         this.imageView = new ImageView();
 
-        pane.setMaxWidth(50);
-        pane.setMinWidth(50);
-        pane.setMaxHeight(50);
-        pane.setMinHeight(50);
+        pane.prefHeightProperty().bindBidirectional(pane.prefWidthProperty());
+
+        pane.maxHeightProperty().bind(pane.prefHeightProperty());
+        pane.minHeightProperty().bind(pane.prefHeightProperty());
+        pane.maxWidthProperty().bind(pane.prefWidthProperty());
+        pane.minWidthProperty().bind(pane.prefWidthProperty());
+
         pane.getChildren().add(imageView);
+
+        imageView.fitHeightProperty().bind(pane.prefHeightProperty());
+        imageView.fitWidthProperty().bind(pane.prefWidthProperty());
 
         // determine if this cell should be light or dark
         if (lightSquare) {

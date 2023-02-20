@@ -35,9 +35,7 @@ public class RemoteGameController extends GameControllerBase {
 
     private final Map<Color, String> namesOfPlayers;
 
-    private RemoteGameController(RemoteGameProxy game, String name, MatchFound matchFound) {
-        this.game = game;
-        this.serverProxy = game;
+    private RemoteGameController(String name, MatchFound matchFound) {
         this.namesOfPlayers = Map.of(matchFound.color(), name, matchFound.color().next(), matchFound.opponentName());
     }
 
@@ -45,7 +43,7 @@ public class RemoteGameController extends GameControllerBase {
      * Initializes game and displays view
      */
     public static void initRootLayout(ServerConnection connection, String name, MatchFound matchFound) {
-        RemoteGameController controller = new RemoteGameController(null, name, matchFound);
+        RemoteGameController controller = new RemoteGameController(name, matchFound);
         RemoteGameProxy proxy = new RemoteGameProxy(controller, connection, matchFound);
         controller.game = proxy;
         controller.serverProxy = proxy;
@@ -55,7 +53,8 @@ public class RemoteGameController extends GameControllerBase {
     }
 
     @FXML
-    private void initialize() {
+    protected void initialize() {
+        super.initialize();
         createBoardGrid(serverProxy.localPlayer() == Color.WHITE);
         refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
     }

@@ -32,6 +32,6 @@ public class LocalResourceImageProvider implements ImageProvider {
 
     protected static Image loadImage(Color color, String name) {
         String path = DIRECTORY_PREFIX + color.name().toLowerCase() + "-" + name + ".png";
-        return new Image(path, 50, 50, false,true, false);
+        return new Image(path);
     }
 }

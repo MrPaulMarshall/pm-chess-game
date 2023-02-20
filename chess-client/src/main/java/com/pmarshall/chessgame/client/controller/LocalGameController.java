@@ -44,7 +44,8 @@ public class LocalGameController extends GameControllerBase {
     }
 
     @FXML
-    private void initialize() {
+    protected void initialize() {
+        super.initialize();
         createBoardGrid(true);
         refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
     }

@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import com.pmarshall.chessgame.model.util.Pair;
 
 import java.util.Collection;
@@ -45,6 +46,11 @@ public abstract class GameControllerBase {
 
     protected final ImageProvider imageProvider = new LocalResourceImageProvider();
 
+    @FXML
+    protected void initialize() {
+        chessBoardGrid.prefHeightProperty().bind(chessBoardGrid.prefWidthProperty());
+    }
+
     protected void createBoardGrid(boolean forward) {
         chessboard = new ChessboardCell[8][8];
         for (int rank = 0; rank < 8; rank++) {
@@ -52,7 +58,10 @@ public abstract class GameControllerBase {
                 final int constRank = rank, constFile = file;
                 chessboard[rank][file] = new ChessboardCell(
                         (rank+file) % 2 == 0, e -> boardCellOnClick(constRank, constFile));
-                chessBoardGrid.add(chessboard[constRank][constFile].getPane(), file, forward ? rank : 7-rank);
+                Pane pane = chessboard[constRank][constFile].getPane();
+
+                chessBoardGrid.add(pane, file, forward ? rank : 7-rank);
+                pane.prefWidthProperty().bind(chessBoardGrid.widthProperty().divide(8));
             }
         }
     }
