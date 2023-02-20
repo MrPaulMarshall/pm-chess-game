@@ -38,6 +38,7 @@ public class App extends Application {
         App.primaryStage = primaryStage;
         primaryStage.setTitle("Marszal Chess FX");
         MenuController.initRootLayout();
+        primaryStage.show();
     }
 
     public static InetSocketAddress serverAddress() {

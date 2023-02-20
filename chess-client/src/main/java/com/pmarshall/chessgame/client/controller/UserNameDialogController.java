@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
 
 import java.util.function.Consumer;
 
@@ -26,10 +25,7 @@ public class UserNameDialogController {
     public static void askUserForName(Consumer<String> resumeCallback) {
         UserNameDialogController controller = new UserNameDialogController(resumeCallback);
         Parent root = FXMLUtils.load(controller, "/view/ask_for_player_name_screen.fxml");
-
-        Stage stage = App.primaryStage();
-        stage.setScene(new Scene(root));
-        stage.show();
+        App.primaryStage().setScene(new Scene(root));
     }
 
     @FXML

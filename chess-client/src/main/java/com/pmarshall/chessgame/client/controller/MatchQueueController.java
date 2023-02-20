@@ -12,7 +12,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,9 +59,7 @@ public class MatchQueueController {
 
         controller.connection = connection;
 
-        Stage stage = App.primaryStage();
-        stage.setScene(new Scene(rootLayout));
-        stage.show();
+        App.primaryStage().setScene(new Scene(rootLayout));
 
         controller.waitingThread = new Thread(() -> {
             try {
