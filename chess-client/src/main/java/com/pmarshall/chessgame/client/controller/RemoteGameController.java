@@ -15,7 +15,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
 
 import java.util.Map;
 
@@ -52,10 +51,7 @@ public class RemoteGameController extends GameControllerBase {
         controller.serverProxy = proxy;
 
         Parent root = FXMLUtils.load(controller, "/view/remote_game_screen.fxml");
-
-        Stage stage = App.primaryStage();
-        stage.setScene(new Scene(root));
-        stage.show();
+        App.primaryStage().setScene(new Scene(root));
     }
 
     @FXML

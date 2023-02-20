@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +40,7 @@ public class LocalGameController extends GameControllerBase {
 
         LocalGameController controller = new LocalGameController(game);
         Parent root = FXMLUtils.load(controller, "/view/local_game_screen.fxml");
-
-        Stage stage = App.primaryStage();
-        stage.setScene(new Scene(root));
-        stage.show();
+        App.primaryStage().setScene(new Scene(root));
     }
 
     @FXML

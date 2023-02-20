@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 
 /**
  * @author Paweł Marszał
@@ -27,10 +26,7 @@ public class MenuController {
     public static void initRootLayout() {
         MenuController controller = new MenuController();
         Parent root = FXMLUtils.load(controller, "/view/menu_screen.fxml");
-
-        Stage stage = App.primaryStage();
-        stage.setScene(new Scene(root));
-        stage.show();
+        App.primaryStage().setScene(new Scene(root));
     }
 
     @FXML
