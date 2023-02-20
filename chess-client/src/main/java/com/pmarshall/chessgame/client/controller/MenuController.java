@@ -10,8 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 /**
  * @author Paweł Marszał
  *
@@ -57,7 +55,7 @@ public class MenuController {
     }
 
     @FXML
-    private void handleRemoteAction(ActionEvent ignored) throws IOException {
+    private void handleRemoteAction(ActionEvent ignored) {
         MatchQueueController.initRootLayout(primaryStage);
     }
 
