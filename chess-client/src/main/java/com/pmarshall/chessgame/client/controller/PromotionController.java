@@ -1,9 +1,9 @@
 package com.pmarshall.chessgame.client.controller;
 
+import com.pmarshall.chessgame.client.FXMLUtils;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.properties.PieceType;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -11,8 +11,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 /**
  * @author Paweł Marszał
@@ -36,13 +34,11 @@ public class PromotionController {
     @FXML
     private GridPane imagesGrid;
 
-    public static PieceType askForPromotionPiece(Stage primaryStage, Color color) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(PromotionController.class.getResource("/view/promotion_dialog_screen.fxml"));
-        Parent rootLayout = loader.load();
-        PromotionController controller = loader.getController();
+    public static PieceType askForPromotionPiece(Stage primaryStage, Color color) {
+        PromotionController controller = new PromotionController();
+        Parent root = FXMLUtils.load(controller, "/view/promotion_dialog_screen.fxml");
 
-        Scene scene = new Scene(rootLayout);
+        Scene scene = new Scene(root);
         Stage stage = new Stage();
 
         for (int i = 0; i < possiblePieces.length; i++) {
@@ -72,9 +68,5 @@ public class PromotionController {
         stage.showAndWait();
 
         return possiblePieces[controller.chosenPieceIndex];
-    }
-
-    @FXML
-    public void initialize() {
     }
 }
