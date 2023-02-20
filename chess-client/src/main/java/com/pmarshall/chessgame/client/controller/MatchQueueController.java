@@ -150,11 +150,6 @@ public class MatchQueueController {
     }
 
     private void initGame(String playerId, MatchFound matchFound) {
-        try {
-            RemoteGameController.initRootLayout(primaryStage, connection, playerId, matchFound);
-        } catch (IOException e) {
-            log.warn("Could not init board after match has been found", e);
-            handleCancelAction();
-        }
+        RemoteGameController.initRootLayout(primaryStage, connection, playerId, matchFound);
     }
 }
