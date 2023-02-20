@@ -16,7 +16,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -88,11 +87,7 @@ public class RemoteGameController extends GameControllerBase {
 
     public void showDrawRequestedWindow() {
         // TODO: disable interacting with the board
-        try {
-            DrawRequestController.initRootLayout(primaryStage, this);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        DrawRequestController.initRootLayout(primaryStage, this);
     }
 
     public void acceptDraw() {
