@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.client.controller;
 
+import com.pmarshall.chessgame.client.App;
 import com.pmarshall.chessgame.client.FXMLUtils;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -22,14 +23,13 @@ public class UserNameDialogController {
         this.resumeCallback = resumeCallback;
     }
 
-    public static void askUserForName(Stage primaryStage, Consumer<String> resumeCallback) {
+    public static void askUserForName(Consumer<String> resumeCallback) {
         UserNameDialogController controller = new UserNameDialogController(resumeCallback);
         Parent root = FXMLUtils.load(controller, "/view/ask_for_player_name_screen.fxml");
 
-        Scene scene = new Scene(root);
-        primaryStage.setTitle("Chess game");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        Stage stage = App.primaryStage();
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
     @FXML

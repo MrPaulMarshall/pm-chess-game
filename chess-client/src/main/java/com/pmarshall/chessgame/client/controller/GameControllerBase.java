@@ -13,7 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import com.pmarshall.chessgame.model.util.Pair;
 
 import java.util.Collection;
@@ -31,8 +30,6 @@ public abstract class GameControllerBase {
     @FXML
     // Area when history of moves is displayed
     protected TextArea movesTextArea;
-
-    protected Stage primaryStage;
 
     protected Game game;
 
@@ -74,7 +71,7 @@ public abstract class GameControllerBase {
         String result = winner == null ? "THE GAME HAS ENDED IN A DRAW"
                 : (winner.toString().toUpperCase() + " HAS WON, CONGRATULATIONS");
 
-        GameEndedController.initRootLayout(primaryStage, result);
+        GameEndedController.initRootLayout(result);
     }
 
     /**
@@ -139,7 +136,7 @@ public abstract class GameControllerBase {
      * @return piece chosen by player
      */
     private PieceType getPromotedPiece() {
-        return PromotionController.askForPromotionPiece(primaryStage, game.currentPlayer());
+        return PromotionController.askForPromotionPiece(game.currentPlayer());
     }
 
     public void refreshStageAfterMove(Color player, LegalMove move, Piece[][] board, Pair<Color, String> gameOutcome) {

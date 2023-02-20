@@ -9,34 +9,30 @@ import javafx.stage.Stage;
 
 public class GameEndedController {
 
-    private final Stage primaryStage;
-
     private final Stage stage;
 
     @FXML
     private Label gameResultLabel;
 
-    private GameEndedController(Stage primaryStage, Stage stage) {
-        this.primaryStage = primaryStage;
+    private GameEndedController(Stage stage) {
         this.stage = stage;
     }
 
-    public static void initRootLayout(Stage primaryStage, String message) {
+    public static void initRootLayout(String message) {
         Stage stage = new Stage();
-        GameEndedController controller = new GameEndedController(primaryStage, stage);
+        GameEndedController controller = new GameEndedController(stage);
         Parent root = FXMLUtils.load(controller, "/view/game_ended_screen.fxml");
 
         controller.gameResultLabel.setText(message);
 
-        Scene scene = new Scene(root);
         stage.setTitle("End game dialog");
-        stage.setScene(scene);
+        stage.setScene(new Scene(root));
         stage.showAndWait();
     }
 
     @FXML
     private void buttonClickedHandler() {
         stage.close();
-        MenuController.initRootLayout(primaryStage);
+        MenuController.initRootLayout();
     }
 }

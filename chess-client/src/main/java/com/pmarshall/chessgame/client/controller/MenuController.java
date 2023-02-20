@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.client.controller;
 
+import com.pmarshall.chessgame.client.App;
 import com.pmarshall.chessgame.client.FXMLUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,27 +18,19 @@ import javafx.stage.Stage;
  */
 public class MenuController {
 
-    private final Stage primaryStage;
-
     @FXML
     private StackPane imagePane;
-
-    private MenuController(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
 
     /**
      * Loads, initializes and displays 'welcome' screen
      */
-    public static void initRootLayout(Stage primaryStage) {
-        MenuController controller = new MenuController(primaryStage);
+    public static void initRootLayout() {
+        MenuController controller = new MenuController();
         Parent root = FXMLUtils.load(controller, "/view/menu_screen.fxml");
 
-        Scene scene = new Scene(root);
-        primaryStage.setTitle("Chess game - welcome screen");
-        primaryStage.setResizable(false);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        Stage stage = App.primaryStage();
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
     @FXML
@@ -51,16 +44,16 @@ public class MenuController {
 
     @FXML
     private void handleLocalAction(ActionEvent ignored) {
-        LocalGameController.initRootLayout(primaryStage);
+        LocalGameController.initRootLayout();
     }
 
     @FXML
     private void handleRemoteAction(ActionEvent ignored) {
-        MatchQueueController.initRootLayout(primaryStage);
+        MatchQueueController.initRootLayout();
     }
 
     @FXML
     private void handleCancelAction(ActionEvent ignored) {
-        primaryStage.close();
+        App.primaryStage().close();
     }
 }

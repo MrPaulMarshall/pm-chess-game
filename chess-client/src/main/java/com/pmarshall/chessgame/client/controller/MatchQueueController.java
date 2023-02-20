@@ -28,33 +28,26 @@ public class MatchQueueController {
 
     private static String playerName = null;
 
-    private final Stage primaryStage;
     private ServerConnection connection;
     private Thread waitingThread;
     private volatile boolean cancelled;
 
-    private MatchQueueController(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
-
-    public static void initRootLayout(Stage primaryStage) {
-        MatchQueueController controller = new MatchQueueController(primaryStage);
+    public static void initRootLayout() {
+        MatchQueueController controller = new MatchQueueController();
         Parent root = FXMLUtils.load(controller, "/view/match_queue_screen.fxml");
 
         if (playerName != null) {
-            resumeInitRootLayout(primaryStage, root, controller);
+            resumeInitRootLayout(root, controller);
         } else {
-            UserNameDialogController.askUserForName(primaryStage, userInput -> {
+            UserNameDialogController.askUserForName(userInput -> {
                 log.info("User provided name: {}", userInput);
                 setPlayerName(userInput);
-                resumeInitRootLayout(primaryStage, root, controller);
+                resumeInitRootLayout(root, controller);
             });
         }
     }
 
-    private static void resumeInitRootLayout(Stage primaryStage,
-                                             Parent rootLayout,
-                                             MatchQueueController controller) {
+    private static void resumeInitRootLayout(Parent rootLayout, MatchQueueController controller) {
         ServerConnection connection;
         try {
             connection = connectToServer();
@@ -67,10 +60,9 @@ public class MatchQueueController {
 
         controller.connection = connection;
 
-        Scene scene = new Scene(rootLayout);
-        primaryStage.setTitle("Chess board");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        Stage stage = App.primaryStage();
+        stage.setScene(new Scene(rootLayout));
+        stage.show();
 
         controller.waitingThread = new Thread(() -> {
             try {
@@ -89,7 +81,7 @@ public class MatchQueueController {
     }
 
     private static ServerConnection connectToServer() throws IOException {
-        InetSocketAddress address = App.getServerAddress();
+        InetSocketAddress address = App.serverAddress();
         if (address == null || address.isUnresolved())
             throw new IOException("Cannot determine server address");
 
@@ -141,10 +133,10 @@ public class MatchQueueController {
             }
         }
 
-        MenuController.initRootLayout(primaryStage);
+        MenuController.initRootLayout();
     }
 
     private void initGame(String playerId, MatchFound matchFound) {
-        RemoteGameController.initRootLayout(primaryStage, connection, playerId, matchFound);
+        RemoteGameController.initRootLayout(connection, playerId, matchFound);
     }
 }

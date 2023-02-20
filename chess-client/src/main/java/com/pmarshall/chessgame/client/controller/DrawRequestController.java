@@ -1,5 +1,6 @@
 package com.pmarshall.chessgame.client.controller;
 
+import com.pmarshall.chessgame.client.App;
 import com.pmarshall.chessgame.client.FXMLUtils;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -21,17 +22,16 @@ public class DrawRequestController {
     /**
      * Creates dialog window and doesn't wait for player's decision
      */
-    public static void initRootLayout(Stage primaryStage, RemoteGameController gameController) {
+    public static void initRootLayout(RemoteGameController gameController) {
         Stage stage = new Stage();
         DrawRequestController controller = new DrawRequestController(stage, gameController);
         Parent root = FXMLUtils.load(controller, "/view/draw_dialog_screen.fxml");
 
         // creates scene
-        Scene scene = new Scene(root);
         stage.setTitle("Draw requested dialog");
-        stage.setScene(scene);
+        stage.setScene(new Scene(root));
         stage.setResizable(false);
-        stage.initOwner(primaryStage);
+        stage.initOwner(App.primaryStage());
         stage.initModality(Modality.WINDOW_MODAL);
 
         // display and wait for player's decision
