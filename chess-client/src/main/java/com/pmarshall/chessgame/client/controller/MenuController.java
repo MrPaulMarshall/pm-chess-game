@@ -52,7 +52,7 @@ public class MenuController {
     }
 
     @FXML
-    private void handleLocalAction(ActionEvent ignored) throws Exception {
+    private void handleLocalAction(ActionEvent ignored) {
         LocalGameController.initRootLayout(primaryStage);
     }
 

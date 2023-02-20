@@ -49,10 +49,6 @@ public abstract class GameControllerBase {
 
     protected final ImageProvider imageProvider = new LocalResourceImageProvider();
 
-    @FXML
-    public void initialize() {
-    }
-
     protected void createBoardGrid(boolean forward) {
         chessboard = new ChessboardCell[8][8];
         for (int rank = 0; rank < 8; rank++) {

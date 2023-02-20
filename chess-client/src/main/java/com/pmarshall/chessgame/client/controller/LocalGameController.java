@@ -1,17 +1,16 @@
 package com.pmarshall.chessgame.client.controller;
 
+import com.pmarshall.chessgame.client.FXMLUtils;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.service.Game;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
@@ -24,46 +23,44 @@ public class LocalGameController extends GameControllerBase {
 
     private static final Logger log = LoggerFactory.getLogger(LocalGameController.class);
 
+    private LocalGameController(Stage primaryStage, Game game) {
+        this.primaryStage = primaryStage;
+        this.game = game;
+    }
+
     /**
      * Initializes game and displays view
-     * @throws IOException if anything goes wrong
      */
-    public static void initRootLayout(Stage primaryStage) throws IOException {
+    public static void initRootLayout(Stage primaryStage) {
         Optional<Game> loadedGameService = ServiceLoader.load(Game.class).findFirst();
         if (loadedGameService.isEmpty()) {
             log.error("Game service was not provided, cannot use local mode");
             return;
         }
-
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(LocalGameController.class.getResource("/view/local_game_screen.fxml"));
-
-        BorderPane rootLayout = loader.load();
-        Scene scene = new Scene(rootLayout);
-
-        LocalGameController controller = loader.getController();
         Game game = loadedGameService.get();
-        controller.injectDependencies(primaryStage, game);
-        controller.createBoardGrid(true);
-        controller.refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
 
+        LocalGameController controller = new LocalGameController(primaryStage, game);
+        Parent root = FXMLUtils.load(controller, "/view/local_game_screen.fxml");
+
+        Scene scene = new Scene(root);
         primaryStage.setTitle("Chess board");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private void injectDependencies(Stage primaryStage, Game game) {
-        this.primaryStage = primaryStage;
-        this.game = game;
+    @FXML
+    private void initialize() {
+        createBoardGrid(true);
+        refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
     }
 
     @FXML
-    public void handleSurrenderAction(ActionEvent ignored) {
+    private void handleSurrenderAction(ActionEvent ignored) {
         endGame(game.currentPlayer().next());
     }
 
     @FXML
-    public void handleDrawAction(ActionEvent ignored) {
+    private void handleDrawAction(ActionEvent ignored) {
         endGame(null);
     }
 
