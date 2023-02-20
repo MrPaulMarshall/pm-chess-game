@@ -1,20 +1,19 @@
 package com.pmarshall.chessgame.client.controller;
 
+import com.pmarshall.chessgame.client.FXMLUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class DrawRequestController {
 
-    private Stage stage;
-    private RemoteGameController gameController;
+    private final Stage stage;
 
-    private void injectDependencies(Stage stage, RemoteGameController gameController) {
+    private final RemoteGameController gameController;
+
+    private DrawRequestController(Stage stage, RemoteGameController gameController) {
         this.stage = stage;
         this.gameController = gameController;
     }
@@ -22,17 +21,13 @@ public class DrawRequestController {
     /**
      * Creates dialog window and doesn't wait for player's decision
      */
-    public static void initRootLayout(Stage primaryStage, RemoteGameController gameController) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(DrawRequestController.class.getResource("/view/draw_dialog_screen.fxml"));
-        Parent rootLayout = loader.load();
-        DrawRequestController controller = loader.getController();
-
+    public static void initRootLayout(Stage primaryStage, RemoteGameController gameController) {
         Stage stage = new Stage();
-        controller.injectDependencies(stage, gameController);
+        DrawRequestController controller = new DrawRequestController(stage, gameController);
+        Parent root = FXMLUtils.load(controller, "/view/draw_dialog_screen.fxml");
 
         // creates scene
-        Scene scene = new Scene(rootLayout);
+        Scene scene = new Scene(root);
         stage.setTitle("Draw requested dialog");
         stage.setScene(scene);
         stage.setResizable(false);

@@ -16,7 +16,6 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import com.pmarshall.chessgame.model.util.Pair;
 
-import java.io.IOException;
 import java.util.Collection;
 
 public abstract class GameControllerBase {
@@ -49,10 +48,6 @@ public abstract class GameControllerBase {
 
     protected final ImageProvider imageProvider = new LocalResourceImageProvider();
 
-    @FXML
-    public void initialize() {
-    }
-
     protected void createBoardGrid(boolean forward) {
         chessboard = new ChessboardCell[8][8];
         for (int rank = 0; rank < 8; rank++) {
@@ -79,11 +74,7 @@ public abstract class GameControllerBase {
         String result = winner == null ? "THE GAME HAS ENDED IN A DRAW"
                 : (winner.toString().toUpperCase() + " HAS WON, CONGRATULATIONS");
 
-        try {
-            GameEndedController.initRootLayout(primaryStage, result);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        GameEndedController.initRootLayout(primaryStage, result);
     }
 
     /**
@@ -148,11 +139,7 @@ public abstract class GameControllerBase {
      * @return piece chosen by player
      */
     private PieceType getPromotedPiece() {
-        try {
-            return PromotionController.askForPromotionPiece(primaryStage, game.currentPlayer());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return PromotionController.askForPromotionPiece(primaryStage, game.currentPlayer());
     }
 
     public void refreshStageAfterMove(Color player, LegalMove move, Piece[][] board, Pair<Color, String> gameOutcome) {

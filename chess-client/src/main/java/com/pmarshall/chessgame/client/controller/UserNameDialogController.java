@@ -1,7 +1,7 @@
 package com.pmarshall.chessgame.client.controller;
 
+import com.pmarshall.chessgame.client.FXMLUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
@@ -9,36 +9,31 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.function.Consumer;
 
 public class UserNameDialogController {
 
-    private Consumer<String> resumeCallback;
+    private final Consumer<String> resumeCallback;
 
     @FXML
     private TextField inputField;
 
-    public static void askUserForName(Stage primaryStage, Consumer<String> resumeCallback) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(UserNameDialogController.class.getResource("/view/ask_for_player_name_screen.fxml"));
-        Parent rootLayout = loader.load();
-        UserNameDialogController controller = loader.getController();
+    private UserNameDialogController(Consumer<String> resumeCallback) {
+        this.resumeCallback = resumeCallback;
+    }
 
-        controller.injectDependencies(resumeCallback);
+    public static void askUserForName(Stage primaryStage, Consumer<String> resumeCallback) {
+        UserNameDialogController controller = new UserNameDialogController(resumeCallback);
+        Parent root = FXMLUtils.load(controller, "/view/ask_for_player_name_screen.fxml");
 
-        Scene scene = new Scene(rootLayout);
+        Scene scene = new Scene(root);
         primaryStage.setTitle("Chess game");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private void injectDependencies(Consumer<String> resumeCallback) {
-        this.resumeCallback = resumeCallback;
-    }
-
     @FXML
-    public void initialize() {
+    private void initialize() {
         final int maxLength = 16;
         inputField.textProperty().addListener((ov, oldValue, newValue) -> {
             if (inputField.getText().length() > maxLength) {

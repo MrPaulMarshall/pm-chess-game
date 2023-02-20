@@ -3,12 +3,10 @@
 * Client threads synchronization
   - extract game state from RemoteGameProxy into a single entity
   - use built-in synchronization mechanism to avoid race conditions between Reader and JavaFX threads
-* Loading FXML files
-  - failure to load FXML file in not recoverable
-  - thus IOException shouldn't be declared/handled explicitly, but rather the app needs to be terminated
-* Initialization of controllers
-  - either inject controller into loader (more elegant and readable code)
-  - or annotate FXML files with 'fx:controller' attribute and inject dependencies into generated controller (better IntelIj support)
+* Access to primary stage
+  - it's singleton crucial to JavaFX app, so maybe it should be treated as global variable instead of pushing in circles
+  - there won't be concurrency problems as it can be modified from only one thread: JavaFX Application thread
+  - encapsulation is not a problem either as almost all controllers receive reference to it anyway
 * More flexible GUI
   - allow resizing windows
   - bind aspect ratios of elements (for example boards needs to be 1:1 square)
