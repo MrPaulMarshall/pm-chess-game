@@ -11,7 +11,7 @@ import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.lobby.Ping;
 import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
-import com.pmarshall.chessgame.api.outcome.GameOutcome;
+import com.pmarshall.chessgame.api.outcome.GameFinished;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -19,7 +19,7 @@ import com.pmarshall.chessgame.api.outcome.GameOutcome;
 )
 @JsonSubTypes({
         @Type(value = MatchFound.class, name = "MatchFound"),
-        @Type(value = GameOutcome.class, name = "GameOutcome"),
+        @Type(value = GameFinished.class, name = "GameFinished"),
         @Type(value = DrawProposition.class, name = "DrawProposition"),
         @Type(value = DrawResponse.class, name = "DrawResponse"),
         @Type(value = Surrender.class, name = "Surrender"),

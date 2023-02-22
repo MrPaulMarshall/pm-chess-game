@@ -9,7 +9,7 @@ import com.pmarshall.chessgame.api.endrequest.Surrender;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
-import com.pmarshall.chessgame.api.outcome.GameOutcome;
+import com.pmarshall.chessgame.api.outcome.GameFinished;
 import com.pmarshall.chessgame.client.controller.RemoteGameController;
 import com.pmarshall.chessgame.model.dto.*;
 import com.pmarshall.chessgame.model.properties.Color;
@@ -54,7 +54,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
     private Map<Triple<Position, Position, PieceType>, Promotion> legalPromotions;
 
     private LegalMove lastMove;
-    private GameOutcome outcome;
+    private GameFinished outcome;
 
     public RemoteGameProxy(RemoteGameController controller, ServerConnection connection, MatchFound message) {
         this.controller = controller;
@@ -330,7 +330,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
                     byte[] messageBytes = in.readNBytes(length);
                     Message msg = Parser.deserialize(messageBytes, length);
 
-                    if (msg instanceof GameOutcome outcomeMsg) {
+                    if (msg instanceof GameFinished outcomeMsg) {
                         outcome = outcomeMsg;
                         Color winner = switch (outcomeMsg.outcome()) {
                             case VICTORY -> localPlayer;

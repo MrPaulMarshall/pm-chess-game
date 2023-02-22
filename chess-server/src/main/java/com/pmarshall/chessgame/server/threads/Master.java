@@ -9,7 +9,7 @@ import com.pmarshall.chessgame.api.endrequest.DrawResponse;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
-import com.pmarshall.chessgame.api.outcome.GameOutcome;
+import com.pmarshall.chessgame.api.outcome.GameFinished;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.model.util.Pair;
 import org.slf4j.Logger;
@@ -118,8 +118,8 @@ public class Master extends Thread {
                 Color surrendered = surrenderQueue.poll();
                 if (surrendered != null) {
                     terminateGame(Map.of(
-                            surrendered, new GameOutcome(GameOutcome.Type.DEFEAT, "You've surrendered"),
-                            surrendered.next(), new GameOutcome(GameOutcome.Type.VICTORY, "The opponent surrendered")
+                            surrendered, new GameFinished(GameFinished.Type.DEFEAT, "You've surrendered"),
+                            surrendered.next(), new GameFinished(GameFinished.Type.VICTORY, "The opponent surrendered")
                     ));
                     break;
                 }
@@ -174,7 +174,7 @@ public class Master extends Thread {
         }
     }
 
-    private void terminateGame(Map<Color, GameOutcome> messages) {
+    private void terminateGame(Map<Color, GameFinished> messages) {
         // stop listening for messages
         readerThreads.values().forEach(Thread::interrupt);
 
@@ -199,7 +199,7 @@ public class Master extends Thread {
 
             // Inform the active player that the opponent had quit
             writerThreads.get(color.next()).pushGameOutcome(
-                    new GameOutcome(GameOutcome.Type.VICTORY, "The opponent had quit"));
+                    new GameFinished(GameFinished.Type.VICTORY, "The opponent had quit"));
         } // else there is no one to notify
 
         // Kill the Writer threads operating on broken connections
@@ -229,8 +229,8 @@ public class Master extends Thread {
 
         if (drawAccepted) {
             terminateGame(Map.of(
-                    sender, new GameOutcome(GameOutcome.Type.DRAW, "You accepted the draw offer"),
-                    sender.next(), new GameOutcome(GameOutcome.Type.DRAW, "Your draw offer was accepted")
+                    sender, new GameFinished(GameFinished.Type.DRAW, "You accepted the draw offer"),
+                    sender.next(), new GameFinished(GameFinished.Type.DRAW, "Your draw offer was accepted")
             ));
             return true;
         } else {
@@ -265,13 +265,13 @@ public class Master extends Thread {
         if (gameResult != null) {
             // TODO: remove GameOutcome.Type and use nullable "Color winner" instead, then the if-else will not be needed
             if (gameResult.left() == null) {
-                GameOutcome drawOutcome = new GameOutcome(GameOutcome.Type.DRAW, "Stalemate");
+                GameFinished drawOutcome = new GameFinished(GameFinished.Type.DRAW, "Stalemate");
                 terminateGame(Map.of(WHITE, drawOutcome, BLACK, drawOutcome));
             } else {
                 Color winner = gameResult.left();
                 terminateGame(Map.of(
-                        winner, new GameOutcome(GameOutcome.Type.VICTORY, "Checkmate"),
-                        winner.next(), new GameOutcome(GameOutcome.Type.DEFEAT, "Checkmate")
+                        winner, new GameFinished(GameFinished.Type.VICTORY, "Checkmate"),
+                        winner.next(), new GameFinished(GameFinished.Type.DEFEAT, "Checkmate")
                 ));
             }
 
