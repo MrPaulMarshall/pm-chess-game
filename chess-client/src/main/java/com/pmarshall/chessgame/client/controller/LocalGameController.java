@@ -51,12 +51,12 @@ public class LocalGameController extends GameControllerBase {
 
     @FXML
     private void handleSurrenderAction(ActionEvent ignored) {
-        endGame(game.currentPlayer().next());
+        endGame(game.currentPlayer().next(), "surrender");
     }
 
     @FXML
     private void handleDrawAction(ActionEvent ignored) {
-        endGame(null);
+        endGame(null, "agreement");
     }
 
     @Override

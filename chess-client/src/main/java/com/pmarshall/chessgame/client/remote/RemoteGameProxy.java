@@ -9,7 +9,7 @@ import com.pmarshall.chessgame.api.endrequest.Surrender;
 import com.pmarshall.chessgame.api.lobby.MatchFound;
 import com.pmarshall.chessgame.api.move.Move;
 import com.pmarshall.chessgame.api.move.OpponentMoved;
-import com.pmarshall.chessgame.api.outcome.GameOutcome;
+import com.pmarshall.chessgame.api.outcome.GameFinished;
 import com.pmarshall.chessgame.client.controller.RemoteGameController;
 import com.pmarshall.chessgame.model.dto.*;
 import com.pmarshall.chessgame.model.properties.Color;
@@ -31,6 +31,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.pmarshall.chessgame.api.outcome.GameFinished.Type.DEFEAT;
 
 public class RemoteGameProxy implements Game, ServerProxy {
 
@@ -54,7 +56,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
     private Map<Triple<Position, Position, PieceType>, Promotion> legalPromotions;
 
     private LegalMove lastMove;
-    private GameOutcome outcome;
+    private GameFinished outcome;
 
     public RemoteGameProxy(RemoteGameController controller, ServerConnection connection, MatchFound message) {
         this.controller = controller;
@@ -284,7 +286,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
         currentPlayer = currentPlayer.next();
     }
 
-    public void terminateGame(Color winner) {
+    public void terminateGame(GameFinished.Type outcome, String message) {
         writerThread.interrupt();
         readerThread.interrupt();
         try {
@@ -293,7 +295,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
             log.warn("Could not close connection to server", ex);
         }
 
-        Platform.runLater(() -> controller.endGame(winner));
+        Platform.runLater(() -> controller.endGame(outcome, message));
     }
 
     @Override
@@ -330,14 +332,9 @@ public class RemoteGameProxy implements Game, ServerProxy {
                     byte[] messageBytes = in.readNBytes(length);
                     Message msg = Parser.deserialize(messageBytes, length);
 
-                    if (msg instanceof GameOutcome outcomeMsg) {
+                    if (msg instanceof GameFinished outcomeMsg) {
                         outcome = outcomeMsg;
-                        Color winner = switch (outcomeMsg.outcome()) {
-                            case VICTORY -> localPlayer;
-                            case DEFEAT -> localPlayer.next();
-                            case DRAW -> null;
-                        };
-                        terminateGame(winner);
+                        terminateGame(outcome.outcome(), outcome.message());
                         break;
                     }
                     if (msg instanceof OpponentMoved opponentMoved) {
@@ -360,7 +357,8 @@ public class RemoteGameProxy implements Game, ServerProxy {
                     log.warn("Unrecognized message: {}", msg);
                 } catch (IOException ex) {
                     log.error("Connection with server was broken in Reader", ex);
-                    terminateGame(null);
+                    // TODO: define separate error window
+                    terminateGame(DEFEAT, "broken connection");
                 }
             }
 
@@ -395,7 +393,7 @@ public class RemoteGameProxy implements Game, ServerProxy {
                     log.warn("Thread Writer was interrupted");
                 } catch (IOException ex) {
                     log.warn("Connection with server was broken in Writer", ex);
-                    terminateGame(null);
+                    terminateGame(DEFEAT, "broken connection");
                 }
             }
 

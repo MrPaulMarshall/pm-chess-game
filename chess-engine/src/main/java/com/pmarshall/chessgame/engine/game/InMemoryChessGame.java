@@ -139,9 +139,9 @@ public class InMemoryChessGame implements Game {
     @Override
     public Pair<Color, String> outcome() {
         if (draw)
-            return Pair.of(null, "Stalemate");
+            return Pair.of(null, "stalemate");
         if (winner != null)
-            return Pair.of(winner.getColor(), "Checkmate");
+            return Pair.of(winner.getColor(), "checkmate");
         return null;
     }
 

@@ -2,7 +2,7 @@ package com.pmarshall.chessgame.server.threads;
 
 import com.pmarshall.chessgame.api.Message;
 import com.pmarshall.chessgame.api.Parser;
-import com.pmarshall.chessgame.api.outcome.GameOutcome;
+import com.pmarshall.chessgame.api.outcome.GameFinished;
 import com.pmarshall.chessgame.model.properties.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class Writer extends Thread {
 
     /* COMMUNICATION CHANNELS */
     private final Semaphore semaphore = new Semaphore(0);
-    private final BlockingQueue<GameOutcome> outcomeQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<GameFinished> outcomeQueue = new LinkedBlockingQueue<>();
     private final BlockingQueue<Message> queue = new LinkedBlockingQueue<>();
 
     public Writer(Color color, String id, OutputStream out, Master masterThread) {
@@ -82,7 +82,7 @@ public class Writer extends Thread {
      * Inform the client about the end of the game.
      * This is considered the final message and the thread will finish after sending it.
      */
-    public void pushGameOutcome(GameOutcome msg) throws InterruptedException {
+    public void pushGameOutcome(GameFinished msg) throws InterruptedException {
         outcomeQueue.put(msg);
         semaphore.release();
     }

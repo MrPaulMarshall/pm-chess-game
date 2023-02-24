@@ -3,12 +3,12 @@ package com.pmarshall.chessgame.api.outcome;
 import com.pmarshall.chessgame.api.Message;
 import java.util.Objects;
 
-public record GameOutcome(
+public record GameFinished(
         Type outcome,
         String message
 ) implements Message {
 
-    public GameOutcome {
+    public GameFinished {
         Objects.requireNonNull(outcome);
     }
 
