@@ -60,16 +60,22 @@ public abstract class GameControllerBase {
     /**
      * Disables board, creates dialog with result, and closes the program
      * @param winner winner of the game (or null, if draw)
+     * @param reason event that ended the game; should be insertable into "Ended by $reason"
      */
-    public void endGame(Color winner) {
-        // this disables 'Draw' and 'Surrender' buttons after end of the game, when board is still visible
+    public void endGame(Color winner, String reason) {
+        // TODO: disable 'physical' buttons instead (i.e. disable GUI elements)
         if (gameEnded) return;
 
         gameEnded = true;
         refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
 
-        String result = winner == null ? "THE GAME HAS ENDED IN A DRAW"
-                : (winner.toString().toUpperCase() + " HAS WON, CONGRATULATIONS");
+        String result;
+        if (winner == null) {
+            result = "A draw by " + reason;
+        } else {
+            String winnerStr = winner.toString().substring(0, 1).toUpperCase() + winner.toString().substring(1);
+            result = winnerStr + " has won by " + reason;
+        }
 
         GameEndedController.initRootLayout(result);
     }
@@ -148,8 +154,7 @@ public abstract class GameControllerBase {
 
         // check win conditions
         if (gameOutcome != null) {
-            // TODO: use the message as well
-            endGame(gameOutcome.left());
+            endGame(gameOutcome.left(), gameOutcome.right());
         }
     }
 

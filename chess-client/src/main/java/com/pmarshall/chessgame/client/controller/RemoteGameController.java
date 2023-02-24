@@ -1,6 +1,7 @@
 package com.pmarshall.chessgame.client.controller;
 
 import com.pmarshall.chessgame.api.lobby.MatchFound;
+import com.pmarshall.chessgame.api.outcome.GameFinished;
 import com.pmarshall.chessgame.client.App;
 import com.pmarshall.chessgame.client.FXMLUtils;
 import com.pmarshall.chessgame.client.remote.ServerConnection;
@@ -105,6 +106,25 @@ public class RemoteGameController extends GameControllerBase {
         chatText.setEditable(true);
         chatText.appendText(namesOfPlayers.get(player) + ": " + message + "\n");
         chatText.setEditable(false);
+    }
+
+    /**
+     * Disables board, creates dialog with result, and closes the program
+     * @param outcome result of the match for the local player
+     * @param reason event that ended the game; should be insertable into "Ended by $reason"
+     */
+    public void endGame(GameFinished.Type outcome, String reason) {
+        // TODO: disable 'physical' buttons instead (i.e. disable GUI elements)
+        if (gameEnded) return;
+        gameEnded = true;
+
+        String result = switch (outcome) {
+            case VICTORY -> "You've won";
+            case DEFEAT -> "You've lost";
+            case DRAW -> "A draw";
+        };
+
+        GameEndedController.initRootLayout(result + " by " + reason);
     }
 
     @Override

@@ -118,8 +118,8 @@ public class Master extends Thread {
                 Color surrendered = surrenderQueue.poll();
                 if (surrendered != null) {
                     terminateGame(Map.of(
-                            surrendered, new GameFinished(GameFinished.Type.DEFEAT, "You've surrendered"),
-                            surrendered.next(), new GameFinished(GameFinished.Type.VICTORY, "The opponent surrendered")
+                            surrendered, new GameFinished(GameFinished.Type.DEFEAT, "surrender"),
+                            surrendered.next(), new GameFinished(GameFinished.Type.VICTORY, "surrender")
                     ));
                     break;
                 }
@@ -199,7 +199,7 @@ public class Master extends Thread {
 
             // Inform the active player that the opponent had quit
             writerThreads.get(color.next()).pushGameOutcome(
-                    new GameFinished(GameFinished.Type.VICTORY, "The opponent had quit"));
+                    new GameFinished(GameFinished.Type.VICTORY, "surrender"));
         } // else there is no one to notify
 
         // Kill the Writer threads operating on broken connections
@@ -229,8 +229,8 @@ public class Master extends Thread {
 
         if (drawAccepted) {
             terminateGame(Map.of(
-                    sender, new GameFinished(GameFinished.Type.DRAW, "You accepted the draw offer"),
-                    sender.next(), new GameFinished(GameFinished.Type.DRAW, "Your draw offer was accepted")
+                    sender, new GameFinished(GameFinished.Type.DRAW, "agreement"),
+                    sender.next(), new GameFinished(GameFinished.Type.DRAW, "agreement")
             ));
             return true;
         } else {
@@ -263,15 +263,14 @@ public class Master extends Thread {
         // check if game ended
         Pair<Color, String> gameResult = game.outcome();
         if (gameResult != null) {
-            // TODO: remove GameOutcome.Type and use nullable "Color winner" instead, then the if-else will not be needed
             if (gameResult.left() == null) {
-                GameFinished drawOutcome = new GameFinished(GameFinished.Type.DRAW, "Stalemate");
+                GameFinished drawOutcome = new GameFinished(GameFinished.Type.DRAW, "stalemate");
                 terminateGame(Map.of(WHITE, drawOutcome, BLACK, drawOutcome));
             } else {
                 Color winner = gameResult.left();
                 terminateGame(Map.of(
-                        winner, new GameFinished(GameFinished.Type.VICTORY, "Checkmate"),
-                        winner.next(), new GameFinished(GameFinished.Type.DEFEAT, "Checkmate")
+                        winner, new GameFinished(GameFinished.Type.VICTORY, "checkmate"),
+                        winner.next(), new GameFinished(GameFinished.Type.DEFEAT, "checkmate")
                 ));
             }
 
