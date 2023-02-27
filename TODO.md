@@ -1,3 +1,9 @@
+# Design changes to consider
+
+* Remove local mode (two players clicking on the same window)
+  - Useful game modes would be single-player against engine and multiplayer via network
+  - Code could be greatly simplified and improved
+
 # Tasks to implement:
 
 * Client threads synchronization
