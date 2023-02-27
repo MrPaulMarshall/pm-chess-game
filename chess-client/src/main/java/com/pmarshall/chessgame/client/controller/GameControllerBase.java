@@ -9,6 +9,7 @@ import com.pmarshall.chessgame.model.service.Game;
 import com.pmarshall.chessgame.client.services.ImageProvider;
 import com.pmarshall.chessgame.client.services.LocalResourceImageProvider;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -26,6 +27,12 @@ public abstract class GameControllerBase {
     @FXML
     // Pane that contains whole board - it contains smaller panes: cells
     protected GridPane chessBoardGrid;
+
+    @FXML
+    protected Button drawButton;
+
+    @FXML
+    protected Button surrenderButton;
 
     @FXML
     // Area when history of moves is displayed
@@ -64,6 +71,7 @@ public abstract class GameControllerBase {
      */
     public void endGame(Color winner, String reason) {
         // TODO: disable 'physical' buttons instead (i.e. disable GUI elements)
+
         if (gameEnded) return;
 
         gameEnded = true;
@@ -78,6 +86,19 @@ public abstract class GameControllerBase {
         }
 
         GameEndedController.initRootLayout(result);
+    }
+
+    public static final int F_BOARD = 1;
+    public static final int F_BUTTONS = 2;
+    public static final int F_CHAT = 4;
+    public void enableGui(int flag, boolean enabled) {
+        if ((flag & F_BOARD) > 0) {
+            chessBoardGrid.setDisable(enabled);
+        }
+        if ((flag & F_BUTTONS) > 0) {
+            drawButton.setDisable(enabled);
+            surrenderButton.setDisable(enabled);
+        }
     }
 
     /**

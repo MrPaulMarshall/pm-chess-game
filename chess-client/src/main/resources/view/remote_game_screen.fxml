@@ -48,7 +48,7 @@
                   </Label>
             <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                <children>
-                      <Button alignment="TOP_CENTER" contentDisplay="TOP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleDrawAction" prefHeight="40" prefWidth="170" text="Propose draw" textAlignment="CENTER">
+                      <Button fx:id="drawButton" alignment="TOP_CENTER" contentDisplay="TOP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleDrawAction" prefHeight="40" prefWidth="170" text="Propose draw" textAlignment="CENTER">
                           <font>
                               <Font size="20" />
                           </font>
@@ -57,7 +57,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                           </VBox.margin>
                       </Button>
-                      <Button alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleSurrenderAction" prefHeight="40" prefWidth="170" text="Surrender">
+                      <Button fx:id="surrenderButton" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleSurrenderAction" prefHeight="40" prefWidth="170" text="Surrender">
                           <font>
                               <Font size="20" />
                           </font>

@@ -127,6 +127,14 @@ public class RemoteGameController extends GameControllerBase {
         GameEndedController.initRootLayout(result + " by " + reason);
     }
 
+    public void enableGui(int flag) {
+        super.enableGui(flag);
+        if ((flag & F_CHAT) > 0) {
+            chatText.setDisable(false);
+            chatInputField.setDisable(false);
+        }
+    }
+
     @Override
     protected boolean arePlayersPiecesDisabled(Color player) {
         return player != serverProxy.localPlayer();

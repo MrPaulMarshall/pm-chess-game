@@ -48,12 +48,12 @@
                 <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="60.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                      <Button alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleDrawAction" text="Propose draw" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                      <Button fx:id="drawButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleDrawAction" text="Draw" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                           <font>
                               <Font size="20" />
                           </font>
                       </Button>
-                      <Button alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleSurrenderAction" text="Surrender" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                      <Button fx:id="surrenderButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleSurrenderAction" text="Surrender" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                           <font>
                               <Font size="20" />
                           </font>
