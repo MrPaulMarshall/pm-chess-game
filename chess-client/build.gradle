@@ -37,7 +37,7 @@ task copyJar(type: Copy) {
 tasks.jpackage {
     dependsOn("build", "copyDependencies", "copyJar")
 
-    arguments = System.getenv('SERVER_ADDRESS') == null ? ['127.0.0.1', '21370'] : Arrays.asList(System.getenv('SERVER_ADDRESS').split(" "))
+    arguments = [System.getenv('SERVER_ADDRESS') == null ? '127.0.0.1:21370' : System.getenv('SERVER_ADDRESS')]
     appVersion = project.version.toString()
     module = "com.pmarshall.chessgame.client/com.pmarshall.chessgame.client.Main"
     modulePaths = ["$buildDir/deps"]
