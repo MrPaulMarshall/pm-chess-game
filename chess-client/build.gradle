@@ -46,12 +46,14 @@ tasks.jpackage {
 
     linux {
         appName = "linux-chess-client"
+        icon = 'src/main/resources/icons/green-knight-icon.png'
         linuxShortcut = true
         linuxPackageName = "linux-chess-client"
     }
 
     windows {
         appName = "Windows Chess Client"
+        icon = 'src/main/resources/icons/green-knight-icon.ico'
         winConsole = true
         winDirChooser = true
         winShortcut = true
