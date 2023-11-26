@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pmarshall.chessgame.client.controller.RemoteGameController">
+   <center>
+      <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="720.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" percentWidth="60.0" />
+          <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints percentHeight="80.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" percentHeight="20.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <AnchorPane GridPane.columnSpan="2" GridPane.rowIndex="1">
+               <children>
+                  <VBox AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                     <children>
+                        <TextArea fx:id="chatText" editable="false" scrollTop="1.0" wrapText="true" />
+                        <TextField fx:id="chatInputField" onKeyPressed="#handleLocalPlayerChatInput" />
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            <GridPane id="chessBoard" fx:id="chessBoardGrid">
+               <rowConstraints>
+                  <RowConstraints percentHeight="4.0" />
+                  <RowConstraints percentHeight="11.5" />
+                  <RowConstraints percentHeight="11.5" />
+                  <RowConstraints percentHeight="11.5" />
+                  <RowConstraints percentHeight="11.5" />
+                  <RowConstraints percentHeight="11.5" />
+                  <RowConstraints percentHeight="11.5" />
+                  <RowConstraints percentHeight="11.5" />
+                  <RowConstraints percentHeight="11.5" />
+                  <RowConstraints percentHeight="4.0" />
+               </rowConstraints>
+               <columnConstraints>
+                  <ColumnConstraints percentWidth="4.0" />
+                  <ColumnConstraints percentWidth="11.5" />
+                  <ColumnConstraints percentWidth="11.5" />
+                  <ColumnConstraints percentWidth="11.5" />
+                  <ColumnConstraints percentWidth="11.5" />
+                  <ColumnConstraints percentWidth="11.5" />
+                  <ColumnConstraints percentWidth="11.5" />
+                  <ColumnConstraints percentWidth="11.5" />
+                  <ColumnConstraints percentWidth="11.5" />
+                  <ColumnConstraints percentWidth="4.0" />
+               </columnConstraints>
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+               <children>
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="a" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="b" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="c" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="d" textAlignment="CENTER" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="e" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="f" textAlignment="CENTER" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="g" textAlignment="CENTER" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="h" textAlignment="CENTER" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="a" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="b" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="c" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="d" textAlignment="CENTER" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="e" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="f" textAlignment="CENTER" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="g" textAlignment="CENTER" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="BOTTOM" text="h" textAlignment="CENTER" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+               </children>
+            </GridPane>
+            <GridPane GridPane.columnIndex="1">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints percentHeight="12.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <AnchorPane GridPane.rowIndex="2">
+                     <children>
+                            <TextArea fx:id="movesTextArea" editable="false" layoutX="-96.0" layoutY="2.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
+                        </TextArea>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </AnchorPane>
+                  <GridPane GridPane.rowIndex="3">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                            <Button alignment="TOP_CENTER" contentDisplay="TOP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleDrawAction" text="Offer Draw" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                <font>
+                                    <Font size="20" />
+                                </font>
+                            </Button>
+                            <Button alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleSurrenderAction" text="Surrender" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                <font>
+                                    <Font size="20" />
+                                </font>
+                            </Button>
+                     </children>
+                  </GridPane>
+                  <GridPane>
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="16.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" percentWidth="26.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="44.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                              <Label fx:id="upperPlayerNameLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="BLACK" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+                                  <font>
+                                      <Font size="18.0" />
+                                  </font>
+                           <GridPane.margin>
+                              <Insets bottom="3.0" left="5.0" right="3.0" top="3.0" />
+                           </GridPane.margin>
+                              </Label>
+                        <Label fx:id="upperClockLabel" alignment="CENTER" text="10:00" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="upperPlayerImageView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="TOP">
+                           <GridPane.margin>
+                              <Insets top="4.0" />
+                           </GridPane.margin></ImageView>
+                     </children>
+                  </GridPane>
+                  <GridPane GridPane.rowIndex="1">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="16.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="26.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="44.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label fx:id="lowerPlayerNameLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="WHITE" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                           <GridPane.margin>
+                              <Insets bottom="3.0" left="5.0" right="3.0" top="3.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="lowerClockLabel" alignment="CENTER" text="10:00" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="lowerPlayerImageView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="TOP">
+                           <GridPane.margin>
+                              <Insets top="4.0" />
+                           </GridPane.margin></ImageView>
+                     </children>
+                  </GridPane>
+               </children>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </GridPane>
+         </children>
+      </GridPane>
+   </center>
+
+</BorderPane>

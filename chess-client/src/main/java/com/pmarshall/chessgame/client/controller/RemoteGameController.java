@@ -8,12 +8,11 @@ import com.pmarshall.chessgame.client.remote.ServerConnection;
 import com.pmarshall.chessgame.model.properties.Color;
 import com.pmarshall.chessgame.client.remote.RemoteGameProxy;
 import com.pmarshall.chessgame.client.remote.ServerProxy;
+import com.pmarshall.chessgame.model.properties.PieceType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -25,12 +24,6 @@ import java.util.Map;
  * Controller of game view in remote mode
  */
 public class RemoteGameController extends GameControllerBase {
-
-    @FXML
-    private TextArea chatText;
-
-    @FXML
-    private TextField chatInputField;
 
     private ServerProxy serverProxy;
 
@@ -51,13 +44,17 @@ public class RemoteGameController extends GameControllerBase {
         controller.game = proxy;
         controller.serverProxy = proxy;
 
-        Parent root = FXMLUtils.load(controller, "/view/remote_game_screen.fxml");
+        Parent root = FXMLUtils.load(controller, "/view/game_screen.fxml");
         App.primaryStage().setScene(new Scene(root));
     }
 
     @FXML
     private void initialize() {
         createBoardGrid(serverProxy.localPlayer() == Color.WHITE);
+        upperPlayerNameLabel.setText(namesOfPlayers.get(serverProxy.localPlayer().next()));
+        upperPlayerImageView.setImage(imageProvider.getImage(PieceType.KING, serverProxy.localPlayer().next()));
+        lowerPlayerNameLabel.setText(namesOfPlayers.get(serverProxy.localPlayer()));
+        lowerPlayerImageView.setImage(imageProvider.getImage(PieceType.KING, serverProxy.localPlayer()));
         refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
     }
 

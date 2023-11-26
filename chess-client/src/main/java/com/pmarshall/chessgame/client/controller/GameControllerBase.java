@@ -9,9 +9,13 @@ import com.pmarshall.chessgame.model.service.Game;
 import com.pmarshall.chessgame.client.services.ImageProvider;
 import com.pmarshall.chessgame.client.services.LocalResourceImageProvider;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import com.pmarshall.chessgame.model.util.Pair;
 
@@ -20,12 +24,26 @@ import java.util.Collection;
 public abstract class GameControllerBase {
 
     @FXML
-    // Label that displays which player currently makes move
-    protected Label currentPlayerName;
+    protected Label upperPlayerNameLabel;
+
+    @FXML
+    protected ImageView upperPlayerImageView;
+
+    @FXML
+    protected Label lowerPlayerNameLabel;
+
+    @FXML
+    protected ImageView lowerPlayerImageView;
 
     @FXML
     // Pane that contains whole board - it contains smaller panes: cells
     protected GridPane chessBoardGrid;
+
+    @FXML
+    protected TextArea chatText;
+
+    @FXML
+    protected TextField chatInputField;
 
     @FXML
     // Area when history of moves is displayed
@@ -47,12 +65,26 @@ public abstract class GameControllerBase {
 
     protected void createBoardGrid(boolean forward) {
         chessboard = new ChessboardCell[8][8];
+
+        for (int rank = 1; rank <= 8; rank++) {
+            String rankStr = String.valueOf(forward ? 9 - rank : rank);
+            Label leftLabel = new Label(rankStr);
+            GridPane.setHalignment(leftLabel, HPos.CENTER);
+            GridPane.setValignment(leftLabel, VPos.CENTER);
+            chessBoardGrid.add(leftLabel, 0, rank);
+
+            Label rightLabel = new Label(rankStr);
+            GridPane.setHalignment(rightLabel, HPos.CENTER);
+            GridPane.setValignment(rightLabel, VPos.CENTER);
+            chessBoardGrid.add(rightLabel, 9, rank);
+        }
+
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
                 final int constRank = rank, constFile = file;
-                chessboard[rank][file] = new ChessboardCell(
-                        (rank+file) % 2 == 0, e -> boardCellOnClick(constRank, constFile));
-                chessBoardGrid.add(chessboard[constRank][constFile].getPane(), file, forward ? rank : 7-rank);
+                chessboard[rank][file] = new ChessboardCell((rank+file) % 2 == 0, e -> boardCellOnClick(constRank, constFile));
+
+                chessBoardGrid.add(chessboard[rank][file].getPane(), file + 1, (forward ? rank : 7 - rank) + 1);
             }
         }
     }
@@ -163,7 +195,6 @@ public abstract class GameControllerBase {
      */
     protected void refreshBoard(Color player, Piece[][] board) {
         repaintBackground();
-        currentPlayerName.setText(player.toString());
         for (int rank = 0; rank < 8; rank++) {
             for (int file = 0; file < 8; file++) {
                 Piece piece = board[rank][file];

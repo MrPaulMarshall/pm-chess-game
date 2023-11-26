@@ -3,11 +3,13 @@ package com.pmarshall.chessgame.client.controller;
 import com.pmarshall.chessgame.client.App;
 import com.pmarshall.chessgame.client.FXMLUtils;
 import com.pmarshall.chessgame.model.properties.Color;
+import com.pmarshall.chessgame.model.properties.PieceType;
 import com.pmarshall.chessgame.model.service.Game;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +41,27 @@ public class LocalGameController extends GameControllerBase {
         Game game = loadedGameService.get();
 
         LocalGameController controller = new LocalGameController(game);
-        Parent root = FXMLUtils.load(controller, "/view/local_game_screen.fxml");
+        Parent root = FXMLUtils.load(controller, "/view/game_screen.fxml");
         App.primaryStage().setScene(new Scene(root));
     }
 
     @FXML
     private void initialize() {
+        chatText.setDisable(true);
+        chatInputField.setDisable(true);
+
         createBoardGrid(true);
+        upperPlayerNameLabel.setText("BLACK");
+        upperPlayerImageView.setImage(imageProvider.getImage(PieceType.KING, Color.BLACK));
+        lowerPlayerNameLabel.setText("WHITE");
+        lowerPlayerImageView.setImage(imageProvider.getImage(PieceType.KING, Color.WHITE));
         refreshBoard(game.currentPlayer(), game.getBoardWithPieces());
+    }
+
+    @FXML
+    private void handleLocalPlayerChatInput(KeyEvent ignored) {
+        // unreachable
+        throw new IllegalStateException();
     }
 
     @FXML

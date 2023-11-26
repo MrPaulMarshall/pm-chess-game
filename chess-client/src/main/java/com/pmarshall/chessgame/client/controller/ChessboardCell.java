@@ -37,7 +37,7 @@ class ChessboardCell {
     /**
      * Pane that represents the cell, it contains background and potentially piece's image
      */
-    private final Pane pane;
+    private final StackPane pane;
 
     /**
      * Object that displays piece's image provided by the controller
