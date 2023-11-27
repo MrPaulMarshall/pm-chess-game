@@ -13,4 +13,5 @@ module com.pmarshall.chessgame.client {
     opens com.pmarshall.chessgame.client to javafx.graphics;
     opens com.pmarshall.chessgame.client.controller to javafx.fxml;
     opens images;
+    opens icons;
 }
