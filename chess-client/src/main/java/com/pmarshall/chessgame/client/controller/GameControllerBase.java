@@ -238,7 +238,7 @@ public abstract class GameControllerBase {
         if (player == Color.WHITE) {
             movesTextArea.appendText(moveCounter + ". " + notation);
         } else {
-            movesTextArea.appendText(" " + notation + "\n");
+            movesTextArea.appendText(" " + notation + "    ");
             moveCounter++;
         }
         movesTextArea.setEditable(false);
