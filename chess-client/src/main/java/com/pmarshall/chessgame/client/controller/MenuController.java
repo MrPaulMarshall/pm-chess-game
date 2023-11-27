@@ -33,7 +33,7 @@ public class MenuController {
     private void initialize() {
         ImageView imageView = new ImageView();
         imageView.setImage(
-                new Image("images/black-queen.png", 240, 240, false, true, false)
+                new Image("icons/green-knight-icon.png", 240, 240, false, true, false)
         );
         imagePane.getChildren().add(imageView);
     }
