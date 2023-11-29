@@ -43,12 +43,13 @@ public class PromotionController {
         Stage stage = new Stage();
 
         for (int i = 0; i < possiblePieces.length; i++) {
-            String path = "images/"
+            String path = "/images/"
                     + color.name().toLowerCase() + "-" + possiblePieces[i].name().toLowerCase() + ".png";
+            Image pieceImage = new Image(PromotionController.class.getResourceAsStream(path));
 
             StackPane pane = (StackPane) controller.imagesGrid.getChildren().get(i);
             ImageView view = (ImageView) pane.getChildren().get(0);
-            view.setImage(new Image(path));
+            view.setImage(pieceImage);
 
             final int index = i;
             pane.setOnMouseClicked(e -> {
