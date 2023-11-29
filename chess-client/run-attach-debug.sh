@@ -1,0 +1,1 @@
+java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=10200 --module-path build/deps --add-modules org.slf4j.simple,com.pmarshall.chessgame.engine --module com.pmarshall.chessgame.client/com.pmarshall.chessgame.client.Main aegyptus.synology.me:65432

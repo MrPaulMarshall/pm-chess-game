@@ -31,11 +31,8 @@ public class MenuController {
 
     @FXML
     private void initialize() {
-        ImageView imageView = new ImageView();
-        imageView.setImage(
-                new Image("icons/green-knight-icon.png", 240, 240, false, true, false)
-        );
-        imagePane.getChildren().add(imageView);
+        Image logo = new Image(getClass().getResourceAsStream("/icons/green-knight-icon.png"), 240, 240, false, true);
+        imagePane.getChildren().add(new ImageView(logo));
     }
 
     @FXML

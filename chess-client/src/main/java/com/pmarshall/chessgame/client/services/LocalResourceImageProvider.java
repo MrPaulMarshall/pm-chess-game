@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class LocalResourceImageProvider implements ImageProvider {
 
-    private static final String DIRECTORY_PREFIX = "images/";
+    private static final String DIRECTORY_PREFIX = "/images/";
 
     private static final Map<Color, Map<PieceType, Image>> images;
 
@@ -32,6 +32,6 @@ public class LocalResourceImageProvider implements ImageProvider {
 
     protected static Image loadImage(Color color, String name) {
         String path = DIRECTORY_PREFIX + color.name().toLowerCase() + "-" + name + ".png";
-        return new Image(path, 50, 50, false,true, false);
+        return new Image(LocalResourceImageProvider.class.getResourceAsStream(path), 50, 50, false,true);
     }
 }
